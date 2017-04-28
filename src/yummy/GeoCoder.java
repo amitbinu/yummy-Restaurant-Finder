@@ -91,8 +91,8 @@ public class GeoCoder {
 		for(String dest : addresses){
 			if (dest == null)
 				break;
-			if (System.currentTimeMillis() > start +10000) // If it takes more than 10 seconds, the search ends.
-				break;
+	//		if (System.currentTimeMillis() > start +10000) // If it takes more than 10 seconds, the search ends.
+	//			break;
 			String[] finalDest = {dest};
 			DistanceMatrix dist = DistanceMatrixApi.getDistanceMatrix(context, temp, finalDest).await();
 			String[] removeKM =  dist.rows[0].elements[0].distance.humanReadable.split("km");
@@ -117,7 +117,7 @@ public class GeoCoder {
 		return restaurants;
 	}
 	
-	public static Stack<String> address(){
+	public static Stack<String> restaurant_addresses(){
 		return addresses;
 	}
 
