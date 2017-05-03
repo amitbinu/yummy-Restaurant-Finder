@@ -2,12 +2,23 @@ package yummy;
 
 import java.util.Stack;
 
+import com.google.maps.model.Photo;
+
 public class data {
 	public Restaurant[] restaurants;
 	
 	public data(Stack<String> foods, String origin, String city_name) throws Exception{
+		String[] temp = new String[foods.size()];
+		for (int i =0; i < foods.size(); i++){
+			temp[i] = foods.get(i);
+		}
+		
 		GeoCoder details = new GeoCoder(city_name , foods, origin);
 		Restaurant[] info = new Restaurant[details.distance_getter().size()];
+		for(String s : temp){
+			foods.push(s);
+		}
+		
 		String food = foods.pop();
 		int count =0; //count variable to count the number of nulls in the restaurant_names / distnace_getter() etc. 
 		for (int i = 0; i < info.length; i++){
@@ -26,8 +37,9 @@ public class data {
 			Double distance = details.distance_getter().get(i);
 			Double time = details.time_getter().get(i);
 			Double rating =details.ratings().get(i);
-			
-			info[i] = new Restaurant(name, address, time, distance, rating, food);
+			Photo[] pictures = details.photos().get(i);
+			Boolean open = details.Open().get(i);
+			info[i] = new Restaurant(name, address, time, distance, rating, food, pictures, open);
 		}
 		restaurants = new Restaurant[info.length - count];
 		
