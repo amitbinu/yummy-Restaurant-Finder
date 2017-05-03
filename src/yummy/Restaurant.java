@@ -10,7 +10,8 @@ public class Restaurant {
 	public Double rating;
 	public String food;
 	public Photo[] photos;
-	public Restaurant(String restaurant_name, String address, Double time, Double distance, Double rating, String food_name, Photo[] samplePhotos){
+	public Boolean open;
+	public Restaurant(String restaurant_name, String address, Double time, Double distance, Double rating, String food_name, Photo[] samplePhotos, Boolean open){
 		this.restuarant_name = restaurant_name;
 		this.address = address;
 		this.time =time;
