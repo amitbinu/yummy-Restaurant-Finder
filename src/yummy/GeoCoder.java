@@ -218,5 +218,8 @@ public class GeoCoder {
 		return photos;
 	}
 	
+	public Stack<Boolean> Open(){
+		return open;
+	}
 	}
 
