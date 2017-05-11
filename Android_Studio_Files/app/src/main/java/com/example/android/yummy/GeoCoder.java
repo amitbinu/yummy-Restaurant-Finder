@@ -2,6 +2,7 @@ package com.example.android.yummy;
 
 
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.net.URL;
@@ -16,7 +17,10 @@ import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.Photo;
 import com.google.maps.model.PlacesSearchResponse;
 
-import com.google.maps.model.PlacesSearchResponse;
+import static com.example.android.yummy.Result.test;
+import static com.example.android.yummy.restaurant_getter.FOOD;
+import static com.example.android.yummy.restaurant_getter.origin;
+import static com.example.android.yummy.second_address.address;
 
 
 /**
@@ -39,42 +43,43 @@ public class GeoCoder {
 	/**
 	 * Creates a context that sets the Api key. This context is used to communicate with various google Api(s).
 	 */
-	private static GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+	private static GeoApiContext context;
 	
 	/**
 	 * After executing the restaurant_getter() method, this ArrayList will have all the restaurants in the user's city that has the food(s) user want.
 	 */
-	private static Stack<String> restaurants = new Stack<String>();
+	private static Stack<String> restaurants;
 	
 	/**
 	 * This stack will contain the addresses of all the restaurants that the user wants to go to. 
 	 */
-	private static Stack<String> addresses = new Stack<String>();
+	private static Stack<String> addresses;
 	
 	/**
 	 * After executing the distance_getter() method, this ArrayList will contain the distance from user's location to each restaurant.
 	 */
-	private static Stack<Double> distances = new Stack<Double>();
+	private static Stack<Double> distances;
 	
 	/**
 	 * After executing the time_getter() method, this ArrayList will contain the time it takes to go from user's location to each restaurant.
 	 */
-	private static Stack<Double> times = new Stack<Double>();
+	private static Stack<Double> times;
 	
 	/**
 	 * This Stack will contain the google ratings of all the restaurants that the user wants to go to. 
 	 */
-	private static Stack<Double> ratings = new Stack<Double>();
+	private static Stack<Double> ratings;
 	/**
 	 * This stack contains the photos of each restaurant. 
 	 */
-	private static Stack<Photo[]> photos = new Stack<Photo[]>();
+	private static Stack<Photo[]> photos;
+
+	private static GeoCoder object;
+	private static Stack<Boolean> open;
 	
-	private static Stack<Boolean> open = new Stack<Boolean>();
-	
-	private static Stack<Boolean> permanentlyClosed = new Stack<Boolean>();
-	
-	private static Stack<URL> urls = new Stack<URL>();
+	private static Stack<Boolean> permanentlyClosed;
+	private static data Dataobject;
+	private static Stack<URL> urls;
 	/**
 	 * The constructor assigns the parameters to appropriate global variables and then calls the restaurant_getter() method. 
 	 * @param city_name This is the name of the city the user is currently in. 
@@ -82,14 +87,27 @@ public class GeoCoder {
 	 * @param origin This is the exact location of user. 
 	 * @throws Exception Throws exceprions mainly for invalid requests made to google. 
 	 */
-	public GeoCoder(String city_name, Stack<String> foods_from_user, String origin) throws Exception{
+	public GeoCoder(String city_name, Stack<String> foods_from_user, String origin, data object) throws Exception{
+
 		this.city = city_name;
 		this.food = foods_from_user;
+		this.object = this;
+		this.Dataobject = object;
+		context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+		restaurants = new Stack<String>();
+		addresses = new Stack<String>();
+		distances = new Stack<Double>();
+		times = new Stack<Double>();
+		ratings = new Stack<Double>();
+		photos = new Stack<Photo[]>();
+		open = new Stack<Boolean>();
+		permanentlyClosed = new Stack<Boolean>();
+		urls = new Stack<URL>();
+			Restaurant_getter(origin, city, foods_from_user);
 
-			restaurant_getter(origin, city, foods_from_user);
 
 	}
-	
+
 	/**
 	 * This method gets the name, address, rating and photo of each restaurant that offers the food user wants. Then it puts this information to appropriate <i> Stacks </i>. 
 	 * @param origin This is the exact location of user. 
@@ -97,44 +115,55 @@ public class GeoCoder {
 	 * @param FOOD TStack that contains the food(s) user wants
 	 * @throws Exception Throws exceptions mainly for invalid requests made to google. 
 	 */
-	private static void restaurant_getter(String origin, String city, Stack<String> FOOD) throws Exception{
-		Stack<String> tempAdd = new Stack<String>();
-		if (! FOOD.isEmpty()){
-			String f = FOOD.pop();
-		//PlacesSearchResponse address = PlacesApi.textSearchQuery(context, f + " restaurants in " + city).await();
-			com.example.android.yummy.URL test = new com.example.android.yummy.URL(f, city);
-			PlacesSearchResponse address = test.doInBackground();
+	public static restaurant_getter test1;
+	private static void Restaurant_getter(String origin, String city, Stack<String> FOOD) throws Exception {
 
+		if (!FOOD.isEmpty()) {
+			String f = FOOD.pop();
+			//PlacesSearchResponse address = PlacesApi.textSearchQuery(context, f + " restaurants in " + city).await();
+			test1 = new restaurant_getter(origin,city, FOOD,context,f,object);
+
+		}
+	}
+
+
+
+	public static void afterWAIT(String origin, Stack<String> FOOD) throws Exception{
+		PlacesSearchResponse address = test1.address; //Could be a null. Check restaurant_getter();
+		Stack<String> tempAdd = new Stack<String>();
 		for (int i =0; i < address.results.length; i++){
+
+          //  yelp yelpAPi = new yelp(address.results[i].name, address.results[i].formattedAddress);
+            Log.e("END", "Ending of yelpAPI");
+			try{
+				open.push(address.results[i].openingHours.openNow);}
+			catch(NullPointerException e){
+				open.push(null);
+			}
+
 			permanentlyClosed.push(address.results[i].permanentlyClosed);
 			restaurants.push(address.results[i].name);
-			open.push(address.results[i].openingHours.openNow);
 			urls.push(address.results[i].icon);
 			addresses.push(address.results[i].formattedAddress);
-			tempAdd.push(address.results[i].formattedAddress); //This is done so when there are more than one food in the Stack, distanceANdTime() method will use the addresses for only one food. 
+			tempAdd.push(address.results[i].formattedAddress); //This is done so when there are more than one food in the Stack, distanceANdTime() method will use the addresses for only one food.
 			photos.push(address.results[i].photos);
 			double rating = (double) address.results[i].rating*1000000;
 			rating = Math.round(rating);
 			ratings.push(rating/1000000); //This is done so that the rating will have only one decimal value.
 		}
-		
+
 		while(address.nextPageToken != null){
-			
-			try{
-			address = PlacesApi.textSearchNextPage(context, address.nextPageToken).await();}
-			catch(InvalidRequestException e){
-				while(true){
-					try{
-						address = PlacesApi.textSearchNextPage(context, address.nextPageToken).await();
-						break;
-					}
-					catch(InvalidRequestException f1){
-						continue;
-					}
+			test2 = new second_address(address.nextPageToken, context,object);
+
+			while(true){
+				if(get_address() != null){
+					address = get_address();
+					break;
 				}
-				
+
 			}
 			for (int i =0; i < address.results.length; i++){
+              //  yelp yelpAPi = new yelp(address.results[i].name, address.results[i].formattedAddress);
 				try{
 				open.push(address.results[i].openingHours.openNow);}
 				catch(NullPointerException e){
@@ -144,7 +173,7 @@ public class GeoCoder {
 				urls.push(address.results[i].icon);
 				restaurants.push(address.results[i].name);
 				addresses.push(address.results[i].formattedAddress);
-				tempAdd.push(address.results[i].formattedAddress); //This is done so when there are more than one food in the Stack, distanceANdTime() method will use the addresses for only one food. 
+				tempAdd.push(address.results[i].formattedAddress); //This is done so when there are more than one food in the Stack, distanceANdTime() method will use the addresses for only one food.
 				photos.push(address.results[i].photos);
 				double rating = (double) address.results[i].rating*1000000;
 				rating = Math.round(rating);
@@ -158,13 +187,22 @@ public class GeoCoder {
 		addresses.push(null);
 		ratings.push(null);
 		photos.push(null);
+        Log.e("tempADD's size", tempAdd.size() + "");
 		distanceAndTime(origin, tempAdd);
-		restaurant_getter(origin, city,FOOD);
+		//Restaurant_getter(origin, city,FOOD);
+		;
+
+        Dataobject.results();
 		}
-		}
-		
-	
+
+	public static second_address test2;
+	public static PlacesSearchResponse get_address(){
+		PlacesSearchResponse addressLAST = test2.address;
+		return addressLAST;
+	}
+	private static distanceTimeBackThread fetcher;
 	/**
+	 *
 	 * This method gets the distance and time it takes to go from user's location to each restaurant. 
 	 * @param origin This is the exact location of user. 
 	 * @param destinations This Stack contains the address of each restaurant that has the food user wants.
@@ -172,25 +210,47 @@ public class GeoCoder {
 	 */
 	private static void distanceAndTime(String origin, Stack<String> destinations) throws Exception{
 		String[] temp = {origin};
-		String[] realAdress= new String[destinations.size()]; 
-			
+		String[] realAdress= new String[destinations.size()];
+
 		for(int i =0; i < realAdress.length ; i++){
 			realAdress[i] = destinations.get(i);
+            Log.e("Destinations", destinations.get(i));
 		}
-		
-		DistanceMatrix dist = DistanceMatrixApi.getDistanceMatrix(context, temp, realAdress).await();
-		
-		for(int i =0; i < destinations.size() ; i++){						
-			String[] removeKM =  dist.rows[0].elements[i].distance.humanReadable.split("km");
-			String[] removeMINS = dist.rows[0].elements[i].duration.humanReadable.split("mins");
-					
-			distances.push(Double.parseDouble(removeKM[0]));
-			times.push(Double.parseDouble(removeMINS[0]));		
-		}
-		
-		distances.push(null);
-		times.push(null);
-	}
+
+		fetcher = new distanceTimeBackThread(temp, realAdress, context, object);
+        while (true){
+            if(fetcher.result != null){
+                break;
+            }
+        }
+        Log.e("Size of destinations", fetcher.destinations.length + "");
+        Log.e("Size of result", fetcher.result.rows[0].elements.length + "");
+        DistanceMatrix dist = fetcher.result;
+        for (int i =0; i < dist.destinationAddresses.length; i++){
+            Log.e("RESULTS !!!!", dist.rows[0].elements[0].distance.toString());
+        }
+
+
+        for(int i =0; i < dist.rows[0].elements.length ; i++){
+            Log.e("Index value", i +"");
+            try{
+            String[] removeKM =  dist.rows[0].elements[i].distance.toString().split("km");
+            String[] removeMINS = dist.rows[0].elements[i].duration.toString().split("mins");
+
+            distances.push(Double.parseDouble(removeKM[0]));
+            times.push(Double.parseDouble(removeMINS[0]));}
+            catch (NullPointerException f){
+                continue;
+            }
+            catch (NumberFormatException e){
+                distances.push(null);
+                times.push(null);
+            }
+        }
+
+        distances.push(null);
+        times.push(null);
+    }
 	/**
 	 * 
 	 * @return a stack that contains the distance between user's location and each restaurant's location. 
