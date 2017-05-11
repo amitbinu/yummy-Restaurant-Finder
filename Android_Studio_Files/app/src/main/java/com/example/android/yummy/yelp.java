@@ -3,12 +3,14 @@ package com.example.android.yummy;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.maps.model.PlacesSearchResponse;
 import com.yelp.fusion.client.connection.YelpFusionApi;
 import com.yelp.fusion.client.connection.YelpFusionApiFactory;
 import com.yelp.fusion.client.models.Business;
@@ -23,6 +25,7 @@ public class yelp{
 	private static String address = "";
 	private static ArrayList<Business> busy = new ArrayList<Business>();
 	public yelp(String name, String address) throws IOException{
+
 		this.name = name;
 		this.address = address;
 
@@ -36,7 +39,8 @@ public class yelp{
 
 		@Override
 		protected String[] doInBackground(String... Params) {
-
+            Log.e("RUNNING", "Still Running");
+			String[] result = new String[2];
 			retrofit2.Response<SearchResponse> response  = null;
 			try{
 				YelpFusionApiFactory apiFactory = new YelpFusionApiFactory();
@@ -56,11 +60,11 @@ public class yelp{
 				response = call.execute();
 
 				//	busy = business;
-				//	price = business.get(0).getPrice();
-				//	phone = business.get(0).getDisplayPhone();
-				//String[] result = new String[2];
-				//result[0] = price;
-				//	result[1] = phone;
+					price = response.body().getBusinesses().get(0).getPrice();
+					phone = response.body().getBusinesses().get(0).getDisplayPhone();
+
+				result[0] = price;
+					result[1] = phone;
 				//	return result;
 			}
 			catch (Exception e){
@@ -68,12 +72,19 @@ public class yelp{
 				//return null;
 			}
 			if (response != null){
+				price = response.body().getBusinesses().get(0).getPrice();
+				phone = response.body().getBusinesses().get(0).getDisplayPhone();
 				Log.e("Business", response.body().getBusinesses().toString());
 			}
-			else{
-				Log.e("LITIFG ", "sbvisvbjvbfdjvbdfvbjdfvbFBBVIBIFESVBEIUVBEIFBDIFVBELKRVBALV BFVJEBLVBA F VJ");
-			}
-			return null;
+
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(String[] strings) {
+			//Result.result.setText(strings[0] + " " + strings[1]);
+			Result.setter(price);
+			super.onPostExecute(strings);
 		}
 	}
 
@@ -83,7 +94,7 @@ public class yelp{
 	public String  Prices(){
 		return price;
 	}
-	public ArrayList<Business> Business(){
-		return busy;
+	public String Phone() {return phone;}
 	}
-}
+
+
