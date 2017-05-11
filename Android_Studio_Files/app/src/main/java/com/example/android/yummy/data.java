@@ -6,16 +6,20 @@ import java.net.URL;
 import com.google.maps.model.Photo;
 
 public class data {
-	public Restaurant[] restaurants;
-	
+	public static Restaurant[] restaurants;
+	private static GeoCoder details;
+	private static String[] temp;
+    private static Stack<String> foods;
 	public data(Stack<String> foods, String origin, String city_name) throws Exception{
-		String[] temp = new String[foods.size()];
+        this.foods = foods;
+		temp = new String[foods.size()];
 		for (int i =0; i < foods.size(); i++){
 			temp[i] = foods.get(i);
 		}
 		
-		GeoCoder details = new GeoCoder(city_name , foods, origin);
-		Restaurant[] info = new Restaurant[details.distance_getter().size()];
+		details = new GeoCoder(city_name , foods, origin, this);}
+	public static void results(){
+		Restaurant[] info = new Restaurant[details.restaurant_names().size()];
 		for(String s : temp){
 			foods.push(s);
 		}
@@ -36,7 +40,7 @@ public class data {
 			String name  = details.restaurant_names().get(i);
 			String address = details.restaurant_addresses().get(i);
 			Double distance = details.distance_getter().get(i);
-			Double time = details.time_getter().get(i);
+             Double time = details.time_getter().get(i);
 			Double rating =details.ratings().get(i);
 			Photo[] pictures = details.photos().get(i);
 			Boolean open = details.Open().get(i);
@@ -59,6 +63,7 @@ public class data {
 				continue;
 				}
 			}
+			Result.getter();
 		}
 		
 	
