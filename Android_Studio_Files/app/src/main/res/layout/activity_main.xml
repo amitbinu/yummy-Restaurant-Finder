@@ -1,55 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.yummy.MainActivity"
-    android:background="@color/colorPrimary"
     >
 
-    <TextView
-        android:id="@+id/text"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/BackGroundSearch"/>
-    <SearchView
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="5dp"
-        android:id="@+id/SearchBar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/rounded_corner"
-        android:queryHint="Type the food here"
-        android:inputType="text"
-        android:imeOptions="actionSearch"
-        android:clickable="true"
-        android:onClick="nextActivity"
-        android:layout_alignParentTop="true"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@color/colorPrimary">
 
-        />
+        <TextView
+            android:id="@+id/yummy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="YUMMY"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:textSize="40dp"
 
-    <TextView
-        android:id="@+id/textview"
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="30dp"
-        android:textColor="@color/TextColor"/>
-    
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_below="@id/textview"
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="100dp"
-        android:visibility="gone"/>
+            android:textColor="@color/YummyColor"
+            android:textStyle="bold|italic" />
 
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/progressBar3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/yummy"
+            android:layout_marginTop="50dp"
+            android:progressBackgroundTint="@color/YummyColor"
+            />
+    </RelativeLayout>
+
+
+</LinearLayout>
