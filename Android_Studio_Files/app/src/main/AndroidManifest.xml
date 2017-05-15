@@ -20,7 +20,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivities.MainActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,9 +28,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Result" />
+        <activity android:name=".DataManager.Result" />
         <activity
-            android:name=".Main2Activity"
+            android:name=".MainActivities.Main2Activity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme"></activity>
     </application>
