@@ -1,20 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.yummy.Result"
-    android:background="@color/colorPrimary">
+    tools:context="com.example.android.yummy.DataManager.Result"
+    android:background="@color/BackGroundSearch"
+    >
+            <TextView
+                android:id="@+id/Header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Restaurants Near Mississauga"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textColor="@color/HeadingColor"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
 
-    <TextView
-        android:id="@+id/textview"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:background="@color/BackGroundSearch"
-        android:textColor="@color/TextColor"
-        android:text=""
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+                android:layout_marginTop="5dp"/>
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerInParent="true"
+                />
 
-</RelativeLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Header"
+            android:id="@+id/scrollview">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/linear"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+
+
+
+    </RelativeLayout>
+
+
