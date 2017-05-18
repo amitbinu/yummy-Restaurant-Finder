@@ -21,11 +21,12 @@ public class PopularRestaurants {
     private static String communityName;
     private static GeoApiContext context;
     public PlacesSearchResponse address;
-
-    public PopularRestaurants(String communityName,GeoApiContext context){
+    private static MainActivity object;
+    public PopularRestaurants(String communityName,GeoApiContext context, MainActivity object){
         this.address = null;
         this.communityName = communityName;
         this.context = context;
+        this.object = object;
         new geoCoding().execute();
     }
     class geoCoding extends AsyncTask<String, Void, PlacesSearchResponse> {
@@ -35,15 +36,19 @@ public class PopularRestaurants {
         protected PlacesSearchResponse doInBackground(String... params) {
 
             try{
-                address = PlacesApi.textSearchQuery(context, "Popular " + " restaurants in " + communityName).await();
-
+                address = PlacesApi.textSearchQuery(context, "Best " + " restaurants in " + communityName).await();
             }
             catch (Exception e){
-                Log.e("ERROR", e.getMessage(), e);
+                Log.e("ERROR IN POPULAR REST", e.getMessage(), e);
             }
             return address;
 
         }
 
+        @Override
+        protected void onPostExecute(PlacesSearchResponse placesSearchResponse) {
+            object.datafetcher();
+            super.onPostExecute(placesSearchResponse);
+        }
     }
 }
