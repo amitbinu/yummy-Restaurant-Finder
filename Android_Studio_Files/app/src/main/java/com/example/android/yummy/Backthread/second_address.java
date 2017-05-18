@@ -26,6 +26,46 @@ public class second_address {
         this.object = object;
         new call().execute();
     }
+
+    public second_address(String nextPage, GeoApiContext context){
+        this.address = null;
+        this.nextPage = nextPage;
+        this.context = context;
+        new firstCall().execute();
+    }
+
+    class firstCall extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                address = PlacesApi.textSearchNextPage(context, nextPage).await();
+
+            }
+            catch (InvalidRequestException f){
+             //   Log.d("error", f.getMessage(), f);
+                while (true){
+                    try{
+                        address = PlacesApi.textSearchNextPage(context, nextPage).await();
+                        break;
+                    }
+                    catch (InvalidRequestException g){
+                  //      Log.d("error", f.getMessage(), f);
+                        continue;
+                    }
+                    catch (Exception all){
+                        Log.e("ERROR", all.getMessage(), all);
+                        break;
+                    }
+                }
+            }
+            catch (Exception e) {
+                address = null;
+                Log.e("ERROR SECOND GEO", e.getMessage(), e);
+            }
+            return null;
+        }
+    }
     class call extends AsyncTask<Void, Void, PlacesSearchResponse>{
 
         @Override
@@ -63,7 +103,7 @@ public class second_address {
         protected void onPostExecute(PlacesSearchResponse strings) {
             //Result.result.setText(strings[0] + " " + strings[1]);
             try{
-               object.get_address()
+     //          object.get_address()
                ;}
             catch (Exception e){
                 Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);

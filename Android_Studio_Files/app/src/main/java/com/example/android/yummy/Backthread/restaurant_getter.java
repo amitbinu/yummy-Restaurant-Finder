@@ -37,13 +37,10 @@ public class restaurant_getter {
 
     class geoCoding extends AsyncTask<String, Void, PlacesSearchResponse> {
 
-
         @Override
         protected PlacesSearchResponse doInBackground(String... params) {
-
                 try{
                     address = PlacesApi.textSearchQuery(context, food + " restaurants in " + city).await();
-
                 }
                 catch (Exception e){
                     Log.e("ERROR", e.getMessage(), e);
@@ -57,7 +54,7 @@ public class restaurant_getter {
             //Result.result.setText(strings[0] + " " + strings[1]);
             try{
 
-            object.afterWAIT(origin, FOOD);}
+            object.afterWAIT();}
             catch (Exception e){
                 Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);
             }
