@@ -1,98 +1,62 @@
 package com.example.android.yummy.Backthread;
 
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.android.yummy.DataManager.Result;
+
+import com.example.android.yummy.MainActivities.MainActivity;
+import com.google.maps.model.PlacesSearchResponse;
 import com.yelp.fusion.client.connection.YelpFusionApi;
 import com.yelp.fusion.client.connection.YelpFusionApiFactory;
 import com.yelp.fusion.client.models.Business;
 import com.yelp.fusion.client.models.SearchResponse;
 
 
-public class yelp{
-	private static retrofit2.Call<SearchResponse> call;
-	private static String price = "";
-	private static String phone = "";
-	private static String name = "";
-	private static String address = "";
-	private static ArrayList<Business> busy = new ArrayList<Business>();
-	public yelp(String name, String address) throws IOException{
+public class yelp {
+    private static String item, address;
+    public static retrofit2.Response<SearchResponse> response;
+    public yelp(String item, String address){
+        this.item = item;
+        this.address = address;
+        this.response = null;
+        new firstCall().execute();
+    }
 
-		this.name = name;
-		this.address = address;
+    class firstCall extends AsyncTask<Void, Void, String> {
 
-		//	System.out.println((double)System.currentTimeMillis() - start );
-		new hope().execute();
-	}
+        @Override
+        protected String doInBackground(Void... params) {
 
+            try {
+                YelpFusionApiFactory apiFactory = new YelpFusionApiFactory();
+                YelpFusionApi yelpFusioinApi = apiFactory.createAPI("EKQF7reSwACI45yGJiBhlg", "FqRhQWJCvmzontKsjalqqd7eb9EnnNv95TEO3hVGdRfkH3CoMSBlUR0NWHbnAEyi");
 
+                Map<String, String> params1 = new HashMap<>();
 
-	class hope extends AsyncTask<String, Void, String[]>{
+                params1.put("term", item);
+                params1.put("location", address);
+                //params.put("longitude", "-79.716575");
+                params1.put("limit", "50");
+                retrofit2.Call<SearchResponse> call = yelpFusioinApi.getBusinessSearch(params1);
+                response  = call.execute();
 
-		@Override
-		protected String[] doInBackground(String... Params) {
-            Log.e("RUNNING", "Still Running");
-			String[] result = new String[2];
-			retrofit2.Response<SearchResponse> response  = null;
-			try{
-				YelpFusionApiFactory apiFactory = new YelpFusionApiFactory();
-				YelpFusionApi yelpFusioinApi = apiFactory.createAPI("EKQF7reSwACI45yGJiBhlg", "FqRhQWJCvmzontKsjalqqd7eb9EnnNv95TEO3hVGdRfkH3CoMSBlUR0NWHbnAEyi");
+            } catch (Exception e) {
+                Log.e("ERROR", e.getMessage());
+            }
+            return null;
+        }
+    }
 
-				Map<String, String> params = new HashMap<>();
+    }
 
-
-				//	Double start = (double) System.currentTimeMillis();
-
-				params.put("term", name);
-				params.put("location", address);
-				params.put("sort_by", "best_match");
-				//params.put("longitude", "-79.716575");
-
-				call = yelpFusioinApi.getBusinessSearch(params);
-				response = call.execute();
-
-				//	busy = business;
-					price = response.body().getBusinesses().get(0).getPrice();
-					phone = response.body().getBusinesses().get(0).getDisplayPhone();
-
-				result[0] = price;
-					result[1] = phone;
-				//	return result;
-			}
-			catch (Exception e){
-				Log.e("ERROR", "HOLY MOTHER OF GOD", e);
-				//return null;
-			}
-			if (response != null){
-				price = response.body().getBusinesses().get(0).getPrice();
-				phone = response.body().getBusinesses().get(0).getDisplayPhone();
-				Log.e("Business", response.body().getBusinesses().toString());
-			}
-
-			return result;
-		}
-
-		@Override
-		protected void onPostExecute(String[] strings) {
-			//Result.result.setText(strings[0] + " " + strings[1]);
-			Result.setter(price);
-			super.onPostExecute(strings);
-		}
-	}
-
-
-
-
-	public String  Prices(){
-		return price;
-	}
-	public String Phone() {return phone;}
-	}
 
 
