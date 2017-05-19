@@ -1,4 +1,6 @@
 package com.example.android.yummy.DataManager;
+import android.graphics.Bitmap;
+
 import java.net.URL;
 
 import com.google.maps.model.Photo;
@@ -10,11 +12,10 @@ public class Restaurant {
 	public Double distance;
 	public Double rating;
 	public String food;
-	public Photo[] photos;
+	public Bitmap photos;
 	public Boolean open;
 	public Boolean permanentlyClosed;
-	public URL url;
-	public Restaurant(String restaurant_name, String address, Double time, Double distance, Double rating, String food_name, Photo[] samplePhotos, Boolean open, Boolean permanentlyClosed, URL url){
+	public Restaurant(String restaurant_name, String address, Double time, Double distance, Double rating, String food_name, Bitmap samplePhotos, Boolean open, Boolean permanentlyClosed){
 		this.restuarant_name = restaurant_name;
 		this.address = address;
 		this.time =time;
@@ -24,18 +25,6 @@ public class Restaurant {
 		this.photos = samplePhotos;
 		this.open = open;
 		this.permanentlyClosed = permanentlyClosed;
-		this.url = url;
 	}
-	
-	public Restaurant(String food_name){
-		this.food = food_name;
-		this.restuarant_name = null;
-		this.distance = null;
-		this.time = null;
-		this.rating = null;
-		this.photos = null;
-		this.open = null;
-		this.permanentlyClosed = null;
-		this.url = null;
-	}
+
 }
