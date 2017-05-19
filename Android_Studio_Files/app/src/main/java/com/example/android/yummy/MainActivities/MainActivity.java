@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -17,7 +16,8 @@ import android.util.Log;
 
 import com.example.android.yummy.Backthread.PopularRestaurants;
 import com.example.android.yummy.Backthread.distanceTimeBackThread;
-import com.example.android.yummy.DataManager.Restaurant;
+import com.example.android.yummy.Backthread.photoRequest;
+import com.example.android.yummy.Backthread.yelp;
 import com.example.android.yummy.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,21 +32,29 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.maps.GeoApiContext;
+import com.google.maps.model.PlacesSearchResponse;
+import com.google.maps.model.PlacesSearchResult;
+import com.yelp.fusion.client.models.Business;
+
+import java.util.ArrayList;
+
+import static com.example.android.yummy.Backthread.yelp.response;
+import static com.example.android.yummy.DataManager.GeoCoder.commonRestaurants_Google;
+import static com.example.android.yummy.DataManager.GeoCoder.commonRestaurants_Yelp;
+
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
-    private static int REQUEST =112;
     private static GoogleApiClient mGoogleApiClient;
     public static String CITY, COMMUNITY, COUNTRY, STATE;
     public static double latitude, longitude;
     public static PopularRestaurants popularRestaurants;
     private static LocationRequest mLocationRequest;
-    public static double[] distances;
-    public static double[] times;
-    private static Restaurant[] PopularRestaurants;
-    private static Bitmap[] bitmap;
+    private MainActivity object;
+    public static photoRequest pictures;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.object = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -57,11 +65,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .build();
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION};
         if (!hasPermissions(this, PERMISSIONS)) {
-            ActivityCompat.requestPermissions( this, PERMISSIONS, REQUEST );
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            ActivityCompat.requestPermissions( this, PERMISSIONS, 112 );
+         //   LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            double starTIime = System.currentTimeMillis();
+            while(System.currentTimeMillis()-starTIime < 3000){
+            }
+            if(!hasPermissions(this, PERMISSIONS)){
+                this.finish();
+                System.exit(0);
+            }
+            else{
+                onStart();
+            }
 
         }
-        onStart();
+        else{
+        onStart();}
     }
 
     private static boolean hasPermissions(Context context, String... permissions) {
@@ -128,9 +147,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         break;
                 }
             }
-
         });
-
     }
 
     @Override
@@ -151,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(Location location){
-        Log.e("ONLOCATIONCHANGED", "in locationchanged method");
         try{
             latitude = location.getLatitude();
             longitude = location.getLongitude();
@@ -172,35 +188,39 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void nextActivity(String cityName, String communityName, String stateName, String CountryName){
         onStop();
-        onStop();
         CITY = cityName;
         COMMUNITY = communityName;
         STATE = stateName;
         COUNTRY = CountryName;
-        Log.e("Starting", "starting the next activity");
-        Intent intent = new Intent(this, Main2Activity.class);
+        Log.d("Starting", "starting the next activity");
+      //  yelpcaller = new yelp("Best Restaurants", COMMUNITY + " " + CITY + " " + STATE + " " + COUNTRY, object);
         GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
-        popularRestaurants = new PopularRestaurants(COMMUNITY,context);
-        while(popularRestaurants.address == null){}
-        String[] origin ={latitude + " " + longitude};
-        String[] destinations = new String[popularRestaurants.address.results.length];
-        for (int i =0; i < destinations.length; i++){
-            destinations[i] = popularRestaurants.address.results[i].formattedAddress;
-        }
-        distanceTimeBackThread distancesANDtimes = new distanceTimeBackThread(origin, destinations, context);
-        while(distancesANDtimes.result == null){}
-        distances = new double[distancesANDtimes.result.rows[0].elements.length];
-        times = new double[distancesANDtimes.result.rows[0].elements.length];
-
-        for (int i =0; i < distances.length; i++){
-            String distance = distancesANDtimes.result.rows[0].elements[i].distance.humanReadable;
-            String[] dist = distance.split("km");
-            distances[i] = Double.parseDouble(dist[0]);
-            String time = distancesANDtimes.result.rows[0].elements[i].duration.humanReadable;
-            String[] tim = time.split("min");
-            times[i] = Double.parseDouble(tim[0]);
-        }
-
+        popularRestaurants = new PopularRestaurants(COMMUNITY + " " + CITY + " " + COUNTRY,context, object);
+        Intent intent = new Intent(this, Main2Activity.class);
         startActivity(intent);
+    }
+
+    private static String[] origin,destinations;
+    public void datafetcher(){
+
+
+
+        PlacesSearchResponse address = popularRestaurants.address;
+    //
+     //
+        pictures = new photoRequest(popularRestaurants.address);
+        origin = new String[1];
+        origin[0] = latitude + " "  + longitude;
+        destinations = new String[address.results.length];
+        for (int i =0; i < destinations.length ; i++){
+            destinations[i] = address.results[i].formattedAddress;
+        }
+        finalCall();
+    }
+
+
+    public static void finalCall(){
+        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+        new distanceTimeBackThread(origin, destinations, context, Main2Activity.object);
     }
 }
