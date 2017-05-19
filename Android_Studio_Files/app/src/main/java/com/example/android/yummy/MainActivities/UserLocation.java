@@ -13,7 +13,7 @@ import com.google.maps.model.LatLng;
 
 public class UserLocation {
 
-    public static String communityName, cityName, stateName, countryName;
+    public static String address,communityName, cityName, stateName, countryName;
 
     private static GeoApiContext context;
     public UserLocation(double latitude,double longitude) throws Exception{
@@ -23,7 +23,7 @@ public class UserLocation {
         GeocodingApi geolocationApi = null;
 
         GeocodingResult[] geocodingApiRequest = geolocationApi.reverseGeocode(context,location).await();
-
+        address = geocodingApiRequest[0].formattedAddress;
         communityName = geocodingApiRequest[0].addressComponents[2].longName;
         cityName = geocodingApiRequest[0].addressComponents[3].longName;
         stateName = geocodingApiRequest[0].addressComponents[5].longName;
