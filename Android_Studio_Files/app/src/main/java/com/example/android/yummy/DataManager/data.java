@@ -1,4 +1,7 @@
 package com.example.android.yummy.DataManager;
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import java.util.Stack;
 
 import com.google.maps.model.Photo;
@@ -14,14 +17,23 @@ public class data {
 		for (int i =0; i < foods.size(); i++){
 			temp[i] = foods.get(i);
 		}
-		
-		details = new GeoCoder(city_name , foods, origin, this);}
+		details = new GeoCoder(city_name , foods, origin, this);
+	}
+
+    public static Boolean checker = false;
 	public static void results(){
+        if(checker == true){
+			Log.e("IN","the if statement");
+            Result.EXIT();
+        }
+        else{
+			Log.e("IN", "the else statement");
 		Restaurant[] info = new Restaurant[details.restaurant_names().size()];
 		for(String s : temp){
 			foods.push(s);
 		}
-		
+
+
 		String food = foods.pop();
 		int count =0; //count variable to count the number of nulls in the restaurant_names / distnace_getter() etc. 
 		for (int i = 0; i < info.length; i++){
@@ -40,11 +52,10 @@ public class data {
 			Double distance = details.distance_getter().get(i);
              Double time = details.time_getter().get(i);
 			Double rating =details.ratings().get(i);
-			Photo[] pictures = details.photos().get(i);
+			Bitmap pictures = details.pictures.pictures1.get(i);
 			Boolean open = details.Open().get(i);
 			Boolean permanentlyClosed = details.PermanentlyClosed().get(i);
-			java.net.URL url = details.URLs().get(i);
-			info[i] = new Restaurant(name, address, time, distance, rating, food, pictures, open,permanentlyClosed,url );
+			info[i] = new Restaurant(name, address, time, distance, rating, food, pictures, open,permanentlyClosed );
 		}
 		restaurants = new Restaurant[info.length - count];
 		
@@ -61,7 +72,7 @@ public class data {
 				continue;
 				}
 			}
-			Result.getter();
+			Result.getter();}
 		}
 		
 	
