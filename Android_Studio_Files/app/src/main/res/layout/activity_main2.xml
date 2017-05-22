@@ -29,6 +29,14 @@
         android:onClick="nextActivity"
         android:layout_alignParentTop="true"
         />
+
+    <ProgressBar
+        android:id="@+id/progressBar3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,25 +44,34 @@
         android:layout_below="@id/text"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
-        android:text="Popular Restaurants Near You"
+        android:text="Popular Restaurants Nearby"
         android:textColor="@color/TextColor"
         android:textSize="22dp"
         android:textStyle="bold"/>
 
     <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/PopularRestaurants"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:scrollbarStyle="insideInset"
+        android:background="#070707">
         <RelativeLayout
             android:id="@+id/relativePopularRestaurants"
-            android:layout_width="300dp"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp">
 
         </RelativeLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 
 
 
