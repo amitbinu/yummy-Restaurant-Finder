@@ -7,18 +7,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.yummy.DataManager.Result"
-    android:background="@color/BackGroundSearch"
+    android:background="@color/colorPrimary"
     >
             <TextView
                 android:id="@+id/Header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Restaurants Near Mississauga"
+                android:text=""
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:textColor="@color/HeadingColor"
+                android:textColor="@color/TextColor"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-
                 android:layout_marginTop="5dp"/>
             <ProgressBar
                 android:id="@+id/progressBar2"
@@ -27,25 +26,24 @@
                 android:layout_centerInParent="true"
                 />
 
-        <ScrollView
-            android:layout_width="match_parent"
+    <ScrollView
+        android:id="@+id/RESULTscrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Header"
+        android:layout_marginTop="10dp"
+        android:scrollbarStyle="insideInset"
+        android:background="#070707">
+        <RelativeLayout
+            android:id="@+id/RESULTrelative"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/Header"
-            android:id="@+id/scrollview">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/linear"
-                android:orientation="vertical">
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
-            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
 
-        </ScrollView>
-
-
-
-
-
-    </RelativeLayout>
+</RelativeLayout>
 
 
