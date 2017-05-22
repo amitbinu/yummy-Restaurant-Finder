@@ -1,3 +1,5 @@
-# PatientsPal
+# Yummy-Restaurant Finder
 
-App to help people search, sort, and map hospitals across the US based on many criteria and star ratings
+An android application that helps the user to choose a restaurant based on what food they want to eat. 
+
+The user can sort the results based on average price spent in the restaurant, time and distance it takes to go to the restuarant and ratings.
