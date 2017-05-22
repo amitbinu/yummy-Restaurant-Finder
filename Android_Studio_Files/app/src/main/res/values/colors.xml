@@ -5,7 +5,9 @@
     <color name="colorAccent">#e80d0d</color>
     <color name="SearchColor">#565454</color>
     <color name="BackGroundSearch">#303847</color>
+    <color name="BackGroundPopular">#232323</color>
     <color name="TextColor">#ffffff</color>
+    <color name="SecondTextColor">#edeaea</color>
     <color name="HeadingColor">#b3dbcc</color>
     <color name="YummyColor">#e80d0d</color>
 </resources>
