@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 
 import com.example.android.yummy.Backthread.PopularRestaurants;
@@ -51,13 +52,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static LocationRequest mLocationRequest;
     private MainActivity object;
     public static photoRequest pictures;
-
+    private static TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.object = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+         textView = (TextView) findViewById(R.id.Update);
+        textView.setText("Getting your Location ...");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -187,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnectionFailed(ConnectionResult connectionResult) {Log.e("CONNECTION Failed", "ERROR");}
 
     private void nextActivity(String cityName, String communityName, String stateName, String CountryName){
+        textView.setText("Gathering info about near by restaurants ...");
         onStop();
         CITY = cityName;
         COMMUNITY = communityName;
