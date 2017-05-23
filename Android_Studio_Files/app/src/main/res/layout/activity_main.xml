@@ -32,6 +32,17 @@
             android:layout_marginTop="50dp"
             android:progressBackgroundTint="@color/YummyColor"
             />
+        <TextView
+            android:id="@+id/Update"
+            android:layout_below="@+id/progressBar3"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textSize="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/YummyColor"
+            android:textStyle="italic"
+            android:text=""/>
     </RelativeLayout>
 
 
