@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.concurrent.ExecutionException;
 
 
 import com.example.android.yummy.Backthread.distanceTimeBackThread;
@@ -20,6 +22,7 @@ import com.example.android.yummy.Backthread.restaurant_getter;
 import com.example.android.yummy.Backthread.second_address;
 import com.example.android.yummy.Backthread.yelp;
 import com.example.android.yummy.MainActivities.Main2Activity;
+import com.example.android.yummy.R;
 import com.google.maps.*;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.Photo;
@@ -27,10 +30,7 @@ import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.yelp.fusion.client.models.Business;
 
-import static android.R.attr.y;
 import static com.example.android.yummy.Backthread.distanceTimeBackThread.destinations;
-import static com.example.android.yummy.Backthread.restaurant_getter.origin;
-import static com.example.android.yummy.Backthread.yelp.response;
 
 
 /**
@@ -131,10 +131,12 @@ public class GeoCoder extends AppCompatActivity {
 
 		if (!FOOD.isEmpty()) {
 			String f = FOOD.pop();
-			yelpCaller = new yelp(f + " Restaurants ",city);
+			yelpCaller = new yelp(f + " Restaurants ",city, object);
 			test1 = new restaurant_getter(origin,city, FOOD,context,f,object);
 		}
 	}
+	public static Boolean checker_for_yelp = false;
+    public static Boolean checker_for_restaurantgetter = false;
 	public static void afterWAIT() throws Exception{
 		PlacesSearchResponse address = test1.address;
         commonRestaurants_Google = new ArrayList<>();
@@ -147,25 +149,70 @@ public class GeoCoder extends AppCompatActivity {
             address = secondAddress.address;
             CommonFinder(address);
         }
-        pictures = new photoRequest(commonRestaurants_Google);
-        DataOrganizer();
+        if(commonRestaurants_Google.size()==0){
+            DataOrganizer2(address);
+            Result.updating("Gathering restaurants' pictures");
+            pictures = new photoRequest(commonRestaurants_Google);
+            if(restaurants.size() == 1){
+                Dataobject.checker = true;
+                Dataobject.results();
+            }
+            else{
+                Dataobject.checker = false;
+                distanceAndTime(origin, destinations);}
+        }
+        else{
+            Result.updating("Gathering restaurants' pictures");
+            pictures = new photoRequest(commonRestaurants_Google);
+            DataOrganizer();}
 		}
 
-    private static void CommonFinder(PlacesSearchResponse address){
-        for (int i =0; i < yelpCaller.response.body().getBusinesses().size(); i++){
-            for (int j =0; j < address.results.length; j++){
-                if(yelpCaller.response.body().getBusinesses().get(i).getName().equals(address.results[j].name) && (!(commonRestaurants_Google.contains(address.results[j])) )){
-                     //       Log.e("CHECK G", address.results[j].name + " " + address.results[j].geometry.location.lat + " " + address.results[j].geometry.location.lng);
-                     //       Log.e("CHECK Y",yelpCaller.response.body().getBusinesses().get(i).getName()+ " " + yelpCaller.response.body().getBusinesses().get(i).getCoordinates().getLatitude()+" " + yelpCaller.response.body().getBusinesses().get(i).getCoordinates().getLongitude() );
-                            commonRestaurants_Google.add(address.results[j]);
-                            commonRestaurants_Yelp.add( yelpCaller.response.body().getBusinesses().get(i));
+    private static void CommonFinder(PlacesSearchResponse address) {
+        for(int j =0; j < address.results.length; j++){
+            for (int i =0; i < yelpCaller.response.body().getBusinesses().size(); i++){
+                if (yelpCaller.response.body().getBusinesses().get(i).getName().equals(address.results[j].name) && (!(commonRestaurants_Google.contains(address.results[j])))){
+                   try{
+                        String price = yelpCaller.response.body().getBusinesses().get(i).getPrice();
+                        Log.e("name & price", address.results[j].name+" " + price);
+                        if(price != null){
+                        commonRestaurants_Google.add(address.results[j]);
+                        commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
+                        }
+                        else{
+                            String isItNull = "";
+                            for (int findPrice=i+1; findPrice< yelpCaller.response.body().getBusinesses().size();findPrice++){
+                                if (yelpCaller.response.body().getBusinesses().get(findPrice).getName().equals(address.results[j].name)){
+                                    try{
+                                        isItNull = yelpCaller.response.body().getBusinesses().get(findPrice).getPrice();
+                                        Boolean checking = isItNull.equals("");
+                                        commonRestaurants_Google.add(address.results[j]);
+                                        commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
+                                        break;
+                                    }
+                                    catch (NullPointerException f){
+                                        continue;
+                                    }
+                                }
+                            }
+                            if(isItNull == null){
+                                commonRestaurants_Google.add(address.results[j]);
+                                commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
+                            }
+                        }
+                    }
+                    catch (ExceptionInInitializerError e){
+                        Log.e("GeoCoder-commonFinder",e.getMessage());
+                    }
+                    break;
                 }
             }
         }
     }
 
+    private static String[] destinations;
 	private static void DataOrganizer() throws Exception{
-        String[] destinations = new String[commonRestaurants_Google.size()];
+        Log.e("# of Common", commonRestaurants_Google.size()+"");
+        destinations = new String[commonRestaurants_Google.size()];
 		for (int i =0; i < commonRestaurants_Google.size(); i++){
 			try{
 				open.push(commonRestaurants_Google.get(i).openingHours.openNow);}
@@ -187,15 +234,42 @@ public class GeoCoder extends AppCompatActivity {
 		addresses.push(null);
 		ratings.push(null);
 		photos.push(null);
-		if(restaurants.size() == 1){
-			Dataobject.checker = true;
+        if(restaurants.size() == 1){
+            Dataobject.checker = true;
             Dataobject.results();
-		}
-		else{
-			Dataobject.checker = false;
-			distanceAndTime(origin, destinations);}
+        }
+        else{
+            Dataobject.checker = false;
+            distanceAndTime(origin, destinations);}
+
 	}
 
+	private static void DataOrganizer2(PlacesSearchResponse address) throws Exception{
+        String[] destinations = new String[address.results.length];
+        for (int i =0 ; i< address.results.length ; i++){
+            commonRestaurants_Google.add(address.results[i]);
+            try{
+                open.push(address.results[i].openingHours.openNow);}
+            catch(NullPointerException e){
+                open.push(null);
+            }
+            permanentlyClosed.push(address.results[i].permanentlyClosed);
+            restaurants.push(address.results[i].name);
+            destinations[i] = address.results[i].formattedAddress;
+            addresses.push(address.results[i].formattedAddress);
+            photos.push(address.results[i].photos);
+            double rating = (double) address.results[i].rating*1000000;
+            rating = Math.round(rating);
+            ratings.push(rating/1000000); //This is done so that the rating will have only one decimal value.
+        }
+        permanentlyClosed.push(null);
+        open.push(null);
+        restaurants.push(null);
+        addresses.push(null);
+        ratings.push(null);
+        photos.push(null);
+
+    }
 	private static distanceTimeBackThread fetcher;
 	/**
 	 *
@@ -227,7 +301,7 @@ public class GeoCoder extends AppCompatActivity {
                 times.push(null);
             }
         }
-
+        while(pictures.pictures1.size() == restaurants.size()){Log.e("WHILE LOOP", "in the loop");}
         distances.push(null);
         times.push(null);
         Dataobject.results();
