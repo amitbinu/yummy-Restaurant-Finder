@@ -9,29 +9,51 @@
     tools:context="com.example.android.yummy.DataManager.Result"
     android:background="@color/colorPrimary"
     >
-            <TextView
-                android:id="@+id/Header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:textColor="@color/TextColor"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:layout_marginTop="5dp"/>
-            <ProgressBar
-                android:id="@+id/progressBar2"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_centerInParent="true"
-                />
+    <TextView
+        android:id="@+id/Header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="@color/TextColor"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_marginTop="5dp"/>
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerInParent="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/update1"
+        android:layout_below="@id/progressBar2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/YummyColor"
+        android:textSize="15dp"
+        android:text="Gathering information ..."/>
 
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Header"
+        android:id="@+id/spinner"
+        android:layout_marginTop="5dp"
+        android:background="@color/TextColor"
+        android:popupBackground="@color/YummyColor"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:prompt="@string/SpinnerName">
+
+    </Spinner>
     <ScrollView
         android:id="@+id/RESULTscrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Header"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/spinner"
+        android:layout_marginTop="4dp"
         android:scrollbarStyle="insideInset"
         android:background="#070707">
         <RelativeLayout
