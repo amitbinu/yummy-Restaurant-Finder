@@ -10,6 +10,7 @@
     android:background="@color/colorPrimary"
     >
 
+
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
@@ -72,6 +73,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/second_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="15dp"
+        android:textColor="@color/colorAccent"
+        android:textStyle="italic"
+        android:text="Gathering the pictures ... "/>
 
 
 
