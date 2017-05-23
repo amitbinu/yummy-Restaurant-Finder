@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Yummy</string>
     <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="SpinnerName">SORT</string>
+    <string-array name="SpinnerSort">
+        <item>Price(low-high)</item>
+        <item>Price(high-low)</item>
+        <item>Distance(low-high)</item>
+        <item>Distance(high-low)</item>
+        <item>Time(low-high)</item>
+        <item>Time(high-low)</item>
+        <item>Rating(low-high)</item>
+        <item>Rating(high-low)</item>
+    </string-array>
 </resources>
