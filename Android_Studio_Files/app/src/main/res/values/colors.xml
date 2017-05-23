@@ -10,4 +10,5 @@
     <color name="SecondTextColor">#edeaea</color>
     <color name="HeadingColor">#b3dbcc</color>
     <color name="YummyColor">#e80d0d</color>
+    <color name="SpinnerColor">#232323</color>
 </resources>
