@@ -44,7 +44,7 @@ public class Main2Activity extends AppCompatActivity {
 
         modifySearchBar();
         if( checker == true){
-            Toast.makeText(this,"ENTER A VALID FOOD NAME",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"ENTER A VALID FOOD !",Toast.LENGTH_SHORT).show();
             checker=false;
         }
     }
@@ -116,13 +116,15 @@ public class Main2Activity extends AppCompatActivity {
             try{open = DATA.results[i].openingHours.openNow;}
             catch (Exception e){open = null;}
             Boolean permanentlyClosed =DATA.results[i].permanentlyClosed;
-            popularRestaurants[i] = new Restaurant(name,address,time,distance,rating,null,null,open,permanentlyClosed);
+            popularRestaurants[i] = new Restaurant(name,address,time,distance,rating,null,null,open,permanentlyClosed, null);
         }
 
         object.PopularRestaurantsLayout();
     }
 
     public void PopularRestaurantsLayout(){
+        TextView update = (TextView) findViewById(R.id.second_update);
+        update.setVisibility(View.GONE);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar2);
         progressBar.setVisibility(View.GONE);
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativePopularRestaurants);
