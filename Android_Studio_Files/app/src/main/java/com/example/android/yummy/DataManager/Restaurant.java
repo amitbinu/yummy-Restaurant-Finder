@@ -15,7 +15,8 @@ public class Restaurant {
 	public Bitmap photos;
 	public Boolean open;
 	public Boolean permanentlyClosed;
-	public Restaurant(String restaurant_name, String address, Double time, Double distance, Double rating, String food_name, Bitmap samplePhotos, Boolean open, Boolean permanentlyClosed){
+	public String price;
+	public Restaurant(String restaurant_name, String address, Double time, Double distance, Double rating, String food_name, Bitmap samplePhotos, Boolean open, Boolean permanentlyClosed, String price){
 		this.restuarant_name = restaurant_name;
 		this.address = address;
 		this.time =time;
@@ -25,6 +26,7 @@ public class Restaurant {
 		this.photos = samplePhotos;
 		this.open = open;
 		this.permanentlyClosed = permanentlyClosed;
+		this.price = price;
 	}
 
 }
