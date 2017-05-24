@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:maxLines="1"
+        android:text="Hello"
+        android:textSize="20dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="7dp"
+        android:background="@drawable/dropdown"
+        android:textColor="@color/TextColor"
+        android:gravity="right"
+        android:ellipsize="marquee"
+
+        >
+    </CheckedTextView>
+
+
+
+
+
