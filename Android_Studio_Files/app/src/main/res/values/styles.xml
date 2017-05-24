@@ -15,4 +15,21 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="SpinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+        </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:dividerHeight">10dip</item>
+        <item name="android:divider">@drawable/dropdown</item>
+    </style>
+
+    <style name="TestSpinnerStyle" parent="android:style/Widget.ListView.DropDown">
+        <item name="android:divider">#ff0000</item>
+        <item name="android:dividerHeight">5dp</item>
+    </style>
+
+
+    <style name="SampleTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:dropDownListViewStyle">@style/TestSpinnerStyle</item>
+    </style>
 </resources>
