@@ -28,12 +28,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/update1"
-        android:layout_below="@id/progressBar2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="32dp"
         android:textColor="@color/YummyColor"
         android:textSize="15dp"
-        android:text="Gathering information ..."/>
+        android:text="Getting the information ready"
+        android:layout_below="@+id/progressBar2"
+        android:layout_centerHorizontal="true" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -65,6 +65,42 @@
 
         </RelativeLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/dot1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="."
+        android:textColor="@color/YummyColor"
+        android:textSize="50dp"
+        android:layout_alignTop="@+id/update1"
+        android:layout_alignRight="@+id/progressBar2"
+        android:layout_alignEnd="@+id/progressBar2">
+    </TextView>
+
+    <TextView
+        android:id="@+id/dot2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="."
+        android:textColor="@color/YummyColor"
+        android:textSize="50dp"
+        android:layout_alignBaseline="@+id/dot3"
+        android:layout_alignBottom="@+id/dot3"
+        android:layout_centerHorizontal="true">
+    </TextView>
+
+    <TextView
+        android:id="@+id/dot3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="."
+        android:textColor="@color/YummyColor"
+        android:textSize="50dp"
+        android:layout_alignTop="@+id/update1"
+        android:layout_alignLeft="@+id/progressBar2"
+        android:layout_alignStart="@+id/progressBar2">
+    </TextView>
 
 </RelativeLayout>
 
