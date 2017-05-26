@@ -14,7 +14,6 @@ import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.yelp.fusion.client.models.Business;
-
 import static com.example.android.yummy.DataManager.sort.restaurants;
 
 /**
@@ -23,33 +22,26 @@ import static com.example.android.yummy.DataManager.sort.restaurants;
  *
  */
 public class GeoCoder extends AppCompatActivity {
-
 	/**
 	 * This is the food user entered.
 	 */
 	public static String  food;
-
 	/**
 	 * The name of the city the user is in.
 	 */
 	private static String city;
-
 	/**
 	 * Creates a context that sets the Api key. This context is used to communicate with various google Api(s).
 	 */
 	private static GeoApiContext context;
-
-
 	/**
 	 * After executing the distance_getter() method, this ArrayList will contain the distance from user's location to each restaurant.
 	 */
 	private static Stack<Double> distances;
-
 	/**
 	 * After executing the time_getter() method, this ArrayList will contain the time it takes to go from user's location to each restaurant.
 	 */
 	private static Stack<Double> times;
-
 	/**
 	 * This Stack will contain the google ratings of all the restaurants that the user wants to go to.
 	 */
@@ -65,11 +57,11 @@ public class GeoCoder extends AppCompatActivity {
 	/**
 	 * photoRequest object that is used to request pictures from Google Photos Api.
 	 */
-    public static photoRequest pictures;
+    	public static photoRequest pictures;
 	/**
 	 * The PlaceSearchResults of all the restaurants returned by Google maps API and / or Yelp API.
 	 */
-    public static ArrayList<PlacesSearchResult> commonRestaurants_Google ;
+    	public static ArrayList<PlacesSearchResult> commonRestaurants_Google ;
 	/**
 	 * The PlaceSearchResults of all the restaurants returened by both Google Maps API and Yelp API.
 	 */
@@ -81,7 +73,7 @@ public class GeoCoder extends AppCompatActivity {
 	/**
 	 * The <i> yelp.models.Business </i> of the common restaurants that are returned by both Google maps API and Yelp API.
 	 */
-    public static ArrayList<Business> commonRestaurants_Yelp;
+    	public static ArrayList<Business> commonRestaurants_Yelp;
 	/**
 	 * <i>data</i> object that is used to call the <i>results</i> method in <i>data</i> class, after all the information is collected.
 	 */
@@ -89,7 +81,7 @@ public class GeoCoder extends AppCompatActivity {
 	/**
 	 * The user's location in the form of coordinates.
 	 */
-    private static String origin;
+    	private static String origin;
 	/**
 	 * <i>restaurant_getter</i> object that calls the google maps API to get the information.
 	 */
@@ -102,18 +94,18 @@ public class GeoCoder extends AppCompatActivity {
 	 * A boolean variable that will be changed to true once the Google Maps's response is gotten.
 	 */
 	public static Boolean checker_for_restaurantgetter = false;
-    /**
-     * An array of all restaurants' addresses.
-     */
-    private static String[] destinations;
-    /**
-     * A <i>distanceTimeBackThread</i> object that calls the Google Maps Api to get the distance and time it takes to go from user's location and each restaurant.
-     */
-    private static distanceTimeBackThread fetcher;
-    /**
-     * This will contain what unit to use for displaying distance.
-     */
-    public static String distanceUnit;
+    	/**
+    	 * An array of all restaurants' addresses.
+	 */
+	private static String[] destinations;
+    	/**
+	* A <i>distanceTimeBackThread</i> object that calls the Google Maps Api to get the distance and time it takes to go from user's location and each restaurant.
+ 	*/
+    	private static distanceTimeBackThread fetcher;
+    	/**
+     	* This will contain what unit to use for displaying distance.
+     	*/
+    	public static String distanceUnit;
 	/**
 	 * The constructor assigns the parameters to appropriate global variables,initializes certain public Stack and then calls the Restaurant_getter() method.
 	 * @param city_name This is the name of the city the user is currently in.
@@ -307,23 +299,17 @@ public class GeoCoder extends AppCompatActivity {
 	 *
 	 * @return a stack that contains the distance between user's location and each restaurant's location.
 	 */
-	public Stack<Double> distance_getter(){
-		return distances;
-	}
+	public Stack<Double> distance_getter(){return distances;}
 	/**
 	 *
 	 * @return a stack that contains the time it takes to go from user's location and each restuarant's location.
 	 */
-	public Stack<Double> time_getter(){
-		return times;
-	}
+	public Stack<Double> time_getter(){return times;}
 	/**
 	 *
 	 * @return a stack that contains the google ratings of all the restaurants that have the food user wants.
 	 */
-	public Stack<Double> ratings(){
-		return ratings;
-	}
+	public Stack<Double> ratings(){return ratings;}
 
 	}
 
