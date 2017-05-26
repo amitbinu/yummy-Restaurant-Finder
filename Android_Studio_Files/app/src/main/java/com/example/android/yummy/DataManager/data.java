@@ -20,10 +20,7 @@ public class data {
      * It executes a conditional statement based on whether the user entered a valid food or not.
      */
 	public static void results(){
-        if(checker == true){
-            Result.EXIT();
-        }
-        else{
-			Result.getter();}
+        if(checker == true){Result.EXIT();}
+        else{Result.getter();}
 		}
 }
