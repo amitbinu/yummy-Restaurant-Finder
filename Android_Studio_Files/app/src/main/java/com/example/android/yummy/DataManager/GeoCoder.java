@@ -1,191 +1,216 @@
 package com.example.android.yummy.DataManager;
 
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.concurrent.ExecutionException;
-
-
 import com.example.android.yummy.Backthread.distanceTimeBackThread;
 import com.example.android.yummy.Backthread.photoRequest;
 import com.example.android.yummy.Backthread.restaurant_getter;
 import com.example.android.yummy.Backthread.second_address;
 import com.example.android.yummy.Backthread.yelp;
-import com.example.android.yummy.MainActivities.Main2Activity;
-import com.example.android.yummy.R;
 import com.google.maps.*;
 import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.Photo;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.yelp.fusion.client.models.Business;
 
-import static com.example.android.yummy.Backthread.distanceTimeBackThread.destinations;
-
+import static com.example.android.yummy.DataManager.sort.restaurants;
 
 /**
- * This class has one constructor, 2 methods and 6 getter methods. 
+ * This class calls the Google Api and yelp Api and then finds the common Restaurants both APIs returns.
  * @author Amit Binu
  *
  */
 public class GeoCoder extends AppCompatActivity {
-    public Context context2 = this;
 
 	/**
-	 * This ArrayList will contain the food(s) user wants. 
+	 * This is the food user entered.
 	 */
-	public static Stack  food;
-	
+	public static String  food;
+
 	/**
-	 * This <i> city </i> variable has the name of the city the user is in.
+	 * The name of the city the user is in.
 	 */
 	private static String city;
-	
+
 	/**
 	 * Creates a context that sets the Api key. This context is used to communicate with various google Api(s).
 	 */
 	private static GeoApiContext context;
-	
-	/**
-	 * After executing the restaurant_getter() method, this ArrayList will have all the restaurants in the user's city that has the food(s) user want.
-	 */
-	private static Stack<String> restaurants;
-	
-	/**
-	 * This stack will contain the addresses of all the restaurants that the user wants to go to. 
-	 */
-	private static Stack<String> addresses;
-	
+
+
 	/**
 	 * After executing the distance_getter() method, this ArrayList will contain the distance from user's location to each restaurant.
 	 */
 	private static Stack<Double> distances;
-	
+
 	/**
 	 * After executing the time_getter() method, this ArrayList will contain the time it takes to go from user's location to each restaurant.
 	 */
 	private static Stack<Double> times;
-	
+
 	/**
-	 * This Stack will contain the google ratings of all the restaurants that the user wants to go to. 
+	 * This Stack will contain the google ratings of all the restaurants that the user wants to go to.
 	 */
 	private static Stack<Double> ratings;
 	/**
-	 * This stack contains the photos of each restaurant. 
+	 * Yelp object that is used to call the yelp Api with appropriate parameters.
 	 */
-	private static Stack<Photo[]> photos;
 	private static yelp yelpCaller;
+	/**
+	 * A GeoCoder object that is passed to other classes.
+	 */
 	private static GeoCoder object;
-	private static Stack<Boolean> open;
+	/**
+	 * photoRequest object that is used to request pictures from Google Photos Api.
+	 */
     public static photoRequest pictures;
+	/**
+	 * The PlaceSearchResults of all the restaurants returned by Google maps API and / or Yelp API.
+	 */
     public static ArrayList<PlacesSearchResult> commonRestaurants_Google ;
+	/**
+	 * The PlaceSearchResults of all the restaurants returened by both Google Maps API and Yelp API.
+	 */
+	private static ArrayList<PlacesSearchResult> Google1;
+	/**
+	 * The PlaceSearchResults of all the restaurants that are returned by Google Maps API but not by Yelp API.
+	 */
+	private static ArrayList<PlacesSearchResult> Google2;
+	/**
+	 * The <i> yelp.models.Business </i> of the common restaurants that are returned by both Google maps API and Yelp API.
+	 */
     public static ArrayList<Business> commonRestaurants_Yelp;
-	private static Stack<Boolean> permanentlyClosed;
+	/**
+	 * <i>data</i> object that is used to call the <i>results</i> method in <i>data</i> class, after all the information is collected.
+	 */
 	private static data Dataobject;
+	/**
+	 * The user's location in the form of coordinates.
+	 */
     private static String origin;
 	/**
-	 * The constructor assigns the parameters to appropriate global variables and then calls the restaurant_getter() method. 
-	 * @param city_name This is the name of the city the user is currently in. 
-	 * @param foods_from_user Stack that contains the food(s) user wants
-	 * @param origin This is the exact location of user. 
-	 * @throws Exception Throws exceprions mainly for invalid requests made to google. 
+	 * <i>restaurant_getter</i> object that calls the google maps API to get the information.
 	 */
-	public GeoCoder (String city_name, Stack<String> foods_from_user, String origin, data object) throws Exception{
-        this.origin = origin;
+	public static restaurant_getter test1;
+	/**
+	 * A boolean variable that will be changed to true once the yelp's response is gotten.
+	 */
+	public static Boolean checker_for_yelp = false;
+	/**
+	 * A boolean variable that will be changed to true once the Google Maps's response is gotten.
+	 */
+	public static Boolean checker_for_restaurantgetter = false;
+    /**
+     * An array of all restaurants' addresses.
+     */
+    private static String[] destinations;
+    /**
+     * A <i>distanceTimeBackThread</i> object that calls the Google Maps Api to get the distance and time it takes to go from user's location and each restaurant.
+     */
+    private static distanceTimeBackThread fetcher;
+    /**
+     * This will contain what unit to use for displaying distance.
+     */
+    public static String distanceUnit;
+	/**
+	 * The constructor assigns the parameters to appropriate global variables,initializes certain public Stack and then calls the Restaurant_getter() method.
+	 * @param city_name This is the name of the city the user is currently in.
+	 * @param foods_from_user The food the user entered.
+	 * @param origin The user's location in the form of coordinates.
+	 * @throws Exception Throws exceptions mainly for invalid requests made to google and / or yelp.
+	 */
+	public GeoCoder (String city_name, String foods_from_user, String origin, data object) throws Exception{
+		this.origin = origin;
 		this.city = city_name;
 		this.food = foods_from_user;
 		this.object = this;
 		this.Dataobject = object;
-		context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
-		restaurants = new Stack<String>();
-		addresses = new Stack<String>();
+		context = new GeoApiContext().setApiKey("");
 		distances = new Stack<Double>();
 		times = new Stack<Double>();
 		ratings = new Stack<Double>();
-		photos = new Stack<Photo[]>();
-		open = new Stack<Boolean>();
-		permanentlyClosed = new Stack<Boolean>();
 			Restaurant_getter(origin, city, foods_from_user);
-
-
 	}
 	/**
-	 * This method gets the name, address, rating and photo of each restaurant that offers the food user wants. Then it puts this information to appropriate <i> Stacks </i>. 
-	 * @param origin This is the exact location of user. 
+	 * This method gets the information of each restaurant that offers the food the user wants by calling Google maps API and Yelp API.
+	 * @param origin This is the exact location of user.
 	 * @param city This is the name of the city the user is currently in.
 	 * @param FOOD TStack that contains the food(s) user wants
-	 * @throws Exception Throws exceptions mainly for invalid requests made to google. 
+	 * @throws Exception Throws exceptions mainly for invalid requests made to google.
 	 */
-	public static restaurant_getter test1;
-	private static void Restaurant_getter(String origin, String city, Stack<String> FOOD) throws Exception {
-
+	private static void Restaurant_getter(String origin, String city, String FOOD) throws Exception {
 		if (!FOOD.isEmpty()) {
-			String f = FOOD.pop();
-			yelpCaller = new yelp(f + " Restaurants ",city, object);
-			test1 = new restaurant_getter(origin,city, FOOD,context,f,object);
+			yelpCaller = new yelp(FOOD + " Restaurants ",city, object);
+			test1 = new restaurant_getter(origin,city,context,FOOD,object);
 		}
 	}
-	public static Boolean checker_for_yelp = false;
-    public static Boolean checker_for_restaurantgetter = false;
+	/**
+	 * This method is called after both yelp's and google maps' response is got.
+	 * This method finds as many common restaurants in google maps' and yelp's response.
+	 * @throws Exception
+	 */
 	public static void afterWAIT() throws Exception{
 		PlacesSearchResponse address = test1.address;
         commonRestaurants_Google = new ArrayList<>();
         commonRestaurants_Yelp = new ArrayList<>();
+		Google1 = new ArrayList<>();
+		Google2 = new ArrayList<>();
         CommonFinder(address);
         while(address.nextPageToken != null){
-            if(commonRestaurants_Google.size()>40){break;}
-            second_address secondAddress = new second_address(address.nextPageToken,new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA"));
+            if(Google1.size()>40){break;}
+            second_address secondAddress = new second_address(address.nextPageToken,new GeoApiContext().setApiKey(""));
             while(secondAddress.address ==null){}
             address = secondAddress.address;
             CommonFinder(address);
         }
-        if(commonRestaurants_Google.size()==0){
-            DataOrganizer2(address);
-            Result.updating("Gathering restaurants' pictures");
-            pictures = new photoRequest(commonRestaurants_Google);
-            if(restaurants.size() == 1){
-                Dataobject.checker = true;
-                Dataobject.results();
-            }
-            else{
-                Dataobject.checker = false;
-                distanceAndTime(origin, destinations);}
-        }
+        int j =0;
+		if (Google1.size() < 10) {
+			for (int i = 0; i < Google1.size() + Google2.size(); i++) {
+				if (i < Google1.size()) {
+					commonRestaurants_Google.add(Google1.get(i));
+				}
+				if(i >= Google1.size() && !commonRestaurants_Google.contains(Google2.get(j))) {
+					commonRestaurants_Google.add(Google2.get(j));
+					j++;
+				}
+			}
+		}
+		else{
+			commonRestaurants_Google = Google1;
+		}
+		if(ratings.size() == 1){
+			Dataobject.checker = true;
+			Dataobject.results();
+		}
         else{
             Result.updating("Gathering restaurants' pictures");
             pictures = new photoRequest(commonRestaurants_Google);
             DataOrganizer();}
 		}
-
+    /**
+     * This method finds the common Restaurants in Google's and Yelp's response.
+     * @param address The PlaseSearchResponse returned by the Google Maps API after a request was made.
+     */
     private static void CommonFinder(PlacesSearchResponse address) {
         for(int j =0; j < address.results.length; j++){
             for (int i =0; i < yelpCaller.response.body().getBusinesses().size(); i++){
-                if (yelpCaller.response.body().getBusinesses().get(i).getName().equals(address.results[j].name) && (!(commonRestaurants_Google.contains(address.results[j])))){
+                if (yelpCaller.response.body().getBusinesses().get(i).getName().equals(address.results[j].name) && (!(Google1.contains(address.results[j])))){
                    try{
                         String price = yelpCaller.response.body().getBusinesses().get(i).getPrice();
-                        Log.e("name & price", address.results[j].name+" " + price);
                         if(price != null){
-                        commonRestaurants_Google.add(address.results[j]);
+                        Google1.add(address.results[j]);
                         commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
                         }
                         else{
-                            String isItNull = "";
+                            String isItNull = null;
                             for (int findPrice=i+1; findPrice< yelpCaller.response.body().getBusinesses().size();findPrice++){
                                 if (yelpCaller.response.body().getBusinesses().get(findPrice).getName().equals(address.results[j].name)){
                                     try{
                                         isItNull = yelpCaller.response.body().getBusinesses().get(findPrice).getPrice();
                                         Boolean checking = isItNull.equals("");
-                                        commonRestaurants_Google.add(address.results[j]);
+                                        Google1.add(address.results[j]);
                                         commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
                                         break;
                                     }
@@ -195,7 +220,7 @@ public class GeoCoder extends AppCompatActivity {
                                 }
                             }
                             if(isItNull == null){
-                                commonRestaurants_Google.add(address.results[j]);
+                                Google1.add(address.results[j]);
                                 commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
                             }
                         }
@@ -206,34 +231,24 @@ public class GeoCoder extends AppCompatActivity {
                     break;
                 }
             }
+            if(!Google1.contains(address.results[j])){
+				Google2.add(address.results[j]);
+			}
         }
     }
-
-    private static String[] destinations;
+    /**
+     * This method organizes all the data and puts certain information in appropriate stacks.
+     * @throws Exception throws an Exception when invalid request is made to get the distance and time.
+     */
 	private static void DataOrganizer() throws Exception{
-        Log.e("# of Common", commonRestaurants_Google.size()+"");
         destinations = new String[commonRestaurants_Google.size()];
 		for (int i =0; i < commonRestaurants_Google.size(); i++){
-			try{
-				open.push(commonRestaurants_Google.get(i).openingHours.openNow);}
-			catch(NullPointerException e){
-				open.push(null);
-			}
-			permanentlyClosed.push(commonRestaurants_Google.get(i).permanentlyClosed);
-			restaurants.push(commonRestaurants_Google.get(i).name);
             destinations[i] = commonRestaurants_Google.get(i).formattedAddress;
-			addresses.push(commonRestaurants_Google.get(i).formattedAddress);
-			photos.push(commonRestaurants_Google.get(i).photos);
 			double rating = (double) commonRestaurants_Google.get(i).rating*1000000;
 			rating = Math.round(rating);
 			ratings.push(rating/1000000); //This is done so that the rating will have only one decimal value.
 		}
-		permanentlyClosed.push(null);
-		open.push(null);
-		restaurants.push(null);
-		addresses.push(null);
 		ratings.push(null);
-		photos.push(null);
         if(restaurants.size() == 1){
             Dataobject.checker = true;
             Dataobject.results();
@@ -241,57 +256,39 @@ public class GeoCoder extends AppCompatActivity {
         else{
             Dataobject.checker = false;
             distanceAndTime(origin, destinations);}
-
 	}
-
-	private static void DataOrganizer2(PlacesSearchResponse address) throws Exception{
-        String[] destinations = new String[address.results.length];
-        for (int i =0 ; i< address.results.length ; i++){
-            commonRestaurants_Google.add(address.results[i]);
-            try{
-                open.push(address.results[i].openingHours.openNow);}
-            catch(NullPointerException e){
-                open.push(null);
-            }
-            permanentlyClosed.push(address.results[i].permanentlyClosed);
-            restaurants.push(address.results[i].name);
-            destinations[i] = address.results[i].formattedAddress;
-            addresses.push(address.results[i].formattedAddress);
-            photos.push(address.results[i].photos);
-            double rating = (double) address.results[i].rating*1000000;
-            rating = Math.round(rating);
-            ratings.push(rating/1000000); //This is done so that the rating will have only one decimal value.
-        }
-        permanentlyClosed.push(null);
-        open.push(null);
-        restaurants.push(null);
-        addresses.push(null);
-        ratings.push(null);
-        photos.push(null);
-
-    }
-	private static distanceTimeBackThread fetcher;
 	/**
 	 *
-	 * This method gets the distance and time it takes to go from user's location to each restaurant. 
-	 * @param origin This is the exact location of user. 
+	 * This method gets the distance and time it takes to go from user's location to each restaurant.
+	 * @param origin This is the exact location of user.
 	 * @param destinations This Stack contains the address of each restaurant that has the food user wants.
-	 * @throws Exception Throws exceptions mainly for invalid requests made to google. 
+	 * @throws Exception Throws exceptions mainly for invalid requests made to google.
 	 */
 	private static void distanceAndTime(String origin, String[] destinations) throws Exception{
 		String[] temp = {origin};
 		fetcher = new distanceTimeBackThread(temp, destinations, context, object);
     }
 
+    /**
+     * This method is called after the distance and time data are obtained from <i>distanceTimeBackThread</i>.
+     *
+     */
     public static void afterDist(){
         DistanceMatrix dist = fetcher.result;
-
         for(int i =0; i < dist.rows[0].elements.length ; i++){
             try{
-                String[] removeKM =  dist.rows[0].elements[i].distance.toString().split("km");
+                String[] removeUnit = null;
+                if(dist.rows[0].elements[i].distance.toString().contains("km")){
+                    distanceUnit = "km";
+                    removeUnit =  dist.rows[0].elements[i].distance.toString().split("km");
+                }
+                if(dist.rows[0].elements[i].distance.toString().contains("miles")){
+                    distanceUnit = "miles";
+                    removeUnit =  dist.rows[0].elements[i].distance.toString().split("miles");
+                }
                 String[] removeMINS = dist.rows[0].elements[i].duration.toString().split("mins");
 
-                distances.push(Double.parseDouble(removeKM[0]));
+                distances.push(Double.parseDouble(removeUnit[0]));
                 times.push(Double.parseDouble(removeMINS[0]));}
             catch (NullPointerException f){
                 continue;
@@ -301,58 +298,32 @@ public class GeoCoder extends AppCompatActivity {
                 times.push(null);
             }
         }
-        while(pictures.pictures1.size() == restaurants.size()){Log.e("WHILE LOOP", "in the loop");}
         distances.push(null);
         times.push(null);
         Dataobject.results();
 
     }
 	/**
-	 * 
-	 * @return a stack that contains the distance between user's location and each restaurant's location. 
+	 *
+	 * @return a stack that contains the distance between user's location and each restaurant's location.
 	 */
 	public Stack<Double> distance_getter(){
 		return distances;
 	}
 	/**
-	 * 
-	 * @return a stack that contains the time it takes to go from user's location and each restuarant's location. 
+	 *
+	 * @return a stack that contains the time it takes to go from user's location and each restuarant's location.
 	 */
 	public Stack<Double> time_getter(){
 		return times;
 	}
 	/**
-	 * 
-	 * @return a stack that contains the names of all the restaurants that have the food user wants. 
-	 */
-	public Stack<String> restaurant_names(){
-		return restaurants;
-	}
-	/**
-	 * 
-	 * @return a stack that contains the addresses of all the restaurants that have the food user wants. 
-	 */
-	public Stack<String> restaurant_addresses(){
-		return addresses;
-	}
-	/**
-	 * 
-	 * @return a stack that contains the google ratings of all the restaurants that have the food user wants. 
+	 *
+	 * @return a stack that contains the google ratings of all the restaurants that have the food user wants.
 	 */
 	public Stack<Double> ratings(){
 		return ratings;
 	}
-	/**
-	 * 
-	 * @return a stack that contians the photos of all the restaurants that have the food user wants. 
-	 */
-	
-	public Stack<Boolean> Open(){
-		return open;
-	}
 
-	public Stack<Boolean> PermanentlyClosed(){
-		return permanentlyClosed;
-	}
 	}
 
