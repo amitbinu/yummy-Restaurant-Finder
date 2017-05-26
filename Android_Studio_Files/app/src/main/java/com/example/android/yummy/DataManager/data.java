@@ -1,34 +1,29 @@
 package com.example.android.yummy.DataManager;
-import android.graphics.Bitmap;
-import android.util.Log;
-
-import java.util.Stack;
-
-import com.google.maps.model.Photo;
-
+/**
+ * This class calls the GeoCoder class and makes sure what to do based on the results got from GeoCoder class.
+ */
 public class data {
 	public static GeoCoder details;
-	private static String[] temp;
-    private static Stack<String> foods;
-	public data(Stack<String> foods, String origin, String city_name) throws Exception{
-        this.foods = foods;
-		temp = new String[foods.size()];
-		for (int i =0; i < foods.size(); i++){
-			temp[i] = foods.get(i);
-		}
+    public static Boolean checker = false;
+	/**
+	 * The constructor calls the GeoCoder class with appropriate parameters.
+	 * @param foods The food the user entered.
+	 * @param origin User's location in the form of coordinates.
+	 * @param city_name The name of the city / county where the user is currently in.
+	 * @throws Exception Exception thrown for invalid requests to Google API and / or Yelp API.
+	 */
+	public data(String foods, String origin, String city_name) throws Exception{
 		details = new GeoCoder(city_name , foods, origin, this);
 	}
-
-    public static Boolean checker = false;
+    /**
+     * This method is called by the GeoCoder class after all the data are collected.
+     * It executes a conditional statement based on whether the user entered a valid food or not.
+     */
 	public static void results(){
         if(checker == true){
-			Log.e("IN","the if statement");
             Result.EXIT();
         }
         else{
-			Log.e("IN", "the else statement");
 			Result.getter();}
 		}
-		
-	
 }
