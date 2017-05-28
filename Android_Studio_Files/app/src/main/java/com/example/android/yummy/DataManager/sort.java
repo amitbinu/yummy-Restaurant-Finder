@@ -2,43 +2,28 @@ package com.example.android.yummy.DataManager;
 
 import android.graphics.Bitmap;
 import android.util.Log;
-
-import com.example.android.yummy.Backthread.yelp;
-import com.google.maps.model.PlacesSearchResult;
-import com.yelp.fusion.client.models.Business;
-
 import java.util.ArrayList;
-
 import edu.princeton.cs.algs4.Quick;
-
-import static android.R.attr.name;
+import static com.example.android.yummy.DataManager.data.details;
 
 
 public class sort {
-    private static sort SortObject;
     public static Boolean checker = true;
     private static data object;
-    public static ArrayList<Restaurant> restaurants;
+    public static ArrayList<Restaurant> Sortedrestaurants;
     private static ArrayList<Integer> price0 = new ArrayList<>();
     private static ArrayList<Integer> price1 = new ArrayList<>();
     private static ArrayList<Integer> price2 = new ArrayList<>();
     private static ArrayList<Integer> price3 = new ArrayList<>();
     private static ArrayList<Integer> price4 = new ArrayList<>();
-    private static ArrayList<String> strangeRestaurants = new ArrayList<>();
-    private static ArrayList<String> strangeResponse = new ArrayList<>();
-    private static Integer integer, nextIndex;
-    private static yelp yelpCall;
 	public sort(data object, String sortValue){
         price0 = new ArrayList<>();
         price1 = new ArrayList<>();
         price2 = new ArrayList<>();
         price3 = new ArrayList<>();
         price4 = new ArrayList<>();
-        strangeRestaurants = new ArrayList<>();
-        strangeResponse = new ArrayList<>();
-        SortObject = this;
         this.object = object;
-        this.restaurants = new ArrayList<>();
+        this.Sortedrestaurants = new ArrayList<>();
         Result.updating("Sorting the restaurants ...");
         Log.e("SORT_VALUE", sortValue);
         switch (sortValue){
@@ -62,229 +47,308 @@ public class sort {
     }
 
     private static void setRestaurants(int i, String price){
-        String name = object.details.commonRestaurants_Google.get(i).name;
-        String address = object.details.commonRestaurants_Google.get(i).formattedAddress;
-        Double time = object.details.time_getter().get(i);
-        Double distance = object.details.distance_getter().get(i);
-        Double rating = object.details.ratings().get(i);
-        Bitmap picture = object.details.pictures.pictures1.get(i);
+
+        String name = details.commonRestaurants_Google.get(i).name;
+        Log.e("checking", i + " " +name );
+        String address = details.commonRestaurants_Google.get(i).formattedAddress;
+        Double time = details.time_getter().get(i);
+        Double distance = details.distance_getter().get(i);
+        Double rating = details.ratings().get(i);
+        Bitmap picture = details.pictures.pictures1.get(i);
         Boolean open;
         try{
-        open = object.details.commonRestaurants_Google.get(i).openingHours.openNow;}
+            open = object.details.commonRestaurants_Google.get(i).openingHours.openNow;
+        }
         catch (NullPointerException e){
             open = null;
         }
         Boolean permanent = object.details.commonRestaurants_Google.get(i).permanentlyClosed;
-        restaurants.add(new Restaurant(name, address,time, distance, rating, null, picture, open, permanent, price));
+        Sortedrestaurants.add(new Restaurant(name, address,time, distance, rating, null, picture, open, permanent, price));
     }
 
     private static void priceLow(){
-        for (int i =0; i < object.details.commonRestaurants_Yelp.size(); i++){
-            Log.e("Google & Yelp", object.details.commonRestaurants_Google.get(i).name + " " + object.details.commonRestaurants_Yelp.get(i).getName() + " " + object.details.commonRestaurants_Yelp.get(i).getPrice() + 2);
-        }
-
-
-        if(object.details.commonRestaurants_Yelp.size() != 0){
-
-            for (int i =0; i < object.details.commonRestaurants_Yelp.size(); i++){
+        if(details.commonRestaurants_Yelp.size() != 0){
+            for (int i =0; i < details.pictures.pictures1.size(); i++){
                 try{
-                switch (object.details.commonRestaurants_Yelp.get(i).getPrice()){
-                    case("$"):
+                    String price = details.commonRestaurants_Yelp.get(i).getPrice();
+                    if(price.equals("$")){
                         price1.add(i);
-                    case("$$"):
-                        Log.e("Second Price", object.details.commonRestaurants_Yelp.get(i).getName() + " " +object.details.commonRestaurants_Yelp.get(i).getPrice());
+                    }
+                    if(price.equals("$$")){
                         price2.add(i);
-                    case("$$$"):
+                    }
+                    if(price.equals("$$$")){
                         price3.add(i);
-                    case("$$$$"):
+                    }
+                    if(price.equals("$$$$")){
                         price4.add(i);
-                }}
-                catch (NullPointerException e){
-                    Log.e("Name in sort", object.details.commonRestaurants_Yelp.get(i).getName());
-                    Boolean pizzaPizza = object.details.commonRestaurants_Yelp.get(i).getName().equals("Pizza Pizza");
-                    Boolean BurgerKing = object.details.commonRestaurants_Yelp.get(i).getName().equals("Burger King");
-                    Boolean Mcdonalds = object.details.commonRestaurants_Yelp.get(i).getName().equals("McDonald's");
-                    Boolean KFC = object.details.commonRestaurants_Yelp.get(i).getName().equals("Kfc");
-                    Boolean Hero = object.details.commonRestaurants_Yelp.get(i).getName().equals("Hero Certified Burgers");
-                    Boolean SwissChalet = object.details.commonRestaurants_Yelp.get(i).getName().equals("Swiss Chalet");
-                    Log.e("Pizza Pizza", pizzaPizza+"");
-                    if(pizzaPizza || BurgerKing || Mcdonalds || KFC || SwissChalet){
+                    }
+                }
+                catch (Exception e){
+                    Boolean pizzaPizza = details.commonRestaurants_Google.get(i).name.equals("Pizza Pizza");
+                    Boolean BurgerKing = details.commonRestaurants_Google.get(i).name.equals("Burger King");
+                    Boolean Mcdonalds = details.commonRestaurants_Google.get(i).name.equals("McDonald's");
+                    Boolean KFC = details.commonRestaurants_Google.get(i).name.equals("KFC");
+                    Boolean Hero = details.commonRestaurants_Google.get(i).name.equals("Hero Certified Burgers");
+                    Boolean SwissChalet = details.commonRestaurants_Google.get(i).name.equals("Swiss Chalet");
+                    Boolean TimHortons = details.commonRestaurants_Google.get(i).name.equals("Tim Hortons");
+                    Boolean Starbucks = details.commonRestaurants_Google.get(i).name.equals("Starbucks");
+                    Boolean Pizzaville = details.commonRestaurants_Google.get(i).name.equals("Pizzaville");
+                    Boolean Aw = details.commonRestaurants_Google.get(i).name.equals("A&W");
+                    if(pizzaPizza || BurgerKing || Mcdonalds || KFC || SwissChalet || TimHortons){
                         price1.add(i);
                     }
-                    if(Hero){
+                    if(Hero || Starbucks || Pizzaville ||Aw){
                         price2.add(i);
                     }
-                    if(!(pizzaPizza || BurgerKing || Mcdonalds || KFC || Hero || SwissChalet)){
+                    if(!(pizzaPizza || BurgerKing || Mcdonalds || KFC || Hero || SwissChalet || TimHortons || Starbucks || Pizzaville ||Aw)){
                     price0.add(i);}
                 }
             }
-                for(Integer integer: price0){
-                    setRestaurants(integer,"N/A");
-                }
-                for(Integer integer: price1){
-                    setRestaurants(integer,"$");
-                }
-                for(Integer integer: price2){
-                    Log.e("integer value", integer+"");
-                    setRestaurants(integer,"$$");
-                }
-                for(Integer integer: price3){
-                    setRestaurants(integer,"$$$");
-                }
-                for(Integer integer: price4){
-                    setRestaurants(integer,"$$$$");
-                }
+            for(Integer integer: price1){
+                setRestaurants(integer,"$");
+            }
+            for(Integer integer: price2){
+                setRestaurants(integer,"$$");
+            }
+            for(Integer integer: price3){
+                setRestaurants(integer,"$$$");
+            }
+            for(Integer integer: price4){
+                setRestaurants(integer,"$$$$");
+            }
+            for(Integer integer: price0){
+                setRestaurants(integer,"N/A");
+            }
+            if(price0.size()>0){
+                checker = false;
+            }
             }
 
         else{
             checker = false;
-            for(int i =0; i < object.details.test1.address.results.length; i++){
+            for(int i =0; i < details.commonRestaurants_Google.size(); i++){
                 setRestaurants(i, "N/A");
             }
         }
     }
 
     private static void priceHigh(){
-
-        if(object.details.commonRestaurants_Yelp.size() != 0){
-            ArrayList<Integer> price0 = new ArrayList<>();
-            ArrayList<Integer> price1 = new ArrayList<>();
-            ArrayList<Integer> price2 = new ArrayList<>();
-            ArrayList<Integer> price3 = new ArrayList<>();
-            ArrayList<Integer> price4 = new ArrayList<>();
-
-            for (int i =0; i < object.details.commonRestaurants_Yelp.size(); i++){
-                try {
-                    switch (object.details.commonRestaurants_Yelp.get(i).getPrice()) {
-                        case ("$$$$"):
-                            price1.add(i);
-                        case ("$$$"):
-                            price2.add(i);
-                        case ("$$"):
-                            price3.add(i);
-                        case ("$"):
-                            price4.add(i);
+        if(details.commonRestaurants_Yelp.size() != 0){
+            for (int i =0; i < details.pictures.pictures1.size(); i++){
+                try{
+                    String price = details.commonRestaurants_Yelp.get(i).getPrice();
+                    if(price.equals("$")){
+                        price1.add(i);
+                    }
+                    if(price.equals("$$")){
+                        price2.add(i);
+                    }
+                    if(price.equals("$$$")){
+                        price3.add(i);
+                    }
+                    if(price.equals("$$$$")){
+                        price4.add(i);
                     }
                 }
-                catch (NullPointerException e){
-                    price0.add(i);
+                catch (Exception e){
+                    Boolean pizzaPizza = details.commonRestaurants_Google.get(i).name.equals("Pizza Pizza");
+                    Boolean BurgerKing = details.commonRestaurants_Google.get(i).name.equals("Burger King");
+                    Boolean Mcdonalds = details.commonRestaurants_Google.get(i).name.equals("McDonald's");
+                    Boolean KFC = details.commonRestaurants_Google.get(i).name.equals("KFC");
+                    Boolean Hero = details.commonRestaurants_Google.get(i).name.equals("Hero Certified Burgers");
+                    Boolean SwissChalet = details.commonRestaurants_Google.get(i).name.equals("Swiss Chalet");
+                    Boolean TimHortons = details.commonRestaurants_Google.get(i).name.equals("Tim Hortons");
+                    Boolean Starbucks = details.commonRestaurants_Google.get(i).name.equals("Starbucks");
+                    Boolean Pizzaville = details.commonRestaurants_Google.get(i).name.equals("Pizzaville");
+                    Boolean Aw = details.commonRestaurants_Google.get(i).name.equals("A&W");
+                    if(pizzaPizza || BurgerKing || Mcdonalds || KFC || SwissChalet || TimHortons){
+                        price1.add(i);
+                    }
+                    if(Hero || Starbucks || Pizzaville ||Aw){
+                        price2.add(i);
+                    }
+                    if(!(pizzaPizza || BurgerKing || Mcdonalds || KFC || Hero || SwissChalet || TimHortons || Starbucks || Pizzaville ||Aw)){
+                        price0.add(i);}
                 }
             }
-
-                for(Integer integer: price0){
-                    setRestaurants(integer,"N/A");
-                }
-
-                for(Integer integer: price1){
-                    setRestaurants(integer,"$");
-                }
-                for(Integer integer: price2){
-                    setRestaurants(integer,"$$");
-                }
-                for(Integer integer: price3){
-                    setRestaurants(integer,"$$$");
-                }
-                for(Integer integer: price4){
-                    setRestaurants(integer,"$$$$");
-                }
-
-        }
-        else{
-            checker = false;
+            for(Integer integer: price4){
+                setRestaurants(integer,"$$$$");
+            }
+            for(Integer integer: price3){
+                setRestaurants(integer,"$$$");
+            }
+            for(Integer integer: price2){
+                setRestaurants(integer,"$$");
+            }
+            for(Integer integer: price1){
+                setRestaurants(integer,"$");
+            }
+            for(Integer integer: price0){
+                setRestaurants(integer,"N/A");
+            }
+            if(price0.size()>0){
+                checker = false;
+            }
         }
     }
 
     private static void distanceLow(){
-
+        Double[] distance =(Double[]) details.distance_getter().toArray();
+        Quick.sort(distance);
+        for (double dist : distance){
+            int index = details.distance_getter().indexOf(dist);
+            String name = details.commonRestaurants_Google.get(index).name;
+            String address = details.commonRestaurants_Google.get(index).formattedAddress;
+            Double time = details.time_getter().get(index);
+            Double rating = details.ratings().get(index);
+            Bitmap picture = details.pictures.pictures1.get(index);
+            Boolean open;
+            String price;
+            try{
+                price = object.details.commonRestaurants_Yelp.get(index).getPrice();
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (NullPointerException e){
+                checker = false;
+                price = "N/A";
+                open = null;
+            }
+            Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
+            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,null,picture,open,permanent,price));
+        }
     }
 
     private static void distanceHigh(){
-
+        Double[] distance =(Double[]) details.distance_getter().toArray();
+        Quick.sort(distance);
+        for (int i = distance.length-1; i >=0; i--){
+            double dist = distance[i];
+            int index = details.distance_getter().indexOf(dist);
+            String name = details.commonRestaurants_Google.get(index).name;
+            String address = details.commonRestaurants_Google.get(index).formattedAddress;
+            Double time = details.time_getter().get(index);
+            Double rating = details.ratings().get(index);
+            Bitmap picture = details.pictures.pictures1.get(index);
+            Boolean open;
+            String price;
+            try{
+                price = object.details.commonRestaurants_Yelp.get(index).getPrice();
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (NullPointerException e){
+                checker = false;
+                price = "N/A";
+                open = null;
+            }
+            Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
+            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,null,picture,open,permanent,price));
+        }
     }
 
     private static void timeLow(){
-
+        Double[] time =(Double[]) details.time_getter().toArray();
+        Quick.sort(time);
+        for (double hours: time){
+            int index = details.time_getter().indexOf(hours);
+            String name = details.commonRestaurants_Google.get(index).name;
+            String address = details.commonRestaurants_Google.get(index).formattedAddress;
+            Double distance = details.distance_getter().get(index);
+            Double rating = details.ratings().get(index);
+            Bitmap picture = details.pictures.pictures1.get(index);
+            Boolean open;
+            String price;
+            try{
+                price = object.details.commonRestaurants_Yelp.get(index).getPrice();
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (NullPointerException e){
+                checker = false;
+                price = "N/A";
+                open = null;
+            }
+            Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
+            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,null,picture,open,permanent,price));
+        }
     }
 
     private static void timeHigh(){
-
+        Double[] time =(Double[]) details.time_getter().toArray();
+        Quick.sort(time);
+        for (int i = time.length; i >=0; i--){
+            double hours = time[i];
+            int index = details.time_getter().indexOf(hours);
+            String name = details.commonRestaurants_Google.get(index).name;
+            String address = details.commonRestaurants_Google.get(index).formattedAddress;
+            Double distance = details.distance_getter().get(index);
+            Double rating = details.ratings().get(index);
+            Bitmap picture = details.pictures.pictures1.get(index);
+            Boolean open;
+            String price;
+            try{
+                price = object.details.commonRestaurants_Yelp.get(index).getPrice();
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (NullPointerException e){
+                checker = false;
+                price = "N/A";
+                open = null;
+            }
+            Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
+            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,null,picture,open,permanent,price));
+        }
     }
 
     private static void ratingLow(){
-
+        Double[] rating =(Double[]) details.ratings().toArray();
+        Quick.sort(rating);
+        for (Double rate : rating){
+            int index = details.ratings().indexOf(rate);
+            String name = details.commonRestaurants_Google.get(index).name;
+            String address = details.commonRestaurants_Google.get(index).formattedAddress;
+            Double distance = details.distance_getter().get(index);
+            Double time = details.time_getter().get(index);
+            Bitmap picture = details.pictures.pictures1.get(index);
+            Boolean open;
+            String price;
+            try{
+                price = object.details.commonRestaurants_Yelp.get(index).getPrice();
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (NullPointerException e){
+                checker = false;
+                price = "N/A";
+                open = null;
+            }
+            Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
+            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,null,picture,open,permanent,price));
+        }
     }
 
     private static void ratingHigh(){
-
+        Double[] rating =(Double[]) details.ratings().toArray();
+        Quick.sort(rating);
+        for (int i = rating.length-1; i >= 0; i--){
+            Double rate = rating[i];
+            int index = details.ratings().indexOf(rate);
+            String name = details.commonRestaurants_Google.get(index).name;
+            String address = details.commonRestaurants_Google.get(index).formattedAddress;
+            Double distance = details.distance_getter().get(index);
+            Double time = details.time_getter().get(index);
+            Bitmap picture = details.pictures.pictures1.get(index);
+            Boolean open;
+            String price;
+            try{
+                price = object.details.commonRestaurants_Yelp.get(index).getPrice();
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (NullPointerException e){
+                checker = false;
+                price = "N/A";
+                open = null;
+            }
+            Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
+            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,null,picture,open,permanent,price));
+        }
     }
-
-	public static Restaurant[] distance(Restaurant[] info){
-		Comparable[] distances = new Comparable[info.length];
-
-		for (int i =0; i < distances.length; i++){
-
-			try{
-			distances[i] = info[i].distance;
-			}
-			catch (NullPointerException e){
-				distances[i] = null;
-				continue;
-			}
-		}
-		Quick quick_sort = null;
-
-		distances = RemoveNull.correct(distances);
-		quick_sort.sort(distances);
-
-		/**
-		 * The <b> RestaurantSort </b> will return the restaurants in the increasing order of <b> distances </b> <i> which was sorted using quicksort in this method</i>.
-		 */
-		return  RestaurantSort.restSortDist(distances, info);
-	}
-
-	public static Restaurant[] time(Restaurant[] info){
-		Comparable[] times = new Comparable[info.length];
-
-		for (int i =0; i < times.length; i++){
-			try{
-			times[i] = info[i].time;
-			}
-			catch (NullPointerException e){
-				times[i] = null;
-				continue;
-			}
-		}
-		Quick quick_sort = null;
-
-		times = RemoveNull.correct(times);
-		quick_sort.sort(times);
-
-		/**
-		 * The <b> RestaurantSort </b> will return the restaurants in the increasing order of <b> times </b> <i> which was sorted using quicksort in this method</i>.
-		 */
-		return  RestaurantSort.restSortTime(times, info);
-	}
-
-	public static Restaurant[] rating(Restaurant[] info){
-		Comparable[] ratings = new Comparable[info.length];
-
-		for (int i =0; i < ratings.length; i++){
-			try{
-			ratings[i] = info[i].rating;
-			}
-			catch (NullPointerException e){
-				ratings[i] = null;
-				continue;
-			}
-		}
-		Quick quick_sort = null;
-
-		ratings = RemoveNull.correct(ratings);
-		quick_sort.sort(ratings);
-
-		/**
-		 * The <b> RestaurantSort </b> will return the restaurants in the increasing order of <b> ratings </b> <i> which was sorted using quicksort in this method</i>.
-		 */
-		return  RestaurantSort.restSortRating(ratings, info);
-	}
 }
