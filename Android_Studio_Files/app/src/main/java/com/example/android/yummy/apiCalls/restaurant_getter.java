@@ -24,7 +24,7 @@ public class restaurant_getter {
     public static geoCoding running;
     private static GeoCoder object;
 
-    public restaurant_getter(String origin, String city, Stack<String> FOOD, GeoApiContext context, String food, GeoCoder test){
+    public restaurant_getter(String origin, String city, GeoApiContext context, String food, GeoCoder test){
         this.origin = origin;
         this.city = city;
         this.FOOD = FOOD;
@@ -52,12 +52,15 @@ public class restaurant_getter {
         @Override
         protected void onPostExecute(PlacesSearchResponse strings) {
             //Result.result.setText(strings[0] + " " + strings[1]);
-            try{
-
-            object.afterWAIT();}
-            catch (Exception e){
-                Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);
+            object.checker_for_restaurantgetter = true;
+            if(object.checker_for_yelp == true){
+                try{
+                    object.afterWAIT();}
+                catch (Exception e){
+                    Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);
+                }
             }
+
             super.onPostExecute(strings);
         }
     }

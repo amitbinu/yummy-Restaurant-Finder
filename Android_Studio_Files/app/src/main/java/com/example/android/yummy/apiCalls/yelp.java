@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.example.android.yummy.DataManager.Constants;
 import com.example.android.yummy.DataManager.GeoCoder;
 import com.yelp.fusion.client.connection.YelpFusionApi;
 import com.yelp.fusion.client.connection.YelpFusionApiFactory;
@@ -38,8 +40,7 @@ public class yelp {
 
             try {
                 YelpFusionApiFactory apiFactory = new YelpFusionApiFactory();
-                YelpFusionApi yelpFusioinApi = apiFactory.createAPI("");
-
+                YelpFusionApi yelpFusioinApi = apiFactory.createAPI(Constants.yelpAPi_AcessToken, Constants.yelpAApi_AccessSecret);
                 Map<String, String> params1 = new HashMap<>();
 
                 params1.put("term", item);
