@@ -11,4 +11,6 @@
     <color name="HeadingColor">#b3dbcc</color>
     <color name="YummyColor">#e80d0d</color>
     <color name="SpinnerColor">#232323</color>
+    <color name="Green">#2cb21a</color>
+    <color name="link_color">#1d4cd6</color>
 </resources>
