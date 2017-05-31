@@ -13,4 +13,5 @@
     <color name="SpinnerColor">#232323</color>
     <color name="Green">#2cb21a</color>
     <color name="link_color">#1d4cd6</color>
+    <color name="RestaurantNameBG">#211f1f</color>
 </resources>
