@@ -48,6 +48,7 @@
         android:prompt="@string/SpinnerName">
 
     </Spinner>
+
     <ScrollView
         android:id="@+id/RESULTscrollview"
         android:layout_width="match_parent"
