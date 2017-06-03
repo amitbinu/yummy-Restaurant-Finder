@@ -4,11 +4,14 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,7 +25,11 @@ import com.example.android.yummy.apiCalls.DetailedRequest;
 import com.example.android.yummy.apiCalls.DetailedRequest;
 import com.example.android.yummy.apiCalls.yelp;
 import com.example.android.yummy.R;
+import com.google.android.gms.ads.formats.NativeAd;
 import com.google.maps.model.Photo;
+
+import static com.example.android.yummy.R.id.Sunday;
+import static java.security.AccessController.getContext;
 
 
 public class RestaurantActivity extends AppCompatActivity {
@@ -624,7 +631,14 @@ public class RestaurantActivity extends AppCompatActivity {
          review_text.addView(Vertical);
     }
 
+    private int dp(int number){
+        final float scale = getResources().getDisplayMetrics().density;
+        int pixels = (int) (number * scale + 0.5f);
+        return pixels;
+    }
+
     private void openingHours(){
+        ImageView imageView = (ImageView) findViewById(R.id.OpenStatus);
         TextView Sunday = (TextView) findViewById(R.id.Sunday);
         TextView Monday = (TextView) findViewById(R.id.Monday);
         TextView Tuesday = (TextView) findViewById(R.id.Tuesday);
@@ -632,37 +646,92 @@ public class RestaurantActivity extends AppCompatActivity {
         TextView Thursday = (TextView) findViewById(R.id.Thursday);
         TextView Friday = (TextView) findViewById(R.id.Friday);
         TextView Saturday = (TextView) findViewById(R.id.Saturday);
+
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        int day = calendar.get(java.util.Calendar.DAY_OF_WEEK);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(dp(12),dp(12));
+        switch (day){
+            case java.util.Calendar.SUNDAY:
+                layoutParams.setMargins(dp(8),dp(38),0,0);
+                break;
+            case java.util.Calendar.MONDAY:
+                layoutParams.setMargins(dp(8),dp(64),0,0);
+                break;
+            case java.util.Calendar.TUESDAY:
+                layoutParams.setMargins(dp(8),dp(90),0,0);
+                break;
+            case java.util.Calendar.WEDNESDAY:
+                layoutParams.setMargins(dp(8),dp(116),0,0);
+                break;
+            case java.util.Calendar.THURSDAY:
+                layoutParams.setMargins(dp(8),dp(141),0,0);
+                break;
+            case java.util.Calendar.FRIDAY:
+                layoutParams.setMargins(dp(8),dp(166),0,0);
+                break;
+            case java.util.Calendar.SATURDAY:
+                Log.e("Day", day+"");
+                layoutParams.setMargins(dp(8),dp(190),0,0);
+                break;
+        }
+        imageView.setLayoutParams(layoutParams);
+
         try {
-
-            String[] sunday = detailedRequest.placeDetails.openingHours.weekdayText[0].split(" ");
-            Sunday.setText(":  " + sunday[1] + " " + sunday[2] + " - " + sunday[4] + " " + sunday[5]);
-
-            String[] monday = detailedRequest.placeDetails.openingHours.weekdayText[1].split(" ");
-            Monday.setText(":  " + monday[1] + " " + monday[2] + " - " + monday[4] + " " + monday[5]);
-
-            String[] tuesday = detailedRequest.placeDetails.openingHours.weekdayText[2].split(" ");
-            Tuesday.setText(":  " + tuesday[1] + " " + tuesday[2] + " - " + tuesday[4] + " " + tuesday[5]);
-
-            String[] wednesday = detailedRequest.placeDetails.openingHours.weekdayText[3].split(" ");
-            Wednesday.setText(":  " + wednesday[1] + " " + wednesday[2] + " - " + wednesday[4] + " " + wednesday[5]);
-
-            String[] thursday = detailedRequest.placeDetails.openingHours.weekdayText[4].split(" ");
-            Thursday.setText(":  " + thursday[1] + " " + thursday[2] + " - " + thursday[4] + " " + thursday[5]);
-
-            String[] friday = detailedRequest.placeDetails.openingHours.weekdayText[5].split(" ");
-            Friday.setText(":  " + friday[1] + " " + friday[2] + " - " + friday[4] + " " + friday[5]);
-
-            String[] saturday = detailedRequest.placeDetails.openingHours.weekdayText[6].split(" ");
-            Saturday.setText(":  " + saturday[1] + " " + saturday[2] + " - " + saturday[4] + " " + saturday[5]);
-        }
+            if (! detailedRequest.placeDetails.openingHours.openNow){
+                imageView.setImageResource(R.drawable.closed_restaurant_activity);
+            }}
         catch (Exception e){
-            Sunday.setText("N/A");
-            Monday.setText("N/A");
-            Tuesday.setText("N/A");
-            Wednesday.setText("N/A");
-            Thursday.setText("N/A");
-            Friday.setText("N/A");
-            Saturday.setText("N/A");
+            imageView.setImageResource(R.drawable.permanentlyclosed_restaurant_activity);
         }
+            try{
+                Log.e("WeekDay Text", detailedRequest.placeDetails.openingHours.weekdayText[6]);
+            String[] sunday = detailedRequest.placeDetails.openingHours.weekdayText[0].split(" ");
+            Sunday.setText(":  " + sunday[1] + " " + sunday[2] + " - " + sunday[4] + " " + sunday[5]);}
+            catch (Exception e){
+                Sunday.setText("N/A");
+            }
+
+            try{
+            String[] monday = detailedRequest.placeDetails.openingHours.weekdayText[1].split(" ");
+            Monday.setText(":  " + monday[1] + " " + monday[2] + " - " + monday[4] + " " + monday[5]);}
+            catch (Exception e){
+                Monday.setText("N/A");
+            }
+
+            try{
+            String[] tuesday = detailedRequest.placeDetails.openingHours.weekdayText[2].split(" ");
+            Tuesday.setText(":  " + tuesday[1] + " " + tuesday[2] + " - " + tuesday[4] + " " + tuesday[5]);}
+            catch (Exception e){
+                Tuesday.setText("N/A");
+            }
+
+            try{
+            String[] wednesday = detailedRequest.placeDetails.openingHours.weekdayText[3].split(" ");
+            Wednesday.setText(":  " + wednesday[1] + " " + wednesday[2] + " - " + wednesday[4] + " " + wednesday[5]);}
+            catch (Exception e){
+                Wednesday.setText("N/A");
+            }
+
+            try{
+            String[] thursday = detailedRequest.placeDetails.openingHours.weekdayText[4].split(" ");
+            Thursday.setText(":  " + thursday[1] + " " + thursday[2] + " - " + thursday[4] + " " + thursday[5]);}
+            catch (Exception e){
+                Thursday.setText("N/A");
+            }
+
+            try{
+            String[] friday = detailedRequest.placeDetails.openingHours.weekdayText[5].split(" ");
+            Friday.setText(":  " + friday[1] + " " + friday[2] + " - " + friday[4] + " " + friday[5]);}
+            catch (Exception e){
+                Friday.setText("N/A");
+            }
+
+            try{
+            String[] saturday = detailedRequest.placeDetails.openingHours.weekdayText[6].split(" ");
+            Saturday.setText(":  " + saturday[1] + " " + saturday[2] + " - " + saturday[4] + " " + saturday[5]);}
+            catch (Exception e){
+                Saturday.setText("N/A");
+            }
+
     }
 }
