@@ -1,10 +1,10 @@
-package com.example.android.yummy.Backthread;
+package com.example.android.yummy.DataManager;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.android.yummy.DataManager.Result;
+import com.example.android.yummy.MainActivities.Result;
 import com.example.android.yummy.MainActivities.Main2Activity;
 import com.example.android.yummy.MainActivities.MainActivity;
 
