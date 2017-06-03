@@ -18,19 +18,12 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.android.yummy.Backthread.DetailedRequest;
-import com.example.android.yummy.Backthread.yelp;
-import com.example.android.yummy.DataManager.Restaurant;
+import com.example.android.yummy.apiCalls.DetailedRequest;
+import com.example.android.yummy.apiCalls.DetailedRequest;
+import com.example.android.yummy.apiCalls.yelp;
 import com.example.android.yummy.R;
 import com.google.maps.model.Photo;
 
-import edu.princeton.cs.algs4.LinearRegression;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-import static com.example.android.yummy.R.id.Sunday;
-import static com.example.android.yummy.R.id.relativeLayout;
-import static com.example.android.yummy.R.id.textView;
 
 public class RestaurantActivity extends AppCompatActivity {
     private static TextView distance, restaurantName, time, price, priceText, rating, address;
@@ -42,14 +35,17 @@ public class RestaurantActivity extends AppCompatActivity {
     public static Boolean checker_for_yelp, checker_for_placeDetails;
     private static yelp yelpCaller;
     public static Photo[] photos;
-    private static DetailedRequest detailedRequest;
+    protected static DetailedRequest detailedRequest;
     public static String placeId;
+    public static double distanceText, ratingText, timeText;
+    public static Integer[] typesOfStars;
+    public static String RestaurantName, RestaurantAddress;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
-
         object = this;
         distance = (TextView) findViewById(R.id.Distance_text);
         restaurantName = (TextView) findViewById(R.id.RestaurantName);
@@ -72,7 +68,9 @@ public class RestaurantActivity extends AppCompatActivity {
 
         checker_for_yelp = false;
         checker_for_placeDetails = false;
-        yelpCaller = new yelp(Main2Activity.popularRestaurants[Main2Activity.index_value].restuarant_name, Main2Activity.popularRestaurants[Main2Activity.index_value].address);
+
+        yelpCaller = new yelp(RestaurantName, RestaurantAddress);
+
         detailedRequest = new DetailedRequest(placeId);
     }
 
@@ -82,8 +80,8 @@ public class RestaurantActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         restaurantName.setVisibility(View.VISIBLE);
         scrollView.setVisibility(View.VISIBLE);
-        restaurantName.setText(Main2Activity.popularRestaurants[Main2Activity.index_value].restuarant_name);
-        address.setText(Main2Activity.popularRestaurants[Main2Activity.index_value].address);
+        restaurantName.setText(detailedRequest.placeDetails.name);
+        address.setText(detailedRequest.placeDetails.formattedAddress);
         try {
             price.setText(yelpCaller.response.body().getBusinesses().get(0).getPrice());
 
@@ -105,8 +103,10 @@ public class RestaurantActivity extends AppCompatActivity {
             price.setText("N/A");
             priceText.setText("     - -");
         }
-        distance.setText(Main2Activity.popularRestaurants[Main2Activity.index_value].distance + " " + Main2Activity.distanceUnit);
-        time.setText(Main2Activity.popularRestaurants[Main2Activity.index_value].time + " " + "min");
+
+            distance.setText(distanceText + " " + Main2Activity.distanceUnit);
+            time.setText(timeText + " " + "min");
+
         setRatings();
         object.review_setter();
         object.openingHours();
@@ -114,7 +114,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
     public static void setRatings() {
 
-        switch (Main2Activity.typesOfStars.get(Main2Activity.index_value)[0]) {
+        switch (typesOfStars[0]) {
             case 0:
                 star1.setImageResource(R.drawable.emptystar_restaurant_activity);
                 break;
@@ -125,7 +125,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 star1.setImageResource(R.drawable.fullstar_restaurant_activity);
                 break;
         }
-        switch (Main2Activity.typesOfStars.get(Main2Activity.index_value)[1]) {
+        switch (typesOfStars[1]) {
             case 0:
                 star2.setImageResource(R.drawable.emptystar_restaurant_activity);
                 break;
@@ -136,7 +136,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 star2.setImageResource(R.drawable.fullstar_restaurant_activity);
                 break;
         }
-        switch (Main2Activity.typesOfStars.get(Main2Activity.index_value)[2]) {
+        switch (typesOfStars[2]) {
             case 0:
                 star3.setImageResource(R.drawable.emptystar_restaurant_activity);
                 break;
@@ -147,7 +147,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 star3.setImageResource(R.drawable.fullstar_restaurant_activity);
                 break;
         }
-        switch (Main2Activity.typesOfStars.get(Main2Activity.index_value)[3]) {
+        switch (typesOfStars[3]) {
             case 0:
                 star4.setImageResource(R.drawable.emptystar_restaurant_activity);
                 break;
@@ -158,7 +158,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 star4.setImageResource(R.drawable.fullstar_restaurant_activity);
                 break;
         }
-        switch (Main2Activity.typesOfStars.get(Main2Activity.index_value)[4]) {
+        switch (typesOfStars[4]) {
             case 0:
                 star5.setImageResource(R.drawable.emptystar_restaurant_activity);
                 break;
@@ -169,11 +169,11 @@ public class RestaurantActivity extends AppCompatActivity {
                 star5.setImageResource(R.drawable.fullstar_restaurant_activity);
                 break;
         }
-        rating.setText("(" + Main2Activity.popularRestaurants[Main2Activity.index_value].rating + ")");
+        rating.setText("(" + ratingText + ")");
     }
 
     public void GoogleMaps(View view) {
-        Uri gmmIntentUri = Uri.parse("google.navigation:q="+detailedRequest.placeDetails.name+",+"+detailedRequest.placeDetails.formattedAddress);
+        Uri gmmIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination="+ detailedRequest.placeDetails.name + " " + detailedRequest.placeDetails.formattedAddress);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
@@ -234,7 +234,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
             if(i == 0){
             TextView userName = new TextView(this);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(300, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(10,5,0,0);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             userName.setTextColor(getResources().getColor(R.color.SecondTextColor));
@@ -244,7 +244,7 @@ public class RestaurantActivity extends AppCompatActivity {
             linearLayout.addView(userName);}
             else{
                 TextView userName = new TextView(this);
-                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(300, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(10,20,0,0);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 userName.setTextColor(getResources().getColor(R.color.SecondTextColor));
@@ -621,32 +621,48 @@ public class RestaurantActivity extends AppCompatActivity {
             Vertical.addView(HorizontalLinearLayout);
             Vertical.addView(redLine);
         }
-
          review_text.addView(Vertical);
     }
 
     private void openingHours(){
         TextView Sunday = (TextView) findViewById(R.id.Sunday);
-        Sunday.setText(detailedRequest.placeDetails.openingHours.weekdayText[0]);
-
         TextView Monday = (TextView) findViewById(R.id.Monday);
-        Monday.setText(detailedRequest.placeDetails.openingHours.weekdayText[1]);
-
         TextView Tuesday = (TextView) findViewById(R.id.Tuesday);
-        Tuesday.setText(detailedRequest.placeDetails.openingHours.weekdayText[2]);
-
         TextView Wednesday = (TextView) findViewById(R.id.Wednesday);
-        Wednesday.setText(detailedRequest.placeDetails.openingHours.weekdayText[3]);
-
         TextView Thursday = (TextView) findViewById(R.id.Thursday);
-        Thursday.setText(detailedRequest.placeDetails.openingHours.weekdayText[4]);
-
         TextView Friday = (TextView) findViewById(R.id.Friday);
-        Friday.setText(detailedRequest.placeDetails.openingHours.weekdayText[5]);
-
         TextView Saturday = (TextView) findViewById(R.id.Saturday);
-        Saturday.setText(detailedRequest.placeDetails.openingHours.weekdayText[6]);
+        try {
 
+            String[] sunday = detailedRequest.placeDetails.openingHours.weekdayText[0].split(" ");
+            Sunday.setText(":  " + sunday[1] + " " + sunday[2] + " - " + sunday[4] + " " + sunday[5]);
 
+            String[] monday = detailedRequest.placeDetails.openingHours.weekdayText[1].split(" ");
+            Monday.setText(":  " + monday[1] + " " + monday[2] + " - " + monday[4] + " " + monday[5]);
+
+            String[] tuesday = detailedRequest.placeDetails.openingHours.weekdayText[2].split(" ");
+            Tuesday.setText(":  " + tuesday[1] + " " + tuesday[2] + " - " + tuesday[4] + " " + tuesday[5]);
+
+            String[] wednesday = detailedRequest.placeDetails.openingHours.weekdayText[3].split(" ");
+            Wednesday.setText(":  " + wednesday[1] + " " + wednesday[2] + " - " + wednesday[4] + " " + wednesday[5]);
+
+            String[] thursday = detailedRequest.placeDetails.openingHours.weekdayText[4].split(" ");
+            Thursday.setText(":  " + thursday[1] + " " + thursday[2] + " - " + thursday[4] + " " + thursday[5]);
+
+            String[] friday = detailedRequest.placeDetails.openingHours.weekdayText[5].split(" ");
+            Friday.setText(":  " + friday[1] + " " + friday[2] + " - " + friday[4] + " " + friday[5]);
+
+            String[] saturday = detailedRequest.placeDetails.openingHours.weekdayText[6].split(" ");
+            Saturday.setText(":  " + saturday[1] + " " + saturday[2] + " - " + saturday[4] + " " + saturday[5]);
+        }
+        catch (Exception e){
+            Sunday.setText("N/A");
+            Monday.setText("N/A");
+            Tuesday.setText("N/A");
+            Wednesday.setText("N/A");
+            Thursday.setText("N/A");
+            Friday.setText("N/A");
+            Saturday.setText("N/A");
+        }
     }
 }
