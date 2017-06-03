@@ -21,20 +21,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.android.yummy.DataManager.Restaurant;
 import com.example.android.yummy.R;
-import com.example.android.yummy.DataManager.Result;
 import com.google.maps.model.PlacesSearchResponse;
 
 import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity {
     public static String Message;
-    private static Restaurant[] popularRestaurants;
+    public static Restaurant[] popularRestaurants;
     public static Main2Activity object;
     public static double[] distances;
     public static double[] times;
-    public static String distanceUnit, placeId;
+    public static String distanceUnit;
     public static Boolean checker = false;
-    public static ArrayList<Integer[]> typesOfStars;
+    private static ArrayList<Integer[]> typesOfStars = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,11 +122,12 @@ public class Main2Activity extends AppCompatActivity {
             Boolean permanentlyClosed =DATA.results[i].permanentlyClosed;
             popularRestaurants[i] = new Restaurant(name,address,time,distance,rating,null,open,permanentlyClosed, null,restaurantId);
         }
-        typesOfStars = new ArrayList<>();
         object.PopularRestaurantsLayout();
     }
 
     public void PopularRestaurantsLayout(){
+        int mTopStars = 470;
+        int spacingBetweenStars =75;
         TextView update = (TextView) findViewById(R.id.second_update);
         update.setVisibility(View.GONE);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar2);
@@ -151,11 +151,16 @@ public class Main2Activity extends AppCompatActivity {
             relativeLayout1.setLayoutParams(layoutParams);
             relativeLayout1.setId(i);
             relativeLayout1.setOnClickListener(new View.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(object, RestaurantActivity.class);
                     RestaurantActivity.placeId = popularRestaurants[relativeLayout1.getId()].restaurantId;
+                    RestaurantActivity.ratingText = popularRestaurants[relativeLayout1.getId()].rating;
+                    RestaurantActivity.distanceText = popularRestaurants[relativeLayout1.getId()].distance;
+                    RestaurantActivity.timeText = popularRestaurants[relativeLayout1.getId()].time;
+                    RestaurantActivity.typesOfStars = typesOfStars.get(relativeLayout1.getId());
+                    RestaurantActivity.RestaurantName = popularRestaurants[relativeLayout1.getId()].restuarant_name;
+                    RestaurantActivity.RestaurantAddress = popularRestaurants[relativeLayout1.getId()].address;
                     startActivity(intent);
                 }
             });
@@ -220,6 +225,8 @@ public class Main2Activity extends AppCompatActivity {
             }
             catch (Exception e){
                 imageView1.setImageResource(R.drawable.permanentlyclosed);
+                layoutParams5.setMargins(0,40,35 ,0);
+                open.setLayoutParams(layoutParams5);
                 open.setText("N/A");
             }
 
@@ -227,7 +234,7 @@ public class Main2Activity extends AppCompatActivity {
             distanceImage.setImageResource(R.drawable.distance);
             RelativeLayout.LayoutParams layoutParams6 = new RelativeLayout.LayoutParams(100,100);
             layoutParams6.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            layoutParams6.setMargins(0,200,230,0);
+            layoutParams6.setMargins(0,190,230,0);
             distanceImage.setLayoutParams(layoutParams6);
 
             TextView distance = new TextView(this);
@@ -236,14 +243,14 @@ public class Main2Activity extends AppCompatActivity {
             distance.setTextSize(16);
             distance.setTextColor(getResources().getColor(R.color.SecondTextColor));
             layoutParams7.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            layoutParams7.setMargins(0,216,20,0);
+            layoutParams7.setMargins(0,206,20,0);
             distance.setLayoutParams(layoutParams7);
 
             ImageView timeImage = new ImageView(this);
             timeImage.setImageResource(R.drawable.time);
             RelativeLayout.LayoutParams layoutParams8 = new RelativeLayout.LayoutParams(100, 100);
             layoutParams8.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            layoutParams8.setMargins(0,360,230,0);
+            layoutParams8.setMargins(0,350,230,0);
             timeImage.setLayoutParams(layoutParams8);
 
             TextView time = new TextView(this);
@@ -252,7 +259,7 @@ public class Main2Activity extends AppCompatActivity {
             time.setTextSize(16);
             time.setTextColor(getResources().getColor(R.color.SecondTextColor));
             layoutParams9.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            layoutParams9.setMargins(0,376,20,0);
+            layoutParams9.setMargins(0,366,20,0);
             time.setLayoutParams(layoutParams9);
 
             int numberOfStars = numberOfStars(popularRestaurants[i].rating);
@@ -278,34 +285,34 @@ public class Main2Activity extends AppCompatActivity {
                     star.setImageResource(R.drawable.quarterstar);
                     RelativeLayout.LayoutParams layoutParams12 = new RelativeLayout.LayoutParams(100,100);
                     layoutParams12.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParams12.setMargins(0,500,340,0);
+                    layoutParams12.setMargins(0,mTopStars,spacingBetweenStars*4,0);
 
                     ImageView starPict = new ImageView(this);
                     starPict.setImageResource(R.drawable.quarterstar);
                     RelativeLayout.LayoutParams emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                     emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    emptyStarLayout.setMargins(0,500,280,0);
+                    emptyStarLayout.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                     starPict.setLayoutParams(emptyStarLayout);
 
                     ImageView starPict2 = new ImageView(this);
-                    starPict.setImageResource(R.drawable.quarterstar);
+                    starPict2.setImageResource(R.drawable.quarterstar);
                     RelativeLayout.LayoutParams emptyStarLayout2 = new RelativeLayout.LayoutParams(100,100);
                     emptyStarLayout2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    emptyStarLayout2.setMargins(0,500,220,0);
+                    emptyStarLayout2.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                     starPict2.setLayoutParams(emptyStarLayout2);
 
                     ImageView starPict3 = new ImageView(this);
-                    starPict.setImageResource(R.drawable.quarterstar);
+                    starPict3.setImageResource(R.drawable.quarterstar);
                     RelativeLayout.LayoutParams emptyStarLayout3 = new RelativeLayout.LayoutParams(100,100);
                     emptyStarLayout3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    emptyStarLayout3.setMargins(0,500,160,0);
+                    emptyStarLayout3.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                     starPict3.setLayoutParams(emptyStarLayout3);
 
                     ImageView starPict4 = new ImageView(this);
-                    starPict.setImageResource(R.drawable.quarterstar);
+                    starPict4.setImageResource(R.drawable.quarterstar);
                     RelativeLayout.LayoutParams emptyStarLayout4 = new RelativeLayout.LayoutParams(100,100);
                     emptyStarLayout4.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    emptyStarLayout4.setMargins(0,500,100,0);
+                    emptyStarLayout4.setMargins(0,mTopStars,100,0);
                     starPict4.setLayoutParams(emptyStarLayout4);
 
                     relativeLayout1.addView(star);
@@ -327,35 +334,35 @@ public class Main2Activity extends AppCompatActivity {
                     if(rating >= 0.75){
                         star1.setImageResource(R.drawable.fullstar);
                         layoutParams10.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams10.setMargins(0,500,340,0);
+                        layoutParams10.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1.setLayoutParams(layoutParams10);
 
                         starPict = new ImageView(this);
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,280,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         starPict2 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict2.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout2 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout2.setMargins(0,500,220,0);
+                        emptyStarLayout2.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         starPict2.setLayoutParams(emptyStarLayout2);
 
                         starPict3 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict3.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout3 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout3.setMargins(0,500,160,0);
+                        emptyStarLayout3.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         starPict3.setLayoutParams(emptyStarLayout3);
 
                         starPict4 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict4.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout4 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout4.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout4.setMargins(0,500,100,0);
+                        emptyStarLayout4.setMargins(0,mTopStars,100,0);
                         starPict4.setLayoutParams(emptyStarLayout4);
 
                         relativeLayout1.addView(starPict);
@@ -373,35 +380,35 @@ public class Main2Activity extends AppCompatActivity {
                     else{
                         star1.setImageResource(R.drawable.halfstar);
                         layoutParams10.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams10.setMargins(0,500,340,0);
+                        layoutParams10.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1.setLayoutParams(layoutParams10);
 
                         starPict = new ImageView(this);
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,280,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         starPict2 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict2.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout2 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout2.setMargins(0,500,220,0);
+                        emptyStarLayout2.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         starPict2.setLayoutParams(emptyStarLayout2);
 
                         starPict3 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict3.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout3 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout3.setMargins(0,500,160,0);
+                        emptyStarLayout3.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         starPict3.setLayoutParams(emptyStarLayout3);
 
                         starPict4 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict4.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout4 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout4.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout4.setMargins(0,500,100,0);
+                        emptyStarLayout4.setMargins(0,mTopStars,100,0);
                         starPict4.setLayoutParams(emptyStarLayout4);
 
                         relativeLayout1.addView(starPict);
@@ -425,13 +432,13 @@ public class Main2Activity extends AppCompatActivity {
                     if(rating >= 1.75){
                         star1_2.setImageResource(R.drawable.fullstar);
                         layoutParams13.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams13.setMargins(0,500,340,0);
+                        layoutParams13.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1_2.setLayoutParams(layoutParams13);
 
                         ImageView star2 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,280,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setImageResource(R.drawable.fullstar);
                         star2.setLayoutParams(layoutParams11);
 
@@ -439,21 +446,21 @@ public class Main2Activity extends AppCompatActivity {
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,220,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         starPict2 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict2.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout2 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout2.setMargins(0,500,160,0);
+                        emptyStarLayout2.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         starPict2.setLayoutParams(emptyStarLayout2);
 
                         starPict3 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict3.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout3 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout3.setMargins(0,500,100,0);
+                        emptyStarLayout3.setMargins(0,mTopStars,100,0);
                         starPict3.setLayoutParams(emptyStarLayout3);
 
                         relativeLayout1.addView(starPict);
@@ -472,13 +479,13 @@ public class Main2Activity extends AppCompatActivity {
                     else{
                         star1_2.setImageResource(R.drawable.fullstar);
                         layoutParams13.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams13.setMargins(0,500,340,0);
+                        layoutParams13.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
 
                         ImageView star2 = new ImageView(this);
                         star2.setImageResource(R.drawable.halfstar);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,280,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setLayoutParams(layoutParams11);
                         star1_2.setLayoutParams(layoutParams13);
 
@@ -486,21 +493,21 @@ public class Main2Activity extends AppCompatActivity {
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,220,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         starPict2 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict2.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout2 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout2.setMargins(0,500,160,0);
+                        emptyStarLayout2.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         starPict2.setLayoutParams(emptyStarLayout2);
 
                         starPict3 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict3.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout3 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout3.setMargins(0,500,100,0);
+                        emptyStarLayout3.setMargins(0,mTopStars,100,0);
                         starPict3.setLayoutParams(emptyStarLayout3);
 
                         relativeLayout1.addView(starPict);
@@ -525,13 +532,13 @@ public class Main2Activity extends AppCompatActivity {
                     if(rating >= 2.75){
                         star1_3.setImageResource(R.drawable.fullstar);
                         layoutParams15.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams15.setMargins(0,500,340,0);
+                        layoutParams15.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1_3.setLayoutParams(layoutParams15);
 
                         ImageView star2 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,280,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setImageResource(R.drawable.fullstar);
                         star2.setLayoutParams(layoutParams11);
 
@@ -540,21 +547,21 @@ public class Main2Activity extends AppCompatActivity {
                         star3.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams14 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams14.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams14.setMargins(0,500,220,0);
+                        layoutParams14.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         star3.setLayoutParams(layoutParams14);
 
                         starPict = new ImageView(this);
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,160,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         starPict2 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict2.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout2 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout2.setMargins(0,500,100,0);
+                        emptyStarLayout2.setMargins(0,mTopStars,100,0);
                         starPict2.setLayoutParams(emptyStarLayout2);
 
                         relativeLayout1.addView(starPict);
@@ -573,13 +580,13 @@ public class Main2Activity extends AppCompatActivity {
                     else {
                         star1_3.setImageResource(R.drawable.fullstar);
                         layoutParams15.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams15.setMargins(0,500,340,0);
+                        layoutParams15.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1_3.setLayoutParams(layoutParams15);
 
                         ImageView star2 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,280,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setImageResource(R.drawable.fullstar);
                         star2.setLayoutParams(layoutParams11);
 
@@ -587,21 +594,21 @@ public class Main2Activity extends AppCompatActivity {
                         star3.setImageResource(R.drawable.halfstar);
                         RelativeLayout.LayoutParams layoutParams16 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams16.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams16.setMargins(0,500,220,0);
+                        layoutParams16.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         star3.setLayoutParams(layoutParams16);
 
                         starPict = new ImageView(this);
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,160,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         starPict2 = new ImageView(this);
-                        starPict.setImageResource(R.drawable.quarterstar);
+                        starPict2.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout2 = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout2.setMargins(0,500,100,0);
+                        emptyStarLayout2.setMargins(0,mTopStars,100,0);
                         starPict2.setLayoutParams(emptyStarLayout2);
 
                         relativeLayout1.addView(starPict);
@@ -625,13 +632,13 @@ public class Main2Activity extends AppCompatActivity {
                     if(rating >= 3.75){
                         star1_4.setImageResource(R.drawable.fullstar);
                         layoutParams17.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams17.setMargins(0,500,340,0);
+                        layoutParams17.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1_4.setLayoutParams(layoutParams17);
 
                         ImageView star2 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,280,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setImageResource(R.drawable.fullstar);
                         star2.setLayoutParams(layoutParams11);
 
@@ -639,21 +646,21 @@ public class Main2Activity extends AppCompatActivity {
                         star3.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams14 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams14.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams14.setMargins(0,500,220,0);
+                        layoutParams14.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         star3.setLayoutParams(layoutParams14);
 
                         ImageView star4 = new ImageView(this);
                         star4.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams16 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams16.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams16.setMargins(0,500,160,0);
+                        layoutParams16.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         star4.setLayoutParams(layoutParams16);
 
                         starPict = new ImageView(this);
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,100,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         relativeLayout1.addView(starPict);
@@ -672,13 +679,13 @@ public class Main2Activity extends AppCompatActivity {
                     else {
                         star1_4.setImageResource(R.drawable.fullstar);
                         layoutParams17.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams17.setMargins(0,500,340,0);
+                        layoutParams17.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1_4.setLayoutParams(layoutParams17);
 
                         ImageView star2 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,280,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setImageResource(R.drawable.fullstar);
                         star2.setLayoutParams(layoutParams11);
 
@@ -686,21 +693,21 @@ public class Main2Activity extends AppCompatActivity {
                         star3.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams14 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams14.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams14.setMargins(0,500,220,0);
+                        layoutParams14.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         star3.setLayoutParams(layoutParams14);
 
                         ImageView star4 = new ImageView(this);
                         star4.setImageResource(R.drawable.halfstar);
                         RelativeLayout.LayoutParams layoutParams16 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams16.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams16.setMargins(0,500,160,0);
+                        layoutParams16.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         star4.setLayoutParams(layoutParams16);
 
                         starPict = new ImageView(this);
                         starPict.setImageResource(R.drawable.quarterstar);
                         emptyStarLayout = new RelativeLayout.LayoutParams(100,100);
                         emptyStarLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        emptyStarLayout.setMargins(0,500,100,0);
+                        emptyStarLayout.setMargins(0,mTopStars,100,0);
                         starPict.setLayoutParams(emptyStarLayout);
 
                         relativeLayout1.addView(starPict);
@@ -724,13 +731,13 @@ public class Main2Activity extends AppCompatActivity {
                         RelativeLayout.LayoutParams layoutParams19 = new RelativeLayout.LayoutParams(100,100);
                         star1_5.setImageResource(R.drawable.fullstar);
                         layoutParams19.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams19.setMargins(0,500,340,0);
+                        layoutParams19.setMargins(00,mTopStars,100+spacingBetweenStars*4,0);
                         star1_5.setLayoutParams(layoutParams19);
 
                         ImageView star2 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,280,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setImageResource(R.drawable.fullstar);
                         star2.setLayoutParams(layoutParams11);
 
@@ -738,21 +745,21 @@ public class Main2Activity extends AppCompatActivity {
                         star3.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams14 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams14.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams14.setMargins(0,500,220,0);
+                        layoutParams14.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         star3.setLayoutParams(layoutParams14);
 
                         ImageView star4 = new ImageView(this);
                         star4.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams16 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams16.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams16.setMargins(0,500,160,0);
+                        layoutParams16.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         star4.setLayoutParams(layoutParams16);
 
                         ImageView star5 = new ImageView(this);
                         star5.setImageResource(R.drawable.halfstar);
                         RelativeLayout.LayoutParams layoutParams18 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams18.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams18.setMargins(0,500,100,0);
+                        layoutParams18.setMargins(0,mTopStars,100,0);
                         star5.setLayoutParams(layoutParams18);
 
                         relativeLayout1.addView(star5);
@@ -773,13 +780,13 @@ public class Main2Activity extends AppCompatActivity {
                         RelativeLayout.LayoutParams layoutParams19 = new RelativeLayout.LayoutParams(100,100);
                         star1_5.setImageResource(R.drawable.fullstar);
                         layoutParams19.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams19.setMargins(0,500,280,0);
+                        layoutParams19.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
                         star1_5.setLayoutParams(layoutParams19);
 
                         ImageView star2 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams11= new RelativeLayout.LayoutParams(100,100);
                         layoutParams11.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams11.setMargins(0,500,220,0);
+                        layoutParams11.setMargins(0,mTopStars,100+spacingBetweenStars*3,0);
                         star2.setImageResource(R.drawable.fullstar);
                         star2.setLayoutParams(layoutParams11);
 
@@ -787,21 +794,21 @@ public class Main2Activity extends AppCompatActivity {
                         star3.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams14 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams14.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams14.setMargins(0,500,160,0);
+                        layoutParams14.setMargins(0,mTopStars,100+spacingBetweenStars*2,0);
                         star3.setLayoutParams(layoutParams14);
 
                         ImageView star4 = new ImageView(this);
                         star4.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams16 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams16.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams16.setMargins(0,500,160,0);
+                        layoutParams16.setMargins(0,mTopStars,100+spacingBetweenStars,0);
                         star4.setLayoutParams(layoutParams16);
 
                         ImageView star5 = new ImageView(this);
                         star5.setImageResource(R.drawable.fullstar);
                         RelativeLayout.LayoutParams layoutParams18 = new RelativeLayout.LayoutParams(100,100);
                         layoutParams18.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                        layoutParams18.setMargins(0,500,100,0);
+                        layoutParams18.setMargins(0,mTopStars,100,0);
                         star5.setLayoutParams(layoutParams18);
 
                         relativeLayout1.addView(star5);
