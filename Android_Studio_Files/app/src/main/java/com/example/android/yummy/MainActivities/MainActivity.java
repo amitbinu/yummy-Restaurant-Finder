@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.android.yummy.DataManager.Constants;
 import com.example.android.yummy.apiCalls.PopularRestaurants;
 import com.example.android.yummy.apiCalls.distanceTimeBackThread;
 import com.example.android.yummy.apiCalls.photoRequest;
@@ -40,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public static double latitude, longitude;
     public static PopularRestaurants popularRestaurants;
     private static LocationRequest mLocationRequest;
-    private MainActivity object;
+    public static MainActivity object;
     public static photoRequest pictures;
     private static TextView textView;
     private static ProgressBar progressBar;
@@ -61,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION};
         if (!hasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions( this, PERMISSIONS, 112 );
-         //   LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             double starTIime = System.currentTimeMillis();
             while(System.currentTimeMillis()-starTIime < 3000){
             }
@@ -70,14 +75,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 System.exit(0);
             }
             else{
-                onStart();
+                if(isOnline() == true){
+                    onStart();
+                }
+                else{
+                    Toast.makeText(this,"Need Internet to work",Toast.LENGTH_LONG).show();
+                    Intent settingsIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivityForResult(settingsIntent, 9003);
+                    onBackPressed();
+                }
             }
-
         }
         else{
-            onStart();}
+            if(isOnline() == true){
+                onStart();
+            }
+            else{
+                Toast.makeText(this,"Need Internet to work",Toast.LENGTH_LONG).show();
+                Intent settingsIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivityForResult(settingsIntent, 9003);
+                onBackPressed();
+            }
+        }
     }
 
+    private Boolean isOnline(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
 
     private static boolean hasPermissions(Context context, String... permissions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
@@ -114,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onResult(LocationSettingsResult locationSettingsResult) {
                 final Status status = locationSettingsResult.getStatus();
                 final LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
-                Log.e("States", states.isGpsUsable()+"");
 
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
@@ -187,14 +212,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         COMMUNITY = communityName;
         STATE = stateName;
         COUNTRY = CountryName;
-        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyDXu5YvRPvWUySjEr_sMy4-EnIfjc54tA4");
+        GeoApiContext context = new GeoApiContext().setApiKey(Constants.ApiKey);
         popularRestaurants = new PopularRestaurants(COMMUNITY + " " + CITY + " " + COUNTRY,context, object);
-        Intent intent = new Intent(this, Main2Activity.class);
-        startActivity(intent);
+
     }
 
     private static String[] origin,destinations;
-    public void datafetcher(){
+
+    public void startNextActivity(){
+        Intent intent = new Intent(this, Main2Activity.class);
+        startActivity(intent);
+    }
+    public static void datafetcher(){
         PlacesSearchResponse address = popularRestaurants.address;
         pictures = new photoRequest(popularRestaurants.address);
         origin = new String[1];
@@ -203,12 +232,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         for (int i =0; i < destinations.length ; i++){
             destinations[i] = address.results[i].formattedAddress;
         }
-        finalCall();
-    }
-
-
-    public static void finalCall(){
-        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyDXu5YvRPvWUySjEr_sMy4-EnIfjc54tA4");
+        GeoApiContext context = new GeoApiContext().setApiKey(Constants.ApiKey);
         new distanceTimeBackThread(origin, destinations, context, Main2Activity.object);
     }
 }
