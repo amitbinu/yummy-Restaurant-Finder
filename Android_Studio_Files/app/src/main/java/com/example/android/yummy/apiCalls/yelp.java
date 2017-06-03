@@ -1,4 +1,4 @@
-package com.example.android.yummy.Backthread;
+package com.example.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -7,6 +7,9 @@ import java.util.Map;
 
 import com.example.android.yummy.DataManager.Constants;
 import com.example.android.yummy.DataManager.GeoCoder;
+import com.example.android.yummy.DataManager.Restaurant;
+import com.example.android.yummy.MainActivities.RestaurantActivity;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.yelp.fusion.client.connection.YelpFusionApi;
 import com.yelp.fusion.client.connection.YelpFusionApiFactory;
 import com.yelp.fusion.client.models.SearchResponse;
@@ -33,11 +36,17 @@ public class yelp {
         new firstCall().execute();
     }
 
+    public yelp(String item, String address){
+        this.item = item;
+        this.address = address;
+        this.response = null;
+        new detailedCall().execute();
+    }
+
     class firstCall extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
-
             try {
                 YelpFusionApiFactory apiFactory = new YelpFusionApiFactory();
                 YelpFusionApi yelpFusioinApi = apiFactory.createAPI(Constants.yelpAPi_AcessToken, Constants.yelpAApi_AccessSecret);
@@ -66,6 +75,37 @@ public class yelp {
                 }
             }
             super.onPostExecute(s);
+        }
+    }
+
+    class detailedCall extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                YelpFusionApiFactory apiFactory = new YelpFusionApiFactory();
+                YelpFusionApi yelpFusioinApi = apiFactory.createAPI(Constants.yelpAPi_AcessToken, Constants.yelpAApi_AccessSecret);
+                Map<String, String> params1 = new HashMap<>();
+
+                params1.put("term", item);
+                params1.put("location", address);
+                params1.put("limit", "50");
+                retrofit2.Call<SearchResponse> call = yelpFusioinApi.getBusinessSearch(params1);
+                response  = call.execute();
+
+            } catch (Exception e) {
+                Log.e("ERROR", e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            RestaurantActivity.checker_for_yelp = true;
+            if(RestaurantActivity.checker_for_placeDetails == true){
+                RestaurantActivity.afterApiCall();
+            }
+            super.onPostExecute(aVoid);
         }
     }
     }
