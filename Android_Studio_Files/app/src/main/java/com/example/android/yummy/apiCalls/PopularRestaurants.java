@@ -1,4 +1,4 @@
-package com.example.android.yummy.Backthread;
+package com.example.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -11,7 +11,7 @@ import com.google.maps.model.PlacesSearchResponse;
 
 import java.util.Stack;
 
-import static com.example.android.yummy.Backthread.restaurant_getter.city;
+import static com.example.android.yummy.apiCalls.restaurant_getter.city;
 
 /**
  * Created by amitb on 2017-05-11.

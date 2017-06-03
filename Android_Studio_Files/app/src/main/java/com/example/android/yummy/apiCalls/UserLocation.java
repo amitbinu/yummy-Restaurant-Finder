@@ -1,4 +1,4 @@
-package com.example.android.yummy.MainActivities;
+package com.example.android.yummy.apiCalls;
 
 import android.util.Log;
 
@@ -19,7 +19,7 @@ public class UserLocation {
     public UserLocation(double latitude,double longitude) throws Exception{
 
         LatLng location = new LatLng(latitude, longitude);
-        context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+        context = new GeoApiContext().setApiKey("AIzaSyDXu5YvRPvWUySjEr_sMy4-EnIfjc54tA4");
         GeocodingApi geolocationApi = null;
 
         GeocodingResult[] geocodingApiRequest = geolocationApi.reverseGeocode(context,location).await();
