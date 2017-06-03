@@ -1,12 +1,16 @@
 package com.example.android.yummy.MainActivities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
@@ -22,7 +26,6 @@ import android.widget.Toast;
 import com.example.android.yummy.DataManager.Restaurant;
 import com.example.android.yummy.R;
 import com.google.maps.model.PlacesSearchResponse;
-
 import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity {
@@ -36,6 +39,7 @@ public class Main2Activity extends AppCompatActivity {
     private static ArrayList<Integer[]> typesOfStars = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MainActivity.datafetcher();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar3);
@@ -171,6 +175,30 @@ public class Main2Activity extends AppCompatActivity {
             layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             imageView.setLayoutParams(layoutParams1);
 
+            if(popularRestaurants[i].restuarant_name.length() > 29){
+                try{
+                String[] nameParts = popularRestaurants[i].restuarant_name.split(" ");
+                textView = new TextView(this);
+                textView.setText(nameParts[0] + " " + nameParts[1] + "...");
+                textView.setTextColor(Color.WHITE);
+                textView.setTextSize(17);
+                textView.setAllCaps(true);
+                RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(550,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams2.setMargins(460,0,0,0);
+                textView.setLayoutParams(layoutParams2);}
+                catch (Exception e){
+                    String name = popularRestaurants[i].restuarant_name;
+                    textView = new TextView(this);
+                    textView.setText(name.charAt(0) + name.charAt(1) +name.charAt(0) +name.charAt(2) +name.charAt(3) +name.charAt(4) +name.charAt(5) +name.charAt(6) + "...");
+                    textView.setTextColor(Color.WHITE);
+                    textView.setTextSize(17);
+                    textView.setAllCaps(true);
+                    RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(550,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParams2.setMargins(460,0,0,0);
+                    textView.setLayoutParams(layoutParams2);
+                }
+            }
+            else{
             textView = new TextView(this);
             textView.setText(popularRestaurants[i].restuarant_name);
             textView.setTextColor(Color.WHITE);
@@ -178,7 +206,7 @@ public class Main2Activity extends AppCompatActivity {
             textView.setAllCaps(true);
             RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(550,RelativeLayout.LayoutParams.WRAP_CONTENT);
             layoutParams2.setMargins(460,0,0,0);
-            textView.setLayoutParams(layoutParams2);
+            textView.setLayoutParams(layoutParams2);}
 
             TextView textView2 = new TextView(this);
             textView2.setTextColor(getResources().getColor(R.color.SecondTextColor));
@@ -862,16 +890,19 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
     public void nextActivity(String view){
+
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar3);
         progressBar.setVisibility(View.VISIBLE);
         Message = view;
-        Intent intent = new Intent(this, Result.class);
+        Intent intent = new Intent(this,Result.class);
         ScrollView searchView = (ScrollView) findViewById(R.id.scrollview);
         searchView.setVisibility(View.GONE);
         TextView textView = (TextView) findViewById(R.id.PopularRestaurants);
         textView.setVisibility(View.GONE);
         Result.test = null;
+        progressBar.setVisibility(View.GONE);
         startActivity(intent);
+
     }
 
 }
