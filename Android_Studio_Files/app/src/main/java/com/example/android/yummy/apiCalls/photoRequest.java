@@ -1,24 +1,32 @@
-package com.example.android.yummy.Backthread;
+package com.example.android.yummy.apiCalls;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.android.yummy.DataManager.Restaurant;
-import com.example.android.yummy.DataManager.Result;
+import com.example.android.yummy.DataManager.Constants;
+import com.example.android.yummy.MainActivities.Result;
 import com.example.android.yummy.MainActivities.Main2Activity;
 import com.example.android.yummy.MainActivities.MainActivity;
+import com.example.android.yummy.MainActivities.photos;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PhotoRequest;
 import com.google.maps.PlacesApi;
+import com.google.maps.model.Photo;
 import com.google.maps.model.PhotoResult;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
-import static com.example.android.yummy.Backthread.restaurant_getter.city;
+import static com.example.android.yummy.apiCalls.restaurant_getter.city;
 
 /**
  * Created by amitb on 2017-05-11.
@@ -27,22 +35,23 @@ import static com.example.android.yummy.Backthread.restaurant_getter.city;
 public class photoRequest {
     public static PhotoResult photoRESULT;
     private static Result object1;
-    public static ArrayList<Bitmap> pictures;
+    public static ArrayList<Bitmap> PopularPictures;
     public static ArrayList<Bitmap> pictures1;
     private static GeoApiContext context;
     private static ArrayList<PlacesSearchResult> placesSearchResult;
     private static int size;
     private static PlacesSearchResponse placesSearchResponse;
-
+    private static Photo[] pictures;
+    private static photos object;
     public photoRequest(Result object){
         this.object1 = object;
         new firtcall().execute();
     }
 
     public photoRequest(PlacesSearchResponse placesSearchResponse){
-        this.context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+        this.context = new GeoApiContext().setApiKey(Constants.ApiKey);
         this.placesSearchResponse= placesSearchResponse;
-        this.pictures = new ArrayList<>();
+        this.PopularPictures = new ArrayList<>();
         if(placesSearchResponse.results.length >= 10){
             this.size = 10;
         }
@@ -53,13 +62,19 @@ public class photoRequest {
 
     }
 
+    public  photoRequest(Photo[] photos, photos object){
+        this.object = object;
+        this.pictures1 = new ArrayList<>();
+        this.pictures = photos;
+        new fetchPhotos().execute();
+    }
+
     public photoRequest(ArrayList<PlacesSearchResult> placesSearchResults){
-        this.context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+        this.context = new GeoApiContext().setApiKey(Constants.ApiKey);
         this.placesSearchResult = placesSearchResults;
         this.pictures1 = new ArrayList<>();
-       // Log.e("placeSearchResponse", placesSearchResponse.results[0].photos[0].toString());
 
-            this.size = placesSearchResults.size();
+        this.size = placesSearchResults.size();
 
         new lastCall().execute();
     }
@@ -76,20 +91,16 @@ public class photoRequest {
                     photoRequests.maxWidth(100);
                     photoRequests.photoReference(result[i].photos[0].photoReference);
                     photoRESULT = photoRequests.await();
-                 //   Log.d("i value", i+"");
                     byte[] bytes = photoRESULT.imageData;
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inScaled = false;
-                    pictures.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
+                    PopularPictures.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
                 }
                 catch (Exception e) {
-                 //   Log.d("photoRequest", "ERROR ERROR");
-                 //   Log.e("ERROR", e.getMessage(), e);
                     PlacesSearchResponse address = null;
                     try{
-                  //      Log.d("Number", i +"");
                         address = PlacesApi.textSearchQuery(context, placesSearchResponse.results[i].name+ " in " + MainActivity.CITY + " " + MainActivity.STATE + " " + MainActivity.COUNTRY).await();}
-                    catch (Exception f){Log.d("Second Error", f.getMessage());};
+                    catch (Exception f){};
                     for (int j=0; j < address.results.length; j++){
                         try{
                             PhotoRequest photoRequests = new PhotoRequest(context);
@@ -101,7 +112,7 @@ public class photoRequest {
                             BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inScaled = false;
 
-                            pictures.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
+                            PopularPictures.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
                             break;
                         }
                         catch (Exception h){
@@ -113,17 +124,17 @@ public class photoRequest {
             return null;
         }
     }
-    class lastCall extends AsyncTask<Void, Void, PhotoResult>{
+    public class lastCall extends AsyncTask<Void, Void, PhotoResult>{
 
         @Override
         protected PhotoResult doInBackground(Void... params) {
             for (int i = 0; i < size; i++){
+                Log.e("in the picture:",i + " " + placesSearchResult.get(i).name);
                 try {
                     PhotoRequest photoRequests = new PhotoRequest(context);
                     photoRequests.maxHeight(100);
                     photoRequests.maxWidth(100);
                     photoRequests.photoReference(placesSearchResult.get(i).photos[0].photoReference);
-                 //   Log.d("photoReference", i+"");
                     photoRESULT = photoRequests.await();
                     byte[] bytes = photoRESULT.imageData;
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -132,38 +143,64 @@ public class photoRequest {
                     pictures1.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
                 }
                 catch (Exception e) {
-                 //   Log.d("photoRequest", "ERROR ERROR");
-                  //  Log.d("ERROR", e.getMessage(), e);
-                    PlacesSearchResponse address = null;
+                    Log.d("photorequest Error", e.getMessage());
+                    Log.d("Values", i +" " + placesSearchResult.get(i).name);
+                    PlacesSearchResponse testingaddress = null;
                     try{
-                  //      Log.d("Number", i +"");
-                        address = PlacesApi.textSearchQuery(context, placesSearchResult.get(i).name+ " in " + city).await();}
-                    catch (Exception f){Log.d("Second Error", f.getMessage());};
-                    for (int j=0; j < address.results.length; j++){
+                        testingaddress = PlacesApi.textSearchQuery(context, placesSearchResult.get(i).name+ " in " + city).await();
+                        while(testingaddress.results == null){}}
+                    catch (Exception f){};
+                    int counter = 0;
+                    for (int j=0; j < testingaddress.results.length; j++){
                         try{
                             PhotoRequest photoRequests = new PhotoRequest(context);
-                            photoRequests.maxHeight(100);
-                            photoRequests.maxWidth(100);
-                            photoRequests.photoReference(address.results[j].photos[0].photoReference);
+                            photoRequests.maxHeight(350);
+                            photoRequests.maxWidth(450);
+                            photoRequests.photoReference(testingaddress.results[j].photos[0].photoReference);
                             photoRESULT = photoRequests.await();
                             byte[] bytes = photoRESULT.imageData;
                             BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inScaled = false;
-
                             pictures1.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
                             break;
                         }
                         catch (Exception h){
+                            counter++;
+                            Log.d("error", h.getMessage());
                             continue;
                         }
                     }
+                    if(counter == testingaddress.results.length){
+                       try{
+                        testingaddress = PlacesApi.textSearchQuery(context, MainActivity.CITY+ " " + MainActivity.STATE).await();}
+                        catch (Exception z){}
+
+                            for (int j=0; j < testingaddress.results.length; j++){
+                                try{
+                                    PhotoRequest photoRequests = new PhotoRequest(context);
+                                    photoRequests.maxHeight(350);
+                                    photoRequests.maxWidth(450);
+                                    photoRequests.photoReference(testingaddress.results[j].photos[0].photoReference);
+                                    photoRESULT = photoRequests.await();
+                                    byte[] bytes = photoRESULT.imageData;
+                                    BitmapFactory.Options options = new BitmapFactory.Options();
+                                    options.inScaled = false;
+                                    pictures1.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
+                                    break;
+                                }
+                                catch (Exception h){
+                                    counter++;
+                                    Log.d("error", h.getMessage());
+                                    continue;
+                                }
+                            }
+                    }
+
                 }
             }
             return null;
         }
     }
-
-
 
     class firtcall extends AsyncTask<Void, Void, PhotoResult>{
 
@@ -177,6 +214,35 @@ public class photoRequest {
         protected void onPostExecute(PhotoResult photoResult) {
             object1.finalRestaurants();
             super.onPostExecute(photoResult);
+        }
+    }
+
+    class fetchPhotos extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            for(Photo photo : pictures){
+                try{
+                    PhotoRequest photoRequests = new PhotoRequest(context);
+                    photoRequests.maxHeight(350);
+                    photoRequests.maxWidth(450);
+                    photoRequests.photoReference(photo.photoReference);
+                    photoRESULT = photoRequests.await();
+                    byte[] bytes = photoRESULT.imageData;
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inScaled = false;
+                    pictures1.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));}
+                catch (Exception e){
+                    Log.e("fetchPhotos","-photoRequest "+ e.getMessage());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            object.afterRequest(pictures1);
+            super.onPostExecute(aVoid);
         }
     }
 }
