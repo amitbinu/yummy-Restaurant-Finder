@@ -1,6 +1,5 @@
 package com.example.android.yummy.MainActivities;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,14 +11,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
-
-import com.example.android.yummy.Backthread.PopularRestaurants;
-import com.example.android.yummy.Backthread.distanceTimeBackThread;
-import com.example.android.yummy.Backthread.photoRequest;
-import com.example.android.yummy.Backthread.yelp;
+import com.example.android.yummy.apiCalls.PopularRestaurants;
+import com.example.android.yummy.apiCalls.distanceTimeBackThread;
+import com.example.android.yummy.apiCalls.photoRequest;
 import com.example.android.yummy.R;
+import com.example.android.yummy.apiCalls.UserLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -34,15 +33,6 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.PlacesSearchResponse;
-import com.google.maps.model.PlacesSearchResult;
-import com.yelp.fusion.client.models.Business;
-
-import java.util.ArrayList;
-
-import static com.example.android.yummy.Backthread.yelp.response;
-import static com.example.android.yummy.DataManager.GeoCoder.commonRestaurants_Google;
-import static com.example.android.yummy.DataManager.GeoCoder.commonRestaurants_Yelp;
-
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
     private static GoogleApiClient mGoogleApiClient;
@@ -53,12 +43,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private MainActivity object;
     public static photoRequest pictures;
     private static TextView textView;
+    private static ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.object = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         textView = (TextView) findViewById(R.id.Update);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar3);
+        progressBar.setVisibility(View.VISIBLE);
+        textView = (TextView) findViewById(R.id.Update);
         textView.setText("Getting your Location ...");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -82,8 +75,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         }
         else{
-        onStart();}
+            onStart();}
     }
+
 
     private static boolean hasPermissions(Context context, String... permissions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
@@ -96,11 +90,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return true;
     }
 
+
     protected void onStart(){
         mGoogleApiClient.connect();
         super.onStart();
     }
-
     protected void onStop(){
         mGoogleApiClient.disconnect();
         super.onStop();
@@ -156,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (resultCode){
             case Activity.RESULT_OK:
-                Log.e("User", "pressed OK");
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,this);
                 break;
             case Activity.RESULT_CANCELED:
@@ -177,16 +170,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         UserLocation userLocation = new UserLocation(latitude,longitude);
         nextActivity(userLocation.cityName, userLocation.communityName, userLocation.stateName, userLocation.countryName);}
         catch (Exception e){}
-        Log.e("RESULT", location.getLatitude() + " " + location.getLongitude());
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        onStop(); Log.e("STATUS", "Locations services suspended");
+        onStop();
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {Log.e("CONNECTION Failed", "ERROR");}
+    public void onConnectionFailed(ConnectionResult connectionResult) {}
 
     private void nextActivity(String cityName, String communityName, String stateName, String CountryName){
         textView.setText("Gathering info about near by restaurants ...");
@@ -195,9 +187,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         COMMUNITY = communityName;
         STATE = stateName;
         COUNTRY = CountryName;
-        Log.d("Starting", "starting the next activity");
-      //  yelpcaller = new yelp("Best Restaurants", COMMUNITY + " " + CITY + " " + STATE + " " + COUNTRY, object);
-        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyDXu5YvRPvWUySjEr_sMy4-EnIfjc54tA4");
         popularRestaurants = new PopularRestaurants(COMMUNITY + " " + CITY + " " + COUNTRY,context, object);
         Intent intent = new Intent(this, Main2Activity.class);
         startActivity(intent);
@@ -205,12 +195,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private static String[] origin,destinations;
     public void datafetcher(){
-
-
-
         PlacesSearchResponse address = popularRestaurants.address;
-    //
-     //
         pictures = new photoRequest(popularRestaurants.address);
         origin = new String[1];
         origin[0] = latitude + " "  + longitude;
@@ -223,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
     public static void finalCall(){
-        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyB9RIqgSUPHG1eg182FbxOamicGXFgjBDA");
+        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyDXu5YvRPvWUySjEr_sMy4-EnIfjc54tA4");
         new distanceTimeBackThread(origin, destinations, context, Main2Activity.object);
     }
 }
