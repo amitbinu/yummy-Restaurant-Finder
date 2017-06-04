@@ -7,6 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,31 +42,45 @@ public class Result extends AppCompatActivity {
     private static ArrayList<Integer[]> typesOfStars = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ResultRan = true;
-        this.object = this;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
-        TextView textView = (TextView) findViewById(R.id.Header);
-        textView.setText("Restaurants near " + COMMUNITY);
-        if (checker == true) {
-            super.onBackPressed();
+        if(isOnline()==true) {
+            ResultRan = true;
+            this.object = this;
+
+            setContentView(R.layout.activity_result);
+            TextView textView = (TextView) findViewById(R.id.Header);
+            textView.setText("Restaurants near " + COMMUNITY);
+            if (checker == true) {
+                super.onBackPressed();
+            }
+            realOne = (RelativeLayout) findViewById(R.id.RESULTrelative);
+            checker = false;
+            contextforme = this;
+            progressBar = (ProgressBar) findViewById(R.id.progressBar2);
+            spinner = (Spinner) findViewById(R.id.spinner);
+            ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.SpinnerSort, R.layout.spinner_list);
+            arrayAdapter.setDropDownViewResource(R.layout.spinner_drop_down);
+            spinner.setAdapter(arrayAdapter);
+            updateForUser = (TextView) findViewById(R.id.update1);
+            if (test == null) {
+                dataCollector();
+            } else {
+                finalRestaurants();
+            }
         }
-        realOne = (RelativeLayout) findViewById(R.id.RESULTrelative);
-        checker = false;
-        contextforme = this;
-        progressBar = (ProgressBar) findViewById(R.id.progressBar2);
-        spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.SpinnerSort, R.layout.spinner_list);
-        arrayAdapter.setDropDownViewResource(R.layout.spinner_drop_down);
-        spinner.setAdapter(arrayAdapter);
-        updateForUser = (TextView) findViewById(R.id.update1);
-        if(test==null){
-        dataCollector();}
         else{
-            finalRestaurants();
+            Toast.makeText(this,"Need Internet to work",Toast.LENGTH_LONG).show();
+            Intent settingsIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+            startActivityForResult(settingsIntent, 9003);
+            onBackPressed();
         }
     }
 
+    private Boolean isOnline(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
     public static boolean ResultRan = false;
 
     public static void dataCollector() {
@@ -147,14 +164,41 @@ public class Result extends AppCompatActivity {
             layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             imageView.setLayoutParams(layoutParams1);
 
-            textView = new TextView(this);
-            textView.setText(sortedResult.Sortedrestaurants.get(i).restuarant_name);
-            textView.setTextColor(Color.WHITE);
-            textView.setTextSize(17);
-            textView.setAllCaps(true);
-            RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(550,RelativeLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams2.setMargins(460,0,0,0);
-            textView.setLayoutParams(layoutParams2);
+            if(sortedResult.Sortedrestaurants.get(i).restuarant_name.length() > 29){
+                try{
+                    String[] nameParts = sortedResult.Sortedrestaurants.get(i).restuarant_name.split(" ");
+                    textView = new TextView(this);
+                    textView.setText(nameParts[0] + " " + nameParts[1] + " ...");
+                    textView.setTextColor(Color.WHITE);
+                    textView.setTextSize(17);
+                    textView.setAllCaps(true);
+                    RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(550,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParams2.setMargins(460,0,0,0);
+                    textView.setLayoutParams(layoutParams2);
+                }
+                catch (Exception e){
+                    String name =  sortedResult.Sortedrestaurants.get(i).restuarant_name;
+                    textView = new TextView(this);
+                    textView.setText(name.charAt(0) + name.charAt(1) +name.charAt(0) +name.charAt(2) +name.charAt(3) +name.charAt(4) +name.charAt(5) +name.charAt(6) + " ...");
+                    textView.setTextColor(Color.WHITE);
+                    textView.setTextSize(17);
+                    textView.setAllCaps(true);
+                    RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(550,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParams2.setMargins(460,0,0,0);
+                    textView.setLayoutParams(layoutParams2);
+                }
+            }
+            else{
+                textView = new TextView(this);
+                textView.setText(sortedResult.Sortedrestaurants.get(i).restuarant_name);
+                textView.setTextColor(Color.WHITE);
+                textView.setTextSize(17);
+                textView.setAllCaps(true);
+                RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(550,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams2.setMargins(460,0,0,0);
+                textView.setLayoutParams(layoutParams2);
+            }
+
 
             TextView textView2 = new TextView(this);
             textView2.setTextColor(getResources().getColor(R.color.SecondTextColor));
