@@ -5,31 +5,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.example.android.yummy.apiCalls.photoRequest;
 import com.example.android.yummy.R;
 import com.google.maps.model.Photo;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class photos extends AppCompatActivity {
+    private static ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
         Photo[] photos = RestaurantActivity.detailedRequest.placeDetails.photos;
+        progressBar = (ProgressBar) findViewById(R.id.PhotoProgressBar);
         if(photos.length != 0){
             TextView errorMessage = (TextView) findViewById(R.id.ErrorMessage);
             errorMessage.setVisibility(View.GONE);
             new photoRequest(photos, this);
+        }
+        else{
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -42,9 +43,7 @@ public class photos extends AppCompatActivity {
             imageView1.setImageBitmap(pictures.get(i));
             imageView1.setLayoutParams(layoutParams1);
             mainView.addView(imageView1);
-
-
         }
-
+        progressBar.setVisibility(View.GONE);
     }
 }
