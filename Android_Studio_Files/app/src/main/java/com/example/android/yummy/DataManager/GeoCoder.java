@@ -14,6 +14,9 @@ import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.yelp.fusion.client.models.Business;
+
+import static com.example.android.yummy.apiCalls.second_address.address;
+
 /**
  * This class calls the Google Api and yelp Api and then finds the common Restaurants both APIs returns.
  * @author Amit Binu
@@ -138,23 +141,28 @@ public class GeoCoder extends AppCompatActivity {
 			test1 = new restaurant_getter(origin,city,context,FOOD,object);
 		}
 	}
+	private static ArrayList<String> yelpNames = new ArrayList<>();
 	/**
 	 * This method is called after both yelp's and google maps' response is got.
 	 * This method finds as many common restaurants in google maps' and yelp's response.
 	 * @throws Exception
 	 */
 	public static void afterWAIT() throws Exception{
+        yelpNames = new ArrayList<>();
 		PlacesSearchResponse address = test1.address;
         commonRestaurants_Google = new ArrayList<>();
         commonRestaurants_Yelp = new ArrayList<>();
 		Google1 = new ArrayList<>();
 		Google2 = new ArrayList<>();
+        for(int i =0; i <yelpCaller.response.body().getBusinesses().size(); i++){
+            yelpNames.add(yelpCaller.response.body().getBusinesses().get(i).getName());
+        }
         CommonFinder(address);
         while(address.nextPageToken != null){
             if(Google1.size()>40){break;}
             second_address secondAddress = new second_address(address.nextPageToken,new GeoApiContext().setApiKey(Constants.ApiKey));
-            while(secondAddress.address ==null){}
-            address = secondAddress.address;
+            while(address ==null){}
+            address = address;
             CommonFinder(address);
         }
         int j =0;
@@ -182,48 +190,47 @@ public class GeoCoder extends AppCompatActivity {
      */
     private static void CommonFinder(PlacesSearchResponse address) {
         for(int j =0; j < address.results.length; j++){
-            for (int i =0; i < yelpCaller.response.body().getBusinesses().size(); i++){
-                if (yelpCaller.response.body().getBusinesses().get(i).getName().equals(address.results[j].name) && (!(Google1.contains(address.results[j])))){
-                   try{
-					    Log.e("name", yelpCaller.response.body().getBusinesses().get(i).getName());
-                        String price = yelpCaller.response.body().getBusinesses().get(i).getPrice();
-                        if(price != null){
+            if(yelpNames.contains(address.results[j].name)){
+                int index = yelpNames.indexOf(address.results[j].name);
+                try{
+                    Log.e("name", yelpCaller.response.body().getBusinesses().get(index).getName());
+                    String price = yelpCaller.response.body().getBusinesses().get(index).getPrice();
+                    if(price != null){
                         Google1.add(address.results[j]);
-                        commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
-                        }
-                        else{
-                            String isItNull = null;
-                            for (int findPrice=i+1; findPrice< yelpCaller.response.body().getBusinesses().size();findPrice++){
-                                if (yelpCaller.response.body().getBusinesses().get(findPrice).getName().equals(address.results[j].name)){
-                                    try{
-                                        isItNull = yelpCaller.response.body().getBusinesses().get(findPrice).getPrice();
-                                        Boolean checking = isItNull.equals("");
-                                        Google1.add(address.results[j]);
-                                        commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
-                                        break;
-                                    }
-                                    catch (NullPointerException f){
-                                        continue;
-                                    }
+                        commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(index));
+                    }
+                    else{
+                        String isItNull = null;
+                        for (int findPrice=index+1; findPrice< yelpCaller.response.body().getBusinesses().size();findPrice++){
+                            if (yelpCaller.response.body().getBusinesses().get(findPrice).getName().equals(address.results[j].name)){
+                                try{
+                                    isItNull = yelpCaller.response.body().getBusinesses().get(findPrice).getPrice();
+                                    Boolean checking = isItNull.equals("");
+                                    Google1.add(address.results[j]);
+                                    commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(index));
+                                    break;
+                                }
+                                catch (NullPointerException f){
+                                    continue;
                                 }
                             }
-                            if(isItNull == null){
-                                Google1.add(address.results[j]);
-                                commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(i));
-                            }
+                        }
+                        if(isItNull == null){
+                            Google1.add(address.results[j]);
+                            commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(index));
                         }
                     }
-                    catch (ExceptionInInitializerError e){
-                        Log.e("GeoCoder-commonFinder",e.getMessage());
-                    }
-                    break;
+                }
+                catch (ExceptionInInitializerError e){
+                    Log.e("GeoCoder-commonFinder",e.getMessage());
                 }
             }
             if(!Google1.contains(address.results[j])){
-				Log.e("name", address.results[j].name);
-				Google2.add(address.results[j]);
-			}
-        }
+                Log.e("name", address.results[j].name);
+                Google2.add(address.results[j]);
+            }
+            }
+
     }
     /**
      * This method organizes all the data and puts certain information in appropriate stacks.
