@@ -47,7 +47,7 @@ public class PopularRestaurants {
 
         @Override
         protected void onPostExecute(PlacesSearchResponse placesSearchResponse) {
-            object.datafetcher();
+            object.startNextActivity();
             super.onPostExecute(placesSearchResponse);
         }
     }
