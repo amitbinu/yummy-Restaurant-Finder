@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.e("STATUS", mGoogleApiClient.isConnected()+"");
 
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setInterval(1);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient ,builder.build());
@@ -147,14 +147,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                         if(location!=null){
                             try{
-
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                                 onStop();
                                 UserLocation userLocation = new UserLocation(latitude,longitude);
                                 nextActivity(userLocation.cityName, userLocation.communityName, userLocation.stateName, userLocation.countryName);
                             }
-                            catch (Exception e){}
+                            catch (Exception e){
+                                Log.e("error-","onResult-onConnected-MainActivity " + e.getMessage());
+                            }
                         }
                         else{LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest,MainActivity.this);}
                         break;
@@ -199,11 +200,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionSuspended(int i) {
-        onStop();
+        Log.e("CONNECTION","SUSPENDED");
+        onStart();
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {}
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e("CONNECTION", "FAILED')");
+    }
 
     private void nextActivity(String cityName, String communityName, String stateName, String CountryName){
         textView.setText("Gathering info about near by restaurants ...");
