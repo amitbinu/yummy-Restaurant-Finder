@@ -161,8 +161,8 @@ public class GeoCoder extends AppCompatActivity {
         while(address.nextPageToken != null){
             if(Google1.size()>40){break;}
             second_address secondAddress = new second_address(address.nextPageToken,new GeoApiContext().setApiKey(Constants.ApiKey));
-            while(address ==null){}
-            address = address;
+            while(secondAddress.address ==null){}
+            address = secondAddress.address;
             CommonFinder(address);
         }
         int j =0;
@@ -193,7 +193,6 @@ public class GeoCoder extends AppCompatActivity {
             if(yelpNames.contains(address.results[j].name)){
                 int index = yelpNames.indexOf(address.results[j].name);
                 try{
-                    Log.e("name", yelpCaller.response.body().getBusinesses().get(index).getName());
                     String price = yelpCaller.response.body().getBusinesses().get(index).getPrice();
                     if(price != null){
                         Google1.add(address.results[j]);
@@ -226,7 +225,6 @@ public class GeoCoder extends AppCompatActivity {
                 }
             }
             if(!Google1.contains(address.results[j])){
-                Log.e("name", address.results[j].name);
                 Google2.add(address.results[j]);
             }
             }
@@ -244,7 +242,6 @@ public class GeoCoder extends AppCompatActivity {
 			rating = Math.round(rating);
 			ratings.push(rating/1000000); //This is done so that the rating will have only one decimal value.
 		}
-		ratings.push(null);
         if(ratings.size() == 1){
             Dataobject.checker = true;
             Dataobject.results();
@@ -282,20 +279,37 @@ public class GeoCoder extends AppCompatActivity {
                     distanceUnit = "miles";
                     removeUnit =  dist.rows[0].elements[i].distance.toString().split("miles");
                 }
-                String[] removeMINS = dist.rows[0].elements[i].duration.toString().split("mins");
-
+                String[] removeMINS;
+                if(dist.rows[0].elements[i].durationInTraffic != null){
+                    if(dist.rows[0].elements[i].durationInTraffic.humanReadable.contains("mins")){
+                        removeMINS = dist.rows[0].elements[i].durationInTraffic.toString().split("mins");
+                    }
+                    else{
+                        removeMINS = dist.rows[0].elements[i].durationInTraffic.toString().split("min");
+                    }
+                }
+                else{
+                    if(dist.rows[0].elements[i].duration.humanReadable.contains("mins")){
+                        removeMINS = dist.rows[0].elements[i].duration.toString().split("mins");
+                    }
+                    else{
+                        removeMINS = dist.rows[0].elements[i].duration.toString().split("min");
+                    }
+                }
                 distances.push(Double.parseDouble(removeUnit[0]));
-                times.push(Double.parseDouble(removeMINS[0]));}
+                times.push(Double.parseDouble(removeMINS[0]));
+				Log.e("Dist&time", Double.parseDouble(removeUnit[0]) + " km " + Double.parseDouble(removeMINS[0])+" mins");
+            }
             catch (NullPointerException f){
+                Log.e("NullError-afterDist", f.getMessage());
                 continue;
             }
             catch (NumberFormatException e){
+                Log.e("NumError-afterdist",e.getMessage());
                 distances.push(null);
                 times.push(null);
             }
         }
-        distances.push(null);
-        times.push(null);
         Dataobject.results();
 
     }
