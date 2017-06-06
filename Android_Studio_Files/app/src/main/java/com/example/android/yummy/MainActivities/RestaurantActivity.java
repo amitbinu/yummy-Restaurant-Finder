@@ -94,7 +94,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
             switch (yelpCaller.response.body().getBusinesses().get(0).getPrice().length()) {
                 case 1:
-                    priceText.setText("   < 10");
+                    priceText.setText(" < 10");
                     break;
                 case 2:
                     priceText.setText("$ 11 - $ 30");
@@ -108,7 +108,7 @@ public class RestaurantActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             price.setText("N/A");
-            priceText.setText("     - -");
+            priceText.setText("  - -");
         }
 
             distance.setText(distanceText + " " + Main2Activity.distanceUnit);
@@ -684,51 +684,80 @@ public class RestaurantActivity extends AppCompatActivity {
             imageView.setImageResource(R.drawable.permanentlyclosed_restaurant_activity);
         }
             try{
-                Log.e("WeekDay Text", detailedRequest.placeDetails.openingHours.weekdayText[6]);
-            String[] sunday = detailedRequest.placeDetails.openingHours.weekdayText[0].split(" ");
-            Sunday.setText(":  " + sunday[1] + " " + sunday[2] + " - " + sunday[4] + " " + sunday[5]);}
+            String[] sunday = detailedRequest.placeDetails.openingHours.weekdayText[6].split(" ");
+                String text = "";
+                for(int i =1; i < sunday.length ; i++){
+                    text += sunday[i] + " ";
+                }
+                Sunday.setText(text);
+            }
             catch (Exception e){
                 Sunday.setText("N/A");
             }
 
             try{
-            String[] monday = detailedRequest.placeDetails.openingHours.weekdayText[1].split(" ");
-            Monday.setText(":  " + monday[1] + " " + monday[2] + " - " + monday[4] + " " + monday[5]);}
+            String[] monday = detailedRequest.placeDetails.openingHours.weekdayText[0].split(" ");
+                String text = "";
+                for(int i =1; i < monday.length ; i++){
+                    text += monday[i] + " ";
+                }
+                Monday.setText(text);
+        }
             catch (Exception e){
                 Monday.setText("N/A");
             }
 
             try{
-            String[] tuesday = detailedRequest.placeDetails.openingHours.weekdayText[2].split(" ");
-            Tuesday.setText(":  " + tuesday[1] + " " + tuesday[2] + " - " + tuesday[4] + " " + tuesday[5]);}
+            String[] tuesday = detailedRequest.placeDetails.openingHours.weekdayText[1].split(" ");
+                String text = "";
+                for(int i =1; i < tuesday.length ; i++){
+                    text += tuesday[i] + " ";
+                }
+                Tuesday.setText(text);}
             catch (Exception e){
                 Tuesday.setText("N/A");
             }
 
             try{
-            String[] wednesday = detailedRequest.placeDetails.openingHours.weekdayText[3].split(" ");
-            Wednesday.setText(":  " + wednesday[1] + " " + wednesday[2] + " - " + wednesday[4] + " " + wednesday[5]);}
+            String[] wednesday = detailedRequest.placeDetails.openingHours.weekdayText[2].split(" ");
+                String text = "";
+                for(int i =1; i < wednesday.length ; i++){
+                    text += wednesday[i] + " ";
+                }
+                Wednesday.setText(text);}
             catch (Exception e){
                 Wednesday.setText("N/A");
             }
 
             try{
-            String[] thursday = detailedRequest.placeDetails.openingHours.weekdayText[4].split(" ");
-            Thursday.setText(":  " + thursday[1] + " " + thursday[2] + " - " + thursday[4] + " " + thursday[5]);}
+            String[] thursday = detailedRequest.placeDetails.openingHours.weekdayText[3].split(" ");
+                String text = "";
+                for(int i =1; i < thursday.length ; i++){
+                    text += thursday[i] + " ";
+                }
+                Thursday.setText(text);}
             catch (Exception e){
                 Thursday.setText("N/A");
             }
 
             try{
-            String[] friday = detailedRequest.placeDetails.openingHours.weekdayText[5].split(" ");
-            Friday.setText(":  " + friday[1] + " " + friday[2] + " - " + friday[4] + " " + friday[5]);}
+            String[] friday = detailedRequest.placeDetails.openingHours.weekdayText[4].split(" ");
+                String text = "";
+                for(int i =1; i < friday.length ; i++){
+                    text += friday[i] + " ";
+                }
+                Friday.setText(text);}
             catch (Exception e){
                 Friday.setText("N/A");
             }
 
             try{
-            String[] saturday = detailedRequest.placeDetails.openingHours.weekdayText[6].split(" ");
-            Saturday.setText(":  " + saturday[1] + " " + saturday[2] + " - " + saturday[4] + " " + saturday[5]);}
+            String[] saturday = detailedRequest.placeDetails.openingHours.weekdayText[5].split(" ");
+                String text = "";
+                for(int i =1; i < saturday.length ; i++){
+                    text += saturday[i] + " ";
+                }
+                Saturday.setText(text);}
             catch (Exception e){
                 Saturday.setText("N/A");
             }
