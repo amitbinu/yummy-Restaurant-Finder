@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +63,7 @@ public class Result extends AppCompatActivity {
             arrayAdapter.setDropDownViewResource(R.layout.spinner_drop_down);
             spinner.setAdapter(arrayAdapter);
             updateForUser = (TextView) findViewById(R.id.update1);
+            spinner.setVisibility(View.INVISIBLE);
             if (test == null) {
                 dataCollector();
             } else {
@@ -111,18 +113,46 @@ public class Result extends AppCompatActivity {
     public static void getter() {
         pictures = new photoRequest(object);
     }
-
+    private static Boolean defaultItem = true;
     public void finalRestaurants() {
-        int spacingBetweenStars = 75;
-        int mTopStars =480;
-        String text = spinner.getSelectedItem().toString();
-        final sort sortedResult = new sort(test, text);
+        spinner.setVisibility(View.VISIBLE);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String text = spinner.getSelectedItem().toString();
+                final sort sortedResult = new sort(test, text);
+                if (sortedResult.checker == false) {
+                    Toast.makeText(object, "SOME PRICES ARE NOT AVAILABLE", Toast.LENGTH_LONG).show();
+                }
+                resultsLayout(sortedResult);
+            }
 
-        if (sortedResult.checker == false) {
-            Toast.makeText(object, "SOME PRICES ARE NOT AVAILABLE", Toast.LENGTH_LONG).show();
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.e("NOT selected", "false");
+            }
+        });
+
+        if(defaultItem){
+            String text = spinner.getSelectedItem().toString();
+            final sort sortedResult = new sort(test, text);
+            if (sortedResult.checker == false) {
+                Toast.makeText(object, "SOME PRICES ARE NOT AVAILABLE", Toast.LENGTH_LONG).show();
+            }
+            updateForUser.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            resultsLayout(sortedResult);
         }
+        defaultItem = true;
+    }
+
+    private void resultsLayout(sort sortObject){
         updateForUser.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
+        defaultItem = false;
+        int spacingBetweenStars = 75;
+        int mTopStars =480;
+        final sort sortedResult = sortObject;
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RESULTrelative);
         LinearLayout mainLinearLayout = new LinearLayout(contextforme);
         LinearLayout.LayoutParams mainlayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -159,7 +189,7 @@ public class Result extends AppCompatActivity {
             });
 
             ImageView imageView = new ImageView(this);
-            imageView.setImageBitmap(resizer(test.details.pictures.pictures1.get(i),450,350));
+            imageView.setImageBitmap(resizer(sortedResult.Sortedrestaurants.get(i).photos,450,350));
             RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(450,350);
             layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             imageView.setLayoutParams(layoutParams1);
@@ -859,8 +889,8 @@ public class Result extends AppCompatActivity {
             mainLinearLayout.addView(relativeLayout1);
         }
         relativeLayout.addView(mainLinearLayout, mainlayoutParams);
-    }
 
+    }
     private static int numberOfStars(double rating){
         if(0 <= rating && rating < 0.25){
             return 0;
