@@ -10,6 +10,9 @@ import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
 
+import java.util.ArrayList;
+
+import static com.example.android.yummy.MainActivities.Main2Activity.distanceUnit;
 import static com.example.android.yummy.MainActivities.Main2Activity.distances;
 import static com.example.android.yummy.MainActivities.Main2Activity.times;
 import static com.example.android.yummy.R.drawable.distance;
@@ -93,7 +96,8 @@ public class distanceTimeBackThread {
         @Override
         protected Void doInBackground(Void... params) {
             try{
-            result = DistanceMatrixApi.getDistanceMatrix(context, origin, destinations).await();}
+            result = DistanceMatrixApi.getDistanceMatrix(context, origin, destinations).await();
+            }
             catch (Exception e){}
             return null;
         }
