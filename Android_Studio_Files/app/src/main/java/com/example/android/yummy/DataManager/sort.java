@@ -2,14 +2,19 @@ package com.example.android.yummy.DataManager;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+
+import com.example.android.yummy.MainActivities.Result;
+
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.Quick;
-import static com.example.android.yummy.DataManager.data.details;
+import static com.example.android.yummy.R.drawable.distance;
+import static com.example.android.yummy.R.drawable.open;
 
 
 public class sort {
     public static Boolean checker = true;
     private static data object;
+    private static GeoCoder details;
     public static ArrayList<Restaurant> Sortedrestaurants;
     private static ArrayList<Integer> price0 = new ArrayList<>();
     private static ArrayList<Integer> price1 = new ArrayList<>();
@@ -17,6 +22,7 @@ public class sort {
     private static ArrayList<Integer> price3 = new ArrayList<>();
     private static ArrayList<Integer> price4 = new ArrayList<>();
 	public sort(data object, String sortValue){
+        details = object.details;
         price0 = new ArrayList<>();
         price1 = new ArrayList<>();
         price2 = new ArrayList<>();
@@ -26,16 +32,22 @@ public class sort {
         this.Sortedrestaurants = new ArrayList<>();
         Result.updating("Sorting the restaurants ...");
         Log.e("SORT_VALUE", sortValue);
+        Log.e("name, distance", details.commonRestaurants_Google.get(0).name + " " + details.distance_getter().get(0));
         switch (sortValue){
             case ("Price(low-high)"):
                 priceLow();
-            case("Price(high-low"):
+                break;
+            case("Price(high-low)"):
                 priceHigh();
-            case("Distance(low-high"):
+                break;
+            case("Distance(low-high)"):
+                Log.e("Chose","distanceLow()");
                 distanceLow();
-            case("Distance(high-low"):
+                break;
+            case("Distance(high-low)"):
                 distanceHigh();
-            case("Rating(high-low"):
+                break;
+            case("Rating(high-low)"):
                 ratingHigh();
             case("Rating(low-high)"):
                 ratingLow();
@@ -49,12 +61,13 @@ public class sort {
     private static void setRestaurants(int i, String price){
 
         String name = details.commonRestaurants_Google.get(i).name;
-        Log.e("checking", i + " " +name );
         String address = details.commonRestaurants_Google.get(i).formattedAddress;
         Double time = details.time_getter().get(i);
+        Log.e("Sort-address", address+" " );
         Double distance = details.distance_getter().get(i);
         Double rating = details.ratings().get(i);
         Bitmap picture = details.pictures.pictures1.get(i);
+        String restaurantId = details.commonRestaurants_Google.get(i).placeId;
         Boolean open;
         try{
             open = object.details.commonRestaurants_Google.get(i).openingHours.openNow;
@@ -63,7 +76,7 @@ public class sort {
             open = null;
         }
         Boolean permanent = object.details.commonRestaurants_Google.get(i).permanentlyClosed;
-        Sortedrestaurants.add(new Restaurant(name, address,time, distance, rating, null, picture, open, permanent, price));
+        Sortedrestaurants.add(new Restaurant(name, address,time, distance, rating, picture, open, permanent, price, restaurantId));
     }
 
     private static void priceLow(){
@@ -73,15 +86,19 @@ public class sort {
                     String price = details.commonRestaurants_Yelp.get(i).getPrice();
                     if(price.equals("$")){
                         price1.add(i);
+                        continue;
                     }
                     if(price.equals("$$")){
                         price2.add(i);
+                        continue;
                     }
                     if(price.equals("$$$")){
                         price3.add(i);
+                        continue;
                     }
                     if(price.equals("$$$$")){
                         price4.add(i);
+                        continue;
                     }
                 }
                 catch (Exception e){
@@ -193,11 +210,16 @@ public class sort {
         }
     }
 
-    private static void distanceLow(){
-        Double[] distance =(Double[]) details.distance_getter().toArray();
+  private static void distanceLow(){
+        Double[] distance = new Double[details.distance_getter().size()];
+        for(int i =0; i < distance.length; i++){
+            distance[i] = details.distance_getter().get(i);
+            Log.e("distance", distance[i]+"");
+        }
         Quick.sort(distance);
         for (double dist : distance){
             int index = details.distance_getter().indexOf(dist);
+            String id = details.commonRestaurants_Google.get(index).placeId;
             String name = details.commonRestaurants_Google.get(index).name;
             String address = details.commonRestaurants_Google.get(index).formattedAddress;
             Double time = details.time_getter().get(index);
@@ -207,24 +229,32 @@ public class sort {
             String price;
             try{
                 price = object.details.commonRestaurants_Yelp.get(index).getPrice();
-                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
             }
-            catch (NullPointerException e){
+            catch (Exception e){
                 checker = false;
                 price = "N/A";
+            }
+            try {
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (Exception e){
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,null,picture,open,permanent,price));
+            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,picture,open,permanent,price,id));
         }
     }
 
     private static void distanceHigh(){
-        Double[] distance =(Double[]) details.distance_getter().toArray();
+        Double[] distance = new Double[details.distance_getter().size()];
+        for(int i =0; i < distance.length; i++){
+            distance[i] = details.distance_getter().get(i);
+        }
         Quick.sort(distance);
         for (int i = distance.length-1; i >=0; i--){
             double dist = distance[i];
             int index = details.distance_getter().indexOf(dist);
+            String id = details.commonRestaurants_Google.get(index).placeId;
             String name = details.commonRestaurants_Google.get(index).name;
             String address = details.commonRestaurants_Google.get(index).formattedAddress;
             Double time = details.time_getter().get(index);
@@ -234,23 +264,34 @@ public class sort {
             String price;
             try{
                 price = object.details.commonRestaurants_Yelp.get(index).getPrice();
-                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
             }
-            catch (NullPointerException e){
+            catch (Exception e){
                 checker = false;
                 price = "N/A";
+            }
+            try {
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (Exception e){
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,null,picture,open,permanent,price));
+            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,picture,open,permanent,price,id));
         }
+
     }
 
     private static void timeLow(){
-        Double[] time =(Double[]) details.time_getter().toArray();
+        Double[] time =new Double[details.time_getter().size()];
+
+        for(int i =0 ; i<time.length; i++){
+            Log.e("time:", "" +time[i]);
+            time[i] = details.time_getter().get(i);
+        }
         Quick.sort(time);
         for (double hours: time){
             int index = details.time_getter().indexOf(hours);
+            String id = details.commonRestaurants_Google.get(index).placeId;
             String name = details.commonRestaurants_Google.get(index).name;
             String address = details.commonRestaurants_Google.get(index).formattedAddress;
             Double distance = details.distance_getter().get(index);
@@ -260,24 +301,32 @@ public class sort {
             String price;
             try{
                 price = object.details.commonRestaurants_Yelp.get(index).getPrice();
-                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
             }
-            catch (NullPointerException e){
+            catch (Exception e){
                 checker = false;
                 price = "N/A";
+            }
+            try {
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (Exception e){
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,null,picture,open,permanent,price));
+            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,picture,open,permanent,price,id));
         }
     }
 
     private static void timeHigh(){
-        Double[] time =(Double[]) details.time_getter().toArray();
+        Double[] time =new Double[details.time_getter().size()];
+        for(int i =0 ; i<time.length; i++){
+            time[i] = details.time_getter().get(i);
+        }
         Quick.sort(time);
-        for (int i = time.length; i >=0; i--){
+        for (int i = time.length-1; i >=0; i--){
             double hours = time[i];
             int index = details.time_getter().indexOf(hours);
+            String id = details.commonRestaurants_Google.get(index).placeId;
             String name = details.commonRestaurants_Google.get(index).name;
             String address = details.commonRestaurants_Google.get(index).formattedAddress;
             Double distance = details.distance_getter().get(index);
@@ -287,23 +336,31 @@ public class sort {
             String price;
             try{
                 price = object.details.commonRestaurants_Yelp.get(index).getPrice();
-                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
             }
-            catch (NullPointerException e){
+            catch (Exception e){
                 checker = false;
                 price = "N/A";
+            }
+            try {
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (Exception e){
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,null,picture,open,permanent,price));
+            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,picture,open,permanent,price,id));
         }
     }
 
     private static void ratingLow(){
-        Double[] rating =(Double[]) details.ratings().toArray();
+        Double[] rating = new Double[details.ratings().size()];
+        for(int i =0; i<rating.length; i++){
+            rating[i] = details.ratings().get(i);
+        }
         Quick.sort(rating);
         for (Double rate : rating){
             int index = details.ratings().indexOf(rate);
+            String id = details.commonRestaurants_Google.get(index).placeId;
             String name = details.commonRestaurants_Google.get(index).name;
             String address = details.commonRestaurants_Google.get(index).formattedAddress;
             Double distance = details.distance_getter().get(index);
@@ -313,24 +370,32 @@ public class sort {
             String price;
             try{
                 price = object.details.commonRestaurants_Yelp.get(index).getPrice();
-                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
             }
-            catch (NullPointerException e){
+            catch (Exception e){
                 checker = false;
                 price = "N/A";
+            }
+            try {
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (Exception e){
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,null,picture,open,permanent,price));
+            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,picture,open,permanent,price,id));
         }
     }
 
     private static void ratingHigh(){
-        Double[] rating =(Double[]) details.ratings().toArray();
+        Double[] rating = new Double[details.ratings().size()];
+        for(int i =0; i<rating.length; i++){
+            rating[i] = details.ratings().get(i);
+        }
         Quick.sort(rating);
         for (int i = rating.length-1; i >= 0; i--){
             Double rate = rating[i];
             int index = details.ratings().indexOf(rate);
+            String id = details.commonRestaurants_Google.get(index).placeId;
             String name = details.commonRestaurants_Google.get(index).name;
             String address = details.commonRestaurants_Google.get(index).formattedAddress;
             Double distance = details.distance_getter().get(index);
@@ -340,15 +405,19 @@ public class sort {
             String price;
             try{
                 price = object.details.commonRestaurants_Yelp.get(index).getPrice();
-                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
             }
-            catch (NullPointerException e){
+            catch (Exception e){
                 checker = false;
                 price = "N/A";
+            }
+            try {
+                open = object.details.commonRestaurants_Google.get(index).openingHours.openNow;
+            }
+            catch (Exception e){
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,null,picture,open,permanent,price));
+            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,picture,open,permanent,price,id));
         }
     }
 }
