@@ -1,16 +1,12 @@
 package com.example.android.yummy.MainActivities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
@@ -39,20 +35,28 @@ public class Main2Activity extends AppCompatActivity {
     private static ArrayList<Integer[]> typesOfStars = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MainActivity.datafetcher();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar3);
-        progressBar.setVisibility(View.GONE);
-        this.object = this;
+        try{
 
-        if (Result.ResultRan){
-            popularRestaurants();
+            setContentView(R.layout.activity_main2);
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar3);
+            progressBar.setVisibility(View.GONE);
+            this.object = this;
+
+            if (Result.ResultRan){
+                popularRestaurants();
+            }
+            else{
+                MainActivity.datafetcher();
+            }
+            modifySearchBar();
+            if( checker == true){
+                Toast.makeText(this,"ENTER A VALID FOOD !",Toast.LENGTH_SHORT).show();
+                checker=false;
+            }
         }
-        modifySearchBar();
-        if( checker == true){
-            Toast.makeText(this,"ENTER A VALID FOOD !",Toast.LENGTH_SHORT).show();
-            checker=false;
+        catch (Exception e){
+            onBackPressed();
         }
     }
 
@@ -66,7 +70,6 @@ public class Main2Activity extends AppCompatActivity {
         final SearchView searchbar = (SearchView) findViewById(R.id.SearchBar);
         searchbar.setQueryHint(Html.fromHtml("<font color = #ffffff>" + " Type the food here " + "</font>"));
         searchbar.onActionViewExpanded();
-        searchbar.setIconified(false);
         searchbar.setQueryHint(Html.fromHtml("<font color = #ffffff>" + " Type the food here " + "</font>"));
         searchbar.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
@@ -82,12 +85,9 @@ public class Main2Activity extends AppCompatActivity {
         searchbar.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                searchbar.setIconified(false);
-
             }
         });
-        searchbar.setIconified(false);
-        searchbar.setIconified(true);
+      //  searchbar.setIconifiedByDefault(false);
     }
 
 
