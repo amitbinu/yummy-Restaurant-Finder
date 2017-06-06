@@ -2,6 +2,7 @@ package com.example.android.yummy.apiCalls;
 
 import android.util.Log;
 
+import com.example.android.yummy.DataManager.Constants;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
@@ -19,7 +20,7 @@ public class UserLocation {
     public UserLocation(double latitude,double longitude) throws Exception{
 
         LatLng location = new LatLng(latitude, longitude);
-        context = new GeoApiContext().setApiKey("AIzaSyDXu5YvRPvWUySjEr_sMy4-EnIfjc54tA4");
+        context = new GeoApiContext().setApiKey(Constants.ApiKey);
         GeocodingApi geolocationApi = null;
 
         GeocodingResult[] geocodingApiRequest = geolocationApi.reverseGeocode(context,location).await();
