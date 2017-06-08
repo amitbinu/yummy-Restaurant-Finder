@@ -2,12 +2,13 @@ package com.example.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
 import com.example.android.yummy.DataManager.GeoCoder;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.errors.InvalidRequestException;
 import com.google.maps.model.PlacesSearchResponse;
+
+import static com.example.android.yummy.apiCalls.restaurant_getter.city;
 
 /**
  * Created by amitb on 2017-05-05.
@@ -18,12 +19,11 @@ public class second_address {
     public static Exception exception;
     private static String nextPage;
     private static GeoApiContext context;
-    private static GeoCoder object;
-    public second_address(String nextPage, GeoApiContext context, GeoCoder object){
+    private static String query;
+    public second_address(GeoApiContext context, String query){
         this.address = null;
-        this.nextPage = nextPage;
         this.context = context;
-        this.object = object;
+        this.query = query;
         new call().execute();
     }
 
@@ -79,7 +79,7 @@ public class second_address {
                     Log.e("error", f.getMessage(), f);
                     while (true){
                         try{
-                            address = PlacesApi.textSearchNextPage(context, nextPage).await();
+                            address = PlacesApi.textSearchQuery(context, query).await();
                             break;
                         }
                         catch (InvalidRequestException g){
