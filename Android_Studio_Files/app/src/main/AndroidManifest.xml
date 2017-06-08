@@ -23,19 +23,22 @@
 
         <activity
             android:name=".MainActivities.MainActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DataManager.Result" />
+        <activity android:name=".MainActivities.Result"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivities.Main2Activity"
             android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".MainActivities.RestaurantActivity" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivities.RestaurantActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".MainActivities.photos"></activity>
     </application>
 
