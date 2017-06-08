@@ -27,7 +27,6 @@ public class restaurant_getter {
     public restaurant_getter(String origin, String city, GeoApiContext context, String food, GeoCoder test){
         this.origin = origin;
         this.city = city;
-        this.FOOD = FOOD;
         this.context = context;
         this.food = food;
         this.object = test;
@@ -51,7 +50,6 @@ public class restaurant_getter {
 
         @Override
         protected void onPostExecute(PlacesSearchResponse strings) {
-            //Result.result.setText(strings[0] + " " + strings[1]);
             object.checker_for_restaurantgetter = true;
             if(object.checker_for_yelp == true){
                 try{
@@ -60,7 +58,6 @@ public class restaurant_getter {
                     Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);
                 }
             }
-
             super.onPostExecute(strings);
         }
     }
