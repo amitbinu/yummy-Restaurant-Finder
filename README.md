@@ -1,4 +1,4 @@
-2# Yummy-Restaurant Finder
+# Yummy-Restaurant Finder
 
 An android application that helps the user to choose a restaurant based on what food they want to eat. 
 
