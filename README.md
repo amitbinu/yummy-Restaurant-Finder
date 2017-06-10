@@ -9,3 +9,11 @@ The user can search a food and sort the final results based on the average price
 When a restaurant is clicked, the application will show more information such as Opening Hours, Contact Info etc about that restaurant.
 
 The data shown in the application are pulled from google maps and yelp.
+
+![Alt text](/relative/path/to/pictures/yummy-1.png?raw=true "Loading Screen")
+
+![Alt text](/relative/path/to/pictures/yummy-2.png?raw=true "Main Screen")
+
+![Alt text](/relative/path/to/pictures/yummy-3.png?raw=true "Results Screen")
+
+![Alt text](/relative/path/to/pictures/yummy-4.png?raw=true "Restaurant Screen")
