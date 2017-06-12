@@ -10,9 +10,8 @@
         android:layout_marginBottom="7dp"
         android:background="@drawable/dropdown"
         android:textColor="@color/TextColor"
-        android:gravity="right"
+        android:gravity="center"
         android:ellipsize="marquee"
-
         >
     </CheckedTextView>
 

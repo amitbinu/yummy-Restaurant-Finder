@@ -108,7 +108,7 @@
                     android:id="@+id/time"
                     android:layout_below="@id/Time_from_your_location"
                     android:src="@drawable/time_restaurant_activity"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="35dp"
                     android:layout_marginTop="4dp"/>
 
                 <TextView
@@ -118,7 +118,7 @@
                     android:layout_below="@id/time"
                     android:textColor="@color/SecondTextColor"
                     android:textSize="18dp"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="30dp"
                     android:text="3.0 min"/>
 
             </RelativeLayout>
@@ -246,35 +246,39 @@
                     android:layout_centerHorizontal="true"
                     android:orientation="horizontal">
                     <ImageView
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:id="@+id/GoogleMaps"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/googlemaps"
+                        android:onClick="GoogleMaps"
                         />
                     <ImageView
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:id="@+id/Website"
                         android:layout_marginTop="5dp"
                         android:layout_marginLeft="20dp"
                         android:src="@drawable/website"
+                        android:onClick="Website"
                         />
                     <ImageView
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:id="@+id/Photos"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/pictures"
+                        android:onClick="Photos"
                         />
                     <ImageView
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:id="@+id/phone"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/phonerestaurantactivity"
+                        android:onClick="Phone"
                         />
                 </LinearLayout>
 
@@ -291,28 +295,32 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/TextColor"
                         android:text="Go Here"
+                        android:textSize="18dp"
                         android:layout_weight="0.89" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/TextColor"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginLeft="11dp"
+                        android:textSize="18dp"
                         android:text="Website"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/TextColor"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginLeft="13dp"
+                        android:textSize="18dp"
                         android:text="Photos"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/TextColor"
-                        android:layout_marginLeft="24dp"
-                        android:text="Phone"/>
+                        android:layout_marginLeft="30dp"
+                        android:textSize="18dp"
+                        android:text="Call"/>
 
                 </LinearLayout>
 
@@ -360,7 +368,7 @@
 
             <TextView
                 android:layout_width="1dp"
-                android:layout_height="215dp"
+                android:layout_height="210dp"
                 android:layout_marginLeft="5dp"
                 android:background="@color/YummyColor"
                 android:layout_toRightOf="@id/relativeLayout3"
@@ -368,20 +376,20 @@
                 android:id="@+id/textView" />
 
             <RelativeLayout
-                android:layout_width="180dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/openingHoursLayout"
-                android:layout_toRightOf="@id/relativeLayout3"
-                android:layout_below="@id/Horizontal_divider3">
+                android:layout_alignTop="@+id/Horizontal_divider3"
+                android:layout_toRightOf="@+id/relativeLayout3"
+                android:layout_toEndOf="@+id/relativeLayout3">
 
                 <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:id="@+id/OpenStatus"
                     android:src="@drawable/open_restaurant_activity"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginTop="144dp"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginTop="172dp"
+                    android:layout_marginLeft="8dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -396,78 +404,158 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/SecondTextColor"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:layout_below="@id/OpeningHours"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="22dp"
                     android:layout_marginTop="2dp"
+                    android:text="Sun"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/SecondTextColor"
+                    android:textSize="15dp"
+                    android:layout_below="@id/OpeningHours"
+                    android:layout_marginTop="2dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="65dp"
                     android:id="@+id/Sunday"
-                    android:text="Sunday"
+                    android:text=""
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/SecondTextColor"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:layout_below="@id/Sunday"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Mon"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/SecondTextColor"
+                    android:textSize="15dp"
+                    android:layout_below="@id/Sunday"
                     android:layout_marginTop="5dp"
                     android:id="@+id/Monday"
-                    android:text="Monday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="65dp"
+                    android:text=""
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/SecondTextColor"
+                    android:textSize="15dp"
+                    android:layout_below="@id/Monday"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Tue"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/SecondTextColor"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:layout_below="@id/Monday"
-                    android:layout_marginLeft="25dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="65dp"
                     android:layout_marginTop="5dp"
                     android:id="@+id/Tuesday"
-                    android:text="Tuesday"
+                    android:text=""
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/SecondTextColor"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:layout_below="@id/Tuesday"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Wed"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/SecondTextColor"
+                    android:textSize="15dp"
+                    android:layout_below="@id/Tuesday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="65dp"
                     android:layout_marginTop="5dp"
                     android:id="@+id/Wednesday"
-                    android:text="Wednesday"
+                    android:text=""
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/SecondTextColor"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:layout_below="@id/Wednesday"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Thu"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/SecondTextColor"
+                    android:textSize="15dp"
+                    android:layout_below="@id/Wednesday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="65dp"
                     android:layout_marginTop="5dp"
                     android:id="@+id/Thursday"
-                    android:text="Thursday"
+                    android:text=""
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/SecondTextColor"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:layout_below="@id/Thursday"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Fri"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/SecondTextColor"
+                    android:textSize="15dp"
+                    android:layout_below="@id/Thursday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="65dp"
                     android:layout_marginTop="5dp"
                     android:id="@+id/Friday"
-                    android:text="Friday"
+                    android:text=""
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/SecondTextColor"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:layout_below="@id/Friday"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Sat"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/SecondTextColor"
+                    android:textSize="15dp"
+                    android:layout_below="@id/Friday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="65dp"
                     android:layout_marginTop="5dp"
                     android:id="@+id/Saturday"
-                    android:text="Saturday"
+                    android:text=""
                     />
             </RelativeLayout>
 
@@ -477,6 +565,7 @@
                 android:layout_height="1dp"
                 android:background="@color/YummyColor"
                 android:layout_below="@id/openingHoursLayout"
+                android:layout_marginTop="5dp"
                 android:layout_centerHorizontal="true"/>
 
             <TextView
@@ -493,6 +582,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_below="@id/Reviews"
                 android:id="@+id/reviews_text">
 

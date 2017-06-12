@@ -27,7 +27,6 @@
         android:inputType="text"
         android:imeOptions="actionSearch"
         android:clickable="true"
-        android:onClick="nextActivity"
         android:layout_alignParentTop="true"
         />
 
