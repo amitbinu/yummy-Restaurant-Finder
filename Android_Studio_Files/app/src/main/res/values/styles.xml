@@ -31,5 +31,6 @@
 
     <style name="SampleTheme" parent="@android:style/Theme.Holo.Light">
         <item name="android:dropDownListViewStyle">@style/TestSpinnerStyle</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 </resources>

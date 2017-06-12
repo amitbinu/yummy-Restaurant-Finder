@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Yummy</string>
     <string name="title_activity_main2">Main2Activity</string>
-
+    <string name="google_app_id">658181482295</string>
     <string name="SpinnerName">SORT</string>
     <string-array name="SpinnerSort">
         <item>Price(low-high)</item>
