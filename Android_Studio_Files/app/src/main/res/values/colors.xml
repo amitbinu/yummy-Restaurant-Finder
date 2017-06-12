@@ -4,12 +4,12 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#e80d0d</color>
     <color name="SearchColor">#565454</color>
-    <color name="BackGroundSearch">#303847</color>
+    <color name="BackGroundSearch">#323c4f</color>
     <color name="BackGroundPopular">#232323</color>
     <color name="TextColor">#ffffff</color>
     <color name="SecondTextColor">#edeaea</color>
     <color name="HeadingColor">#b3dbcc</color>
-    <color name="YummyColor">#e80d0d</color>
+    <color name="YummyColor">#D7263D</color>
     <color name="SpinnerColor">#232323</color>
     <color name="Green">#2cb21a</color>
     <color name="link_color">#1d4cd6</color>
