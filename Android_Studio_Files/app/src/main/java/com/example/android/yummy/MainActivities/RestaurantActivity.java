@@ -84,6 +84,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
 
     public static void afterApiCall() {
+        try{
         progressBar.setVisibility(View.GONE);
         restaurantName.setVisibility(View.VISIBLE);
         scrollView.setVisibility(View.VISIBLE);
@@ -116,7 +117,14 @@ public class RestaurantActivity extends AppCompatActivity {
 
         setRatings();
         object.review_setter();
-        object.openingHours();
+        object.openingHours();}
+        catch (Exception e){
+            object.backPress();
+        }
+    }
+
+    private void backPress(){
+        onBackPressed();
     }
 
     public static void setRatings() {
