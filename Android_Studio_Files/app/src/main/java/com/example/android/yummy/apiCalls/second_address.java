@@ -20,10 +20,12 @@ public class second_address {
     private static String nextPage;
     private static GeoApiContext context;
     private static String query;
-    public second_address(GeoApiContext context, String query){
+    private static GeoCoder geoCoder;
+    public second_address(GeoApiContext context, String query, GeoCoder geoCoder){
         this.address = null;
         this.context = context;
         this.query = query;
+        this.geoCoder = geoCoder;
         new call().execute();
     }
 
@@ -43,14 +45,14 @@ public class second_address {
 
             }
             catch (InvalidRequestException f){
-             //   Log.d("error", f.getMessage(), f);
+                Log.d("error", f.getMessage(), f);
                 while (true){
                     try{
                         address = PlacesApi.textSearchNextPage(context, nextPage).await();
                         break;
                     }
                     catch (InvalidRequestException g){
-                  //      Log.d("error", f.getMessage(), f);
+                       Log.d("error", f.getMessage(), f);
                         continue;
                     }
                     catch (Exception all){
@@ -65,6 +67,16 @@ public class second_address {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if(address.nextPageToken != null){
+                 geoCoder.afterAddress2(address,false);}
+            else{
+                geoCoder.afterAddress2(address,true);
+            }
+            super.onPostExecute(aVoid);
+        }
     }
     class call extends AsyncTask<Void, Void, PlacesSearchResponse>{
 
@@ -72,7 +84,7 @@ public class second_address {
         protected PlacesSearchResponse doInBackground(Void... params) {
 
                 try {
-                    address = PlacesApi.textSearchNextPage(context, nextPage).await();
+                    address = PlacesApi.textSearchQuery(context, query).await();
 
                 }
                 catch (InvalidRequestException f){
@@ -100,10 +112,11 @@ public class second_address {
             return null;
         }
 
+        @Override
         protected void onPostExecute(PlacesSearchResponse strings) {
             //Result.result.setText(strings[0] + " " + strings[1]);
             try{
-     //          object.get_address()
+                geoCoder.afterAddress(address);
                ;}
             catch (Exception e){
                 Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);
