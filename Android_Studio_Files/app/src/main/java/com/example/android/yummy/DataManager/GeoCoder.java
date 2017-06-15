@@ -3,7 +3,9 @@ package com.example.android.yummy.DataManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import java.util.ArrayList;
+
 import java.util.Stack;
+import com.example.android.yummy.MainActivities.MainActivity;
 import com.example.android.yummy.apiCalls.distanceTimeBackThread;
 import com.example.android.yummy.apiCalls.photoRequest;
 import com.example.android.yummy.apiCalls.restaurant_getter;
@@ -123,9 +125,9 @@ public class GeoCoder extends AppCompatActivity {
 		this.object = this;
 		this.Dataobject = object;
 		context = new GeoApiContext().setApiKey(Constants.ApiKey);
-		distances = new Stack<Double>();
-		times = new Stack<Double>();
-		ratings = new Stack<Double>();
+		distances = new Stack<>();
+		times = new Stack<>();
+		ratings = new Stack<>();
 			Restaurant_getter(origin, city, foods_from_user);
 	}
 	/**
@@ -136,10 +138,11 @@ public class GeoCoder extends AppCompatActivity {
 	 * @throws Exception Throws exceptions mainly for invalid requests made to google.
 	 */
 	private static void Restaurant_getter(String origin, String city, String FOOD) throws Exception {
-		if (!FOOD.isEmpty()) {
-			yelpCaller = new yelp(FOOD + " Restaurants ",city, object);
+            checker_for_restaurantgetter = false;
+            checker_for_yelp = false;
+            yelpCaller = new yelp(FOOD + " Restaurants ",city, object);
 			test1 = new restaurant_getter(origin,city,context,FOOD,object);
-		}
+
 	}
 	private static ArrayList<String> yelpNames = new ArrayList<>();
 	/**
@@ -148,6 +151,7 @@ public class GeoCoder extends AppCompatActivity {
 	 * @throws Exception
 	 */
 	public static void afterWAIT() throws Exception{
+		Log.e("Executing", "GeoCoder-afterWait()");
         yelpNames = new ArrayList<>();
 		PlacesSearchResponse address = test1.address;
         commonRestaurants_Google = new ArrayList<>();
@@ -158,37 +162,61 @@ public class GeoCoder extends AppCompatActivity {
             yelpNames.add(yelpCaller.response.body().getBusinesses().get(i).getName());
         }
         CommonFinder(address);
-        while(address.nextPageToken != null){
-            if(Google1.size()>40){break;}
-            second_address secondAddress = new second_address(address.nextPageToken,new GeoApiContext().setApiKey(Constants.ApiKey));
-            while(secondAddress.address ==null){}
-            address = secondAddress.address;
-            CommonFinder(address);
-        }
-        int j =0;
-		if (Google1.size() < 10) {
-			for (int i = 0; i < Google1.size() + Google2.size(); i++) {
-				if (i < Google1.size()) {
-					commonRestaurants_Google.add(Google1.get(i));
-				}
-				if(i >= Google1.size() && !commonRestaurants_Google.contains(Google2.get(j))) {
-					commonRestaurants_Google.add(Google2.get(j));
-					j++;
-				}
-			}
+		if(address.nextPageToken == null){
+			second_address SecondAddress = new second_address(context, food + " restaurants in " + MainActivity.CITY, object);
 		}
 		else{
-			commonRestaurants_Google = Google1;
+            second_address SecondAddress = new second_address(address.nextPageToken,context);
+        }
+
 		}
-            com.example.android.yummy.MainActivities.Result.updating("Gathering restaurants' pictures");
-            pictures = new photoRequest(commonRestaurants_Google);
-            DataOrganizer();
-		}
+
+    public static void afterAddress2(PlacesSearchResponse address,boolean value){
+        CommonFinder(address);
+        if(value==true){
+            organizeAllData();
+        }
+        else {
+            second_address SecondAddress = new second_address(address.nextPageToken,context);
+        }
+    }
+    public static void afterAddress(PlacesSearchResponse address){
+        CommonFinder(address);
+        organizeAllData();
+    }
+
+    private static void organizeAllData(){
+        int j =0;
+        if (Google1.size() < 10) {
+            for (int i = 0; i < Google1.size() + Google2.size(); i++) {
+                if (i < Google1.size()) {
+                    commonRestaurants_Google.add(Google1.get(i));
+                }
+                if(i >= Google1.size() && !commonRestaurants_Google.contains(Google2.get(j))) {
+                    commonRestaurants_Google.add(Google2.get(j));
+                    j++;
+                }
+            }
+        }
+        else{
+            commonRestaurants_Google = Google1;
+        }
+        com.example.android.yummy.MainActivities.Result.updating("Gathering restaurants' pictures");
+        pictures = new photoRequest(commonRestaurants_Google);
+        try{
+            DataOrganizer();}
+        catch (Exception e){
+            Log.e("Geo-201",e.getMessage());
+        }
+    }
     /**
      * This method finds the common Restaurants in Google's and Yelp's response.
      * @param address The PlaseSearchResponse returned by the Google Maps API after a request was made.
      */
+
     private static void CommonFinder(PlacesSearchResponse address) {
+        Log.e("Entering", "CommonFinder");
+
         for(int j =0; j < address.results.length; j++){
             if(yelpNames.contains(address.results[j].name)){
                 int index = yelpNames.indexOf(address.results[j].name);
@@ -235,6 +263,7 @@ public class GeoCoder extends AppCompatActivity {
      * @throws Exception throws an Exception when invalid request is made to get the distance and time.
      */
 	private static void DataOrganizer() throws Exception{
+        Log.e("Entering", "DataOrganizer");
         destinations = new String[commonRestaurants_Google.size()];
 		for (int i =0; i < commonRestaurants_Google.size(); i++){
             destinations[i] = commonRestaurants_Google.get(i).formattedAddress;
@@ -259,6 +288,7 @@ public class GeoCoder extends AppCompatActivity {
 	 */
 	private static void distanceAndTime(String origin, String[] destinations) throws Exception{
 		String[] temp = {origin};
+		Log.e("destinations",destinations.length+"");
 		fetcher = new distanceTimeBackThread(temp, destinations, context, object);
     }
 
@@ -267,7 +297,9 @@ public class GeoCoder extends AppCompatActivity {
      *
      */
     public static void afterDist(){
+
         DistanceMatrix dist = fetcher.result;
+		Log.e("dist-row-size",dist.rows[0].elements.length+"");
         for(int i =0; i < dist.rows[0].elements.length ; i++){
             try{
                 String[] removeUnit = null;
