@@ -2,6 +2,7 @@ package com.example.android.yummy.DataManager;
 
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 import java.util.Stack;
@@ -17,7 +18,6 @@ import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.yelp.fusion.client.models.Business;
 
-import static com.example.android.yummy.apiCalls.second_address.address;
 
 /**
  * This class calls the Google Api and yelp Api and then finds the common Restaurants both APIs returns.
@@ -52,10 +52,6 @@ public class GeoCoder extends AppCompatActivity {
 	 */
 	private static Stack<Double> ratings;
 	/**
-	 * Yelp object that is used to call the yelp Api with appropriate parameters.
-	 */
-	private static yelp yelpCaller;
-	/**
 	 * A GeoCoder object that is passed to other classes.
 	 */
 	private static GeoCoder object;
@@ -72,14 +68,6 @@ public class GeoCoder extends AppCompatActivity {
 	 */
 	private static ArrayList<PlacesSearchResult> Google1;
 	/**
-	 * The PlaceSearchResults of all the restaurants that are returned by Google Maps API but not by Yelp API.
-	 */
-	private static ArrayList<PlacesSearchResult> Google2;
-	/**
-	 * The <i> yelp.models.Business </i> of the common restaurants that are returned by both Google maps API and Yelp API.
-	 */
-    public static ArrayList<Business> commonRestaurants_Yelp;
-	/**
 	 * <i>data</i> object that is used to call the <i>results</i> method in <i>data</i> class, after all the information is collected.
 	 */
 	private static data Dataobject;
@@ -91,10 +79,6 @@ public class GeoCoder extends AppCompatActivity {
 	 * <i>restaurant_getter</i> object that calls the google maps API to get the information.
 	 */
 	public static restaurant_getter test1;
-	/**
-	 * A boolean variable that will be changed to true once the yelp's response is gotten.
-	 */
-	public static Boolean checker_for_yelp = false;
 	/**
 	 * A boolean variable that will be changed to true once the Google Maps's response is gotten.
 	 */
@@ -116,7 +100,7 @@ public class GeoCoder extends AppCompatActivity {
 	 * @param city_name This is the name of the city the user is currently in.
 	 * @param foods_from_user The food the user entered.
 	 * @param origin The user's location in the form of coordinates.
-	 * @throws Exception Throws exceptions mainly for invalid requests made to google and / or yelp.
+	 * @throws Exception Throws exceptions mainly for invalid requests made to google.
 	 */
 	public GeoCoder (String city_name, String foods_from_user, String origin, data object) throws Exception{
 		this.origin = origin;
@@ -138,29 +122,18 @@ public class GeoCoder extends AppCompatActivity {
 	 * @throws Exception Throws exceptions mainly for invalid requests made to google.
 	 */
 	private static void Restaurant_getter(String origin, String city, String FOOD) throws Exception {
-            checker_for_restaurantgetter = false;
-            checker_for_yelp = false;
-            yelpCaller = new yelp(FOOD + " Restaurants ",city, object);
 			test1 = new restaurant_getter(origin,city,context,FOOD,object);
 
 	}
-	private static ArrayList<String> yelpNames = new ArrayList<>();
 	/**
 	 * This method is called after both yelp's and google maps' response is got.
 	 * This method finds as many common restaurants in google maps' and yelp's response.
 	 * @throws Exception
 	 */
 	public static void afterWAIT() throws Exception{
-		Log.e("Executing", "GeoCoder-afterWait()");
-        yelpNames = new ArrayList<>();
 		PlacesSearchResponse address = test1.address;
         commonRestaurants_Google = new ArrayList<>();
-        commonRestaurants_Yelp = new ArrayList<>();
 		Google1 = new ArrayList<>();
-		Google2 = new ArrayList<>();
-        for(int i =0; i <yelpCaller.response.body().getBusinesses().size(); i++){
-            yelpNames.add(yelpCaller.response.body().getBusinesses().get(i).getName());
-        }
         CommonFinder(address);
 		if(address.nextPageToken == null){
 			second_address SecondAddress = new second_address(context, food + " restaurants in " + MainActivity.CITY, object);
@@ -173,7 +146,7 @@ public class GeoCoder extends AppCompatActivity {
 
     public static void afterAddress2(PlacesSearchResponse address,boolean value){
         CommonFinder(address);
-        if(value==true){
+        if(value==true || Google1.size() >=40){
             organizeAllData();
         }
         else {
@@ -186,27 +159,13 @@ public class GeoCoder extends AppCompatActivity {
     }
 
     private static void organizeAllData(){
-        int j =0;
-        if (Google1.size() < 10) {
-            for (int i = 0; i < Google1.size() + Google2.size(); i++) {
-                if (i < Google1.size()) {
-                    commonRestaurants_Google.add(Google1.get(i));
-                }
-                if(i >= Google1.size() && !commonRestaurants_Google.contains(Google2.get(j))) {
-                    commonRestaurants_Google.add(Google2.get(j));
-                    j++;
-                }
-            }
-        }
-        else{
-            commonRestaurants_Google = Google1;
-        }
+        commonRestaurants_Google = Google1;
+
         com.example.android.yummy.MainActivities.Result.updating("Gathering restaurants' pictures");
         pictures = new photoRequest(commonRestaurants_Google);
         try{
             DataOrganizer();}
         catch (Exception e){
-            Log.e("Geo-201",e.getMessage());
         }
     }
     /**
@@ -215,55 +174,18 @@ public class GeoCoder extends AppCompatActivity {
      */
 
     private static void CommonFinder(PlacesSearchResponse address) {
-        Log.e("Entering", "CommonFinder");
-
         for(int j =0; j < address.results.length; j++){
-            if(yelpNames.contains(address.results[j].name)){
-                int index = yelpNames.indexOf(address.results[j].name);
-                try{
-                    String price = yelpCaller.response.body().getBusinesses().get(index).getPrice();
-                    if(price != null){
-                        Google1.add(address.results[j]);
-                        commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(index));
-                    }
-                    else{
-                        String isItNull = null;
-                        for (int findPrice=index+1; findPrice< yelpCaller.response.body().getBusinesses().size();findPrice++){
-                            if (yelpCaller.response.body().getBusinesses().get(findPrice).getName().equals(address.results[j].name)){
-                                try{
-                                    isItNull = yelpCaller.response.body().getBusinesses().get(findPrice).getPrice();
-                                    Boolean checking = isItNull.equals("");
-                                    Google1.add(address.results[j]);
-                                    commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(index));
-                                    break;
-                                }
-                                catch (NullPointerException f){
-                                    continue;
-                                }
-                            }
-                        }
-                        if(isItNull == null){
-                            Google1.add(address.results[j]);
-                            commonRestaurants_Yelp.add(yelpCaller.response.body().getBusinesses().get(index));
-                        }
-                    }
+				if(! Google1.contains(address.results[j])){
+					Google1.add(address.results[j]);
                 }
-                catch (ExceptionInInitializerError e){
-                    Log.e("GeoCoder-commonFinder",e.getMessage());
-                }
-            }
-            if(!Google1.contains(address.results[j])){
-                Google2.add(address.results[j]);
-            }
-            }
 
+            }
     }
     /**
      * This method organizes all the data and puts certain information in appropriate stacks.
      * @throws Exception throws an Exception when invalid request is made to get the distance and time.
      */
 	private static void DataOrganizer() throws Exception{
-        Log.e("Entering", "DataOrganizer");
         destinations = new String[commonRestaurants_Google.size()];
 		for (int i =0; i < commonRestaurants_Google.size(); i++){
             destinations[i] = commonRestaurants_Google.get(i).formattedAddress;
@@ -288,7 +210,6 @@ public class GeoCoder extends AppCompatActivity {
 	 */
 	private static void distanceAndTime(String origin, String[] destinations) throws Exception{
 		String[] temp = {origin};
-		Log.e("destinations",destinations.length+"");
 		fetcher = new distanceTimeBackThread(temp, destinations, context, object);
     }
 
@@ -299,7 +220,6 @@ public class GeoCoder extends AppCompatActivity {
     public static void afterDist(){
 
         DistanceMatrix dist = fetcher.result;
-		Log.e("dist-row-size",dist.rows[0].elements.length+"");
         for(int i =0; i < dist.rows[0].elements.length ; i++){
             try{
                 String[] removeUnit = null;
@@ -330,14 +250,11 @@ public class GeoCoder extends AppCompatActivity {
                 }
                 distances.push(Double.parseDouble(removeUnit[0]));
                 times.push(Double.parseDouble(removeMINS[0]));
-				Log.e("Dist&time", Double.parseDouble(removeUnit[0]) + " km " + Double.parseDouble(removeMINS[0])+" mins");
             }
             catch (NullPointerException f){
-                Log.e("NullError-afterDist", f.getMessage());
                 continue;
             }
             catch (NumberFormatException e){
-                Log.e("NumError-afterdist",e.getMessage());
                 distances.push(null);
                 times.push(null);
             }
