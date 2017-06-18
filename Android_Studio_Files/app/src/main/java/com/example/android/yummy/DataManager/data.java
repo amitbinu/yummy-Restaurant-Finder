@@ -27,6 +27,10 @@ public class data {
             Result.EXIT();
         }
         else{
+			if(details.commonRestaurants_Google.size() != details.distance_getter().size()){
+				details.commonRestaurants_Google.remove(details.commonRestaurants_Google.size()-1);
+				details.pictures.pictures1.remove(details.pictures.pictures1.size()-1);
+			}
 			Result.getter();}
 		}
 }
