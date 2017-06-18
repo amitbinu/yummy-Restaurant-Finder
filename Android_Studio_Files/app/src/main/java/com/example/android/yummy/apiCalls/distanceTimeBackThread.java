@@ -2,20 +2,13 @@ package com.example.android.yummy.apiCalls;
 
 import
         android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.android.yummy.DataManager.GeoCoder;
 import com.example.android.yummy.MainActivities.Main2Activity;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
-
-import java.util.ArrayList;
-
-import static com.example.android.yummy.MainActivities.Main2Activity.distanceUnit;
 import static com.example.android.yummy.MainActivities.Main2Activity.distances;
-import static com.example.android.yummy.MainActivities.Main2Activity.times;
-import static com.example.android.yummy.R.drawable.distance;
 
 /**
  * Created by amitb on 2017-05-07.
@@ -73,13 +66,11 @@ public class distanceTimeBackThread {
                     catch (Exception e){
                         time = result.rows[0].elements[i].duration.humanReadable;
                     }
-                    Log.e("time", time);
                     String[] tim = time.split("min");
                     object1.times[i] = Double.parseDouble(tim[0]);
                 }
                 }
             catch (Exception e){
-                Log.e("ERROR", e.getMessage(), e);
             }
             return null;
         }

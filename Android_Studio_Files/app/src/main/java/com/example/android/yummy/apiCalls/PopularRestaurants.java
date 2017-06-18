@@ -36,7 +36,7 @@ public class PopularRestaurants {
         protected PlacesSearchResponse doInBackground(String... params) {
 
             try{
-                address = PlacesApi.textSearchQuery(context, "Best " + " restaurants in " + communityName).await();
+                address = PlacesApi.textSearchQuery(context, communityName).await();
             }
             catch (Exception e){
                 Log.e("ERROR IN POPULAR REST", e.getMessage(), e);

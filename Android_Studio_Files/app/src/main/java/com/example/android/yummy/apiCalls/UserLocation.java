@@ -1,7 +1,4 @@
 package com.example.android.yummy.apiCalls;
-
-import android.util.Log;
-
 import com.example.android.yummy.DataManager.Constants;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -18,7 +15,6 @@ public class UserLocation {
 
     private static GeoApiContext context;
     public UserLocation(double latitude,double longitude) throws Exception{
-
         LatLng location = new LatLng(latitude, longitude);
         context = new GeoApiContext().setApiKey(Constants.ApiKey);
         GeocodingApi geolocationApi = null;
@@ -29,7 +25,6 @@ public class UserLocation {
         cityName = geocodingApiRequest[0].addressComponents[3].longName;
         stateName = geocodingApiRequest[0].addressComponents[5].longName;
         countryName = geocodingApiRequest[0].addressComponents[6].longName;
-        Log.e("ADDRESS", "WORKED" );
 
 
     }

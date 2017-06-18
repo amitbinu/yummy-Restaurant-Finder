@@ -1,14 +1,12 @@
 package com.example.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
-import android.util.Log;
+
 import com.example.android.yummy.DataManager.GeoCoder;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.errors.InvalidRequestException;
 import com.google.maps.model.PlacesSearchResponse;
-
-import static com.example.android.yummy.apiCalls.restaurant_getter.city;
 
 /**
  * Created by amitb on 2017-05-05.
@@ -45,25 +43,21 @@ public class second_address {
 
             }
             catch (InvalidRequestException f){
-                Log.d("error", f.getMessage(), f);
                 while (true){
                     try{
                         address = PlacesApi.textSearchNextPage(context, nextPage).await();
                         break;
                     }
                     catch (InvalidRequestException g){
-                       Log.d("error", f.getMessage(), f);
                         continue;
                     }
                     catch (Exception all){
-                        Log.e("ERROR", all.getMessage(), all);
                         break;
                     }
                 }
             }
             catch (Exception e) {
                 address = null;
-                Log.e("ERROR SECOND GEO", e.getMessage(), e);
             }
             return null;
         }
@@ -88,25 +82,21 @@ public class second_address {
 
                 }
                 catch (InvalidRequestException f){
-                    Log.e("error", f.getMessage(), f);
                     while (true){
                         try{
                             address = PlacesApi.textSearchQuery(context, query).await();
                             break;
                         }
                         catch (InvalidRequestException g){
-                            Log.e("error", f.getMessage(), f);
                             continue;
                         }
                         catch (Exception all){
-                            Log.e("ERROR", all.getMessage(), all);
                             break;
                         }
                     }
                 }
                 catch (Exception e) {
                     address = null;
-                    Log.e("ERROR SECOND GEO", e.getMessage(), e);
                 }
 
             return null;
@@ -119,7 +109,6 @@ public class second_address {
                 geoCoder.afterAddress(address);
                ;}
             catch (Exception e){
-                Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);
             }
             super.onPostExecute(strings);
         }

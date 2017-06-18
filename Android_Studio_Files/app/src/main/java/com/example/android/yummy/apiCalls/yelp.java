@@ -1,15 +1,12 @@
 package com.example.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
-import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.example.android.yummy.DataManager.Constants;
 import com.example.android.yummy.DataManager.GeoCoder;
-import com.example.android.yummy.DataManager.Restaurant;
 import com.example.android.yummy.MainActivities.RestaurantActivity;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.yelp.fusion.client.connection.YelpFusionApi;
 import com.yelp.fusion.client.connection.YelpFusionApiFactory;
 import com.yelp.fusion.client.models.SearchResponse;
@@ -59,19 +56,16 @@ public class yelp {
                 response  = call.execute();
 
             } catch (Exception e) {
-                Log.e("ERROR", e.getMessage());
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            geoCoder.checker_for_yelp = true;
             if(geoCoder.checker_for_restaurantgetter == true){
                 try{
                 geoCoder.afterWAIT();}
                 catch (Exception e){
-                    Log.e("Error", e.getMessage());
                 }
             }
             super.onPostExecute(s);
@@ -94,7 +88,6 @@ public class yelp {
                 response  = call.execute();
 
             } catch (Exception e) {
-                Log.e("ERROR", e.getMessage());
             }
             return null;
         }

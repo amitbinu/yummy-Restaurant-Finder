@@ -3,11 +3,8 @@ package com.example.android.yummy.apiCalls;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
-
 import com.example.android.yummy.DataManager.Constants;
 import com.example.android.yummy.MainActivities.Result;
-import com.example.android.yummy.MainActivities.Main2Activity;
 import com.example.android.yummy.MainActivities.MainActivity;
 import com.example.android.yummy.MainActivities.photos;
 import com.google.maps.GeoApiContext;
@@ -17,15 +14,7 @@ import com.google.maps.model.Photo;
 import com.google.maps.model.PhotoResult;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
-
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-
 import static com.example.android.yummy.apiCalls.restaurant_getter.city;
 
 /**
@@ -75,7 +64,6 @@ public class photoRequest {
         this.pictures1 = new ArrayList<>();
 
         this.size = placesSearchResults.size();
-
         new lastCall().execute();
     }
 
@@ -129,7 +117,6 @@ public class photoRequest {
         @Override
         protected PhotoResult doInBackground(Void... params) {
             for (int i = 0; i < size; i++){
-                Log.e("in the picture:",i + " " + placesSearchResult.get(i).name);
                 try {
                     PhotoRequest photoRequests = new PhotoRequest(context);
                     photoRequests.maxHeight(100);
@@ -143,8 +130,6 @@ public class photoRequest {
                     pictures1.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));
                 }
                 catch (Exception e) {
-                    Log.d("photorequest Error", e.getMessage());
-                    Log.d("Values", i +" " + placesSearchResult.get(i).name);
                     PlacesSearchResponse testingaddress = null;
                     try{
                         testingaddress = PlacesApi.textSearchQuery(context, placesSearchResult.get(i).name+ " in " + city).await();
@@ -166,7 +151,6 @@ public class photoRequest {
                         }
                         catch (Exception h){
                             counter++;
-                            Log.d("error", h.getMessage());
                             continue;
                         }
                     }
@@ -190,7 +174,6 @@ public class photoRequest {
                                 }
                                 catch (Exception h){
                                     counter++;
-                                    Log.d("error", h.getMessage());
                                     continue;
                                 }
                             }
@@ -233,7 +216,6 @@ public class photoRequest {
                     options.inScaled = false;
                     pictures1.add(BitmapFactory.decodeByteArray(bytes,0,bytes.length,options));}
                 catch (Exception e){
-                    Log.e("fetchPhotos","-photoRequest "+ e.getMessage());
                 }
             }
             return null;

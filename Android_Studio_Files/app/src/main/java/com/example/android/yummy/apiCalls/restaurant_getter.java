@@ -1,15 +1,10 @@
 package com.example.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
-import android.util.Log;
-
 import com.example.android.yummy.DataManager.GeoCoder;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.PlacesSearchResponse;
-
-import java.net.URL;
-import java.util.Stack;
 
 /**
  * Created by amitb on 2017-05-05.
@@ -17,7 +12,6 @@ import java.util.Stack;
 
 public class restaurant_getter {
     public static String origin, city;
-    public static Stack<String> FOOD;
     public static GeoApiContext context;
     public static String food;
     public PlacesSearchResponse address;
@@ -42,7 +36,6 @@ public class restaurant_getter {
                     address = PlacesApi.textSearchQuery(context, food + " restaurants in " + city).await();
                 }
                 catch (Exception e){
-                    Log.e("ERROR", e.getMessage(), e);
                 }
                 return address;
 
@@ -50,14 +43,11 @@ public class restaurant_getter {
 
         @Override
         protected void onPostExecute(PlacesSearchResponse strings) {
-            object.checker_for_restaurantgetter = true;
-            if(object.checker_for_yelp == true){
                 try{
                     object.afterWAIT();}
                 catch (Exception e){
-                    Log.e("ERROR IN doInBACKGROUND", e.getMessage(), e);
                 }
-            }
+
             super.onPostExecute(strings);
         }
     }

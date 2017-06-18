@@ -33,7 +33,6 @@ public class DetailedRequest {
             placeDetails = PlacesApi.placeDetails(context,placeId).await();}
 
             catch (Exception e){
-                Log.e("error-detailedRequest", e.getMessage());
             }
             return null;
         }
