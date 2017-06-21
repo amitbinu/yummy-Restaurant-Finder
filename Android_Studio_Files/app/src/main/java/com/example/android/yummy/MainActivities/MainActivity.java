@@ -40,6 +40,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.PlacesSearchResponse;
 
+import static com.example.android.yummy.apiCalls.restaurant_getter.context;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
     private static GoogleApiClient mGoogleApiClient;
     public static String CITY, COMMUNITY, COUNTRY, STATE;
@@ -131,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.e("STATUS", mGoogleApiClient.isConnected()+"");
 
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient ,builder.build());
@@ -149,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             try{
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
-                                onStop();
                                 UserLocation userLocation = new UserLocation(latitude,longitude);
                                 nextActivity(userLocation.cityName, userLocation.communityName, userLocation.stateName, userLocation.countryName);
                             }
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             status.startResolutionForResult(MainActivity.this, 0);
                         }
                         catch (IntentSender.SendIntentException e) {}
-
+                        break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                         break;
                 }
@@ -189,13 +190,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(Location location){
+        Log.e("onLocationChanged", mGoogleApiClient.isConnected()+"");
         try{
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            onStop();
+
         UserLocation userLocation = new UserLocation(latitude,longitude);
         nextActivity(userLocation.cityName, userLocation.communityName, userLocation.stateName, userLocation.countryName);}
-        catch (Exception e){}
+        catch (Exception e){Log.e("error",e.getMessage());}
     }
 
     @Override
@@ -224,8 +226,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static String[] origin,destinations;
 
     public void startNextActivity(){
+
+
         Intent intent = new Intent(this, Main2Activity.class);
         startActivity(intent);
+
     }
     public static void datafetcher(){
         PlacesSearchResponse address = popularRestaurants.address;

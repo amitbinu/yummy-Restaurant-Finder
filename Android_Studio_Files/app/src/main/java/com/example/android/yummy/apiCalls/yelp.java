@@ -95,9 +95,7 @@ public class yelp {
         @Override
         protected void onPostExecute(Void aVoid) {
             RestaurantActivity.checker_for_yelp = true;
-            if(RestaurantActivity.checker_for_placeDetails == true){
-                RestaurantActivity.afterApiCall();
-            }
+            RestaurantActivity.showAllData();
             super.onPostExecute(aVoid);
         }
     }

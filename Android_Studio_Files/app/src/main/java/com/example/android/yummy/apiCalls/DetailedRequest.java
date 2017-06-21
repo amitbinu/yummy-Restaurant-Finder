@@ -41,7 +41,7 @@ public class DetailedRequest {
         protected void onPostExecute(Void aVoid) {
             RestaurantActivity.checker_for_placeDetails = true;
             if(RestaurantActivity.checker_for_yelp == true){
-                RestaurantActivity.afterApiCall();
+               // RestaurantActivity.afterApiCall();
             }
             super.onPostExecute(aVoid);
         }

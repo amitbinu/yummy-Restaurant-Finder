@@ -89,6 +89,7 @@ public class Result extends AppCompatActivity {
         try {
             test = new data(Main2Activity.Message, MainActivity.latitude + " " + MainActivity.longitude, COMMUNITY + ", " + MainActivity.CITY + ", " + MainActivity.STATE);
         } catch (Exception e) {
+            Log.e("Error---",e.getMessage());
         }
     }
 
@@ -115,6 +116,8 @@ public class Result extends AppCompatActivity {
     }
     private static Boolean defaultItem = true;
     public void finalRestaurants() {
+        defaultItem = true;
+        Log.e("Executing", "finalRestaurants()");
         spinner.setVisibility(View.VISIBLE);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -177,7 +180,8 @@ public class Result extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(object, RestaurantActivity.class);
-                    RestaurantActivity.placeId = sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).restaurantId;
+                    Log.e("Clicked-Restaurant", sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).moreInfo.name + " " + relativeLayout1.getId());
+                    RestaurantActivity.placeDetails = sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).moreInfo;
                     RestaurantActivity.ratingText =sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).rating;
                     RestaurantActivity.distanceText = sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).distance;
                     RestaurantActivity.timeText = sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).time;
@@ -274,6 +278,7 @@ public class Result extends AppCompatActivity {
                 }
             }
             catch (Exception e){
+                Log.e("Exception", e.getMessage());
                 imageView1.setImageResource(R.drawable.permanentlyclosed);
                 layoutParams5.setMargins(0,40,35,0);
                 open.setLayoutParams(layoutParams5);

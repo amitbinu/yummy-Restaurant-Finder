@@ -21,8 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.android.yummy.DataManager.Restaurant;
 import com.example.android.yummy.R;
+import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import java.util.ArrayList;
+
+import static com.example.android.yummy.R.drawable.open;
 
 public class Main2Activity extends AppCompatActivity {
     public static String Message;
@@ -68,9 +71,8 @@ public class Main2Activity extends AppCompatActivity {
 
     public void modifySearchBar(){
         final SearchView searchbar = (SearchView) findViewById(R.id.SearchBar);
-        searchbar.setQueryHint(Html.fromHtml("<font color = #ffffff>" + " Type the food here " + "</font>"));
+        searchbar.setQueryHint(Html.fromHtml("<font color = #ffffff>" + " Type a food here" + "</font>"));
         searchbar.onActionViewExpanded();
-        searchbar.setQueryHint(Html.fromHtml("<font color = #ffffff>" + " Type the food here " + "</font>"));
         searchbar.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
             public boolean onQueryTextSubmit(String query){
@@ -106,7 +108,7 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     public static void popularRestaurants(){
-        popularRestaurants = new Restaurant[MainActivity.popularRestaurants.address.results.length];
+        popularRestaurants = new Restaurant[MainActivity.popularRestaurants.placeDetailses.size()];
         PlacesSearchResponse DATA = MainActivity.popularRestaurants.address;
 
         for (int i =0; i< popularRestaurants.length; i++){
@@ -115,7 +117,8 @@ public class Main2Activity extends AppCompatActivity {
             Double distance = distances[i];
             Double time = times[i];
             Double rating = ((double) Math.round(DATA.results[i].rating*100))/100 ;
-            String restaurantId = DATA.results[i].placeId;
+            Log.e("rating",DATA.results[i].rating+"");
+            PlaceDetails placeDetails = MainActivity.popularRestaurants.placeDetailses.get(i);
             Boolean open;
             try{
                 open = DATA.results[i].openingHours.openNow;
@@ -124,7 +127,7 @@ public class Main2Activity extends AppCompatActivity {
                 open = null;
             }
             Boolean permanentlyClosed =DATA.results[i].permanentlyClosed;
-            popularRestaurants[i] = new Restaurant(name,address,time,distance,rating,null,open,permanentlyClosed, null,restaurantId);
+            popularRestaurants[i] = new Restaurant(name,address,time,distance,rating,null,open,permanentlyClosed, null,placeDetails);
         }
         object.PopularRestaurantsLayout();
     }
@@ -158,7 +161,7 @@ public class Main2Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(object, RestaurantActivity.class);
-                    RestaurantActivity.placeId = popularRestaurants[relativeLayout1.getId()].restaurantId;
+                    RestaurantActivity.placeDetails = popularRestaurants[relativeLayout1.getId()].moreInfo;
                     RestaurantActivity.ratingText = popularRestaurants[relativeLayout1.getId()].rating;
                     RestaurantActivity.distanceText = popularRestaurants[relativeLayout1.getId()].distance;
                     RestaurantActivity.timeText = popularRestaurants[relativeLayout1.getId()].time;
