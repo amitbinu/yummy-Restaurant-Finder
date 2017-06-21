@@ -14,9 +14,14 @@ import com.example.android.yummy.apiCalls.second_address;
 import com.example.android.yummy.apiCalls.yelp;
 import com.google.maps.*;
 import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.yelp.fusion.client.models.Business;
+
+import static android.R.attr.logo;
+import static android.R.attr.value;
+import static com.example.android.yummy.apiCalls.second_address.address;
 
 
 /**
@@ -78,7 +83,7 @@ public class GeoCoder extends AppCompatActivity {
 	/**
 	 * <i>restaurant_getter</i> object that calls the google maps API to get the information.
 	 */
-	public static restaurant_getter test1;
+	public static restaurant_getter firstRestaurants;
 	/**
 	 * A boolean variable that will be changed to true once the Google Maps's response is gotten.
 	 */
@@ -95,6 +100,8 @@ public class GeoCoder extends AppCompatActivity {
      * This will contain what unit to use for displaying distance.
      */
     public static String distanceUnit;
+
+	public static ArrayList<PlaceDetails> detailedInfo;
 	/**
 	 * The constructor assigns the parameters to appropriate global variables,initializes certain public Stack and then calls the Restaurant_getter() method.
 	 * @param city_name This is the name of the city the user is currently in.
@@ -108,6 +115,7 @@ public class GeoCoder extends AppCompatActivity {
 		this.food = foods_from_user;
 		this.object = this;
 		this.Dataobject = object;
+		this.detailedInfo = new ArrayList<>();
 		context = new GeoApiContext().setApiKey(Constants.ApiKey);
 		distances = new Stack<>();
 		times = new Stack<>();
@@ -122,7 +130,7 @@ public class GeoCoder extends AppCompatActivity {
 	 * @throws Exception Throws exceptions mainly for invalid requests made to google.
 	 */
 	private static void Restaurant_getter(String origin, String city, String FOOD) throws Exception {
-			test1 = new restaurant_getter(origin,city,context,FOOD,object);
+			firstRestaurants = new restaurant_getter(origin,city,context,FOOD,object);
 
 	}
 	/**
@@ -131,10 +139,11 @@ public class GeoCoder extends AppCompatActivity {
 	 * @throws Exception
 	 */
 	public static void afterWAIT() throws Exception{
-		PlacesSearchResponse address = test1.address;
+        Log.e("Running","afterWAIT()");
+		PlacesSearchResponse address = firstRestaurants.address;
         commonRestaurants_Google = new ArrayList<>();
 		Google1 = new ArrayList<>();
-        CommonFinder(address);
+        CommonFinder(address, firstRestaurants.placeDetailses);
 		if(address.nextPageToken == null){
 			second_address SecondAddress = new second_address(context, food + " restaurants in " + MainActivity.CITY, object);
 		}
@@ -144,18 +153,23 @@ public class GeoCoder extends AppCompatActivity {
 
 		}
 
-    public static void afterAddress2(PlacesSearchResponse address,boolean value){
-        CommonFinder(address);
-        if(value==true || Google1.size() >=40){
+    public static void afterAddress2(PlacesSearchResponse address,ArrayList<PlaceDetails> placeDetailses,boolean NoNextPage){
+        Log.e("Running","afterAddress2()");
+        CommonFinder(address,placeDetailses);
+        if(NoNextPage==true || Google1.size() >=40){
             organizeAllData();
+            Log.e("Running","organizeAllData()");
         }
         else {
+            Log.e("Running","second Address again");
             second_address SecondAddress = new second_address(address.nextPageToken,context);
+
         }
     }
-    public static void afterAddress(PlacesSearchResponse address){
-        CommonFinder(address);
+    public static void afterAddress(PlacesSearchResponse address, ArrayList<PlaceDetails> placeDetailses){
+        CommonFinder(address,placeDetailses);
         organizeAllData();
+        Log.e("Running","organizeAllData()");
     }
 
     private static void organizeAllData(){
@@ -173,13 +187,20 @@ public class GeoCoder extends AppCompatActivity {
      * @param address The PlaseSearchResponse returned by the Google Maps API after a request was made.
      */
 
-    private static void CommonFinder(PlacesSearchResponse address) {
+    private static void CommonFinder(PlacesSearchResponse address, ArrayList<PlaceDetails> placeDetailses) {
+        Log.e("Running","CommonFinder()");
+        Log.e("results-length",address.results.length+"");
+        Log.e("placeDetails-length",placeDetailses.size()+"");
+
         for(int j =0; j < address.results.length; j++){
+            detailedInfo.add(placeDetailses.get(j));
 				if(! Google1.contains(address.results[j])){
 					Google1.add(address.results[j]);
                 }
 
             }
+        Log.e("Finished","CommonFinder()");
+
     }
     /**
      * This method organizes all the data and puts certain information in appropriate stacks.

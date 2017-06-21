@@ -1,8 +1,11 @@
 package com.example.android.yummy.DataManager;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.example.android.yummy.MainActivities.Result;
+import com.google.android.gms.location.places.Place;
+import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResult;
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.Quick;
@@ -18,6 +21,7 @@ public class sort {
     private static ArrayList<Double> tempRating = new ArrayList<>();
     private static ArrayList<Bitmap> tempPictures = new ArrayList<>();
     private static ArrayList<PlacesSearchResult> tempRestaurants = new ArrayList<>();
+    private static ArrayList<PlaceDetails> tempMoreInfo = new ArrayList<>();
 	public sort(data object, String sortValue){
         details = object.details;
         tempDistance = new ArrayList<>();
@@ -25,12 +29,15 @@ public class sort {
         tempRating = new ArrayList<>();
         tempPictures = new ArrayList<>();
         tempRestaurants = new ArrayList<>();
+        tempMoreInfo = new ArrayList<>();
         for(int i =0; i < details.distance_getter().size(); i++){
             tempDistance.add(details.distance_getter().get(i));
             tempTime.add(details.time_getter().get(i));
             tempRating.add(details.ratings().get(i));
             tempPictures.add(details.pictures.pictures1.get(i));
             tempRestaurants.add(details.commonRestaurants_Google.get(i));
+            Log.e("detailedInfo",details.detailedInfo.get(i).name);
+            tempMoreInfo.add(details.detailedInfo.get(i));
         }
         this.object = object;
         this.Sortedrestaurants = new ArrayList<>();
@@ -67,7 +74,7 @@ public class sort {
 
         for (double dist : distance){
             int index = tempDistance.indexOf(dist);
-            String id = tempRestaurants.get(index).placeId;
+            PlaceDetails moreInfo = tempMoreInfo.get(index);
             String name = tempRestaurants.get(index).name;
             String address = tempRestaurants.get(index).formattedAddress;
             Double time = tempTime.get(index);
@@ -89,12 +96,14 @@ public class sort {
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,picture,open,permanent,price,id));
+            Log.e("placeDetails-Name",moreInfo.name+" " + index);
+            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,picture,open,permanent,price,moreInfo));
             tempDistance.remove(index);
             tempRestaurants.remove(index);
             tempTime.remove(index);
             tempRating.remove(index);
             tempPictures.remove(index);
+            tempMoreInfo.remove(index);
         }
     }
 
@@ -107,7 +116,7 @@ public class sort {
         for (int i = distance.length-1; i >=0; i--){
             double dist = distance[i];
             int index = tempDistance.indexOf(dist);
-            String id = tempRestaurants.get(index).placeId;
+            PlaceDetails placeDetails = tempMoreInfo.get(index);
             String name = tempRestaurants.get(index).name;
             String address = tempRestaurants.get(index).formattedAddress;
             Double time = tempTime.get(index);
@@ -129,7 +138,7 @@ public class sort {
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,picture,open,permanent,price,id));
+            Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,picture,open,permanent,price,placeDetails));
             tempDistance.remove(index);
             tempRestaurants.remove(index);
             tempTime.remove(index);
@@ -148,7 +157,7 @@ public class sort {
         Quick.sort(time);
         for (double hours: time){
             int index = tempTime.indexOf(hours);
-            String id = tempRestaurants.get(index).placeId;
+            PlaceDetails placeDetails = tempMoreInfo.get(index);
             String name = tempRestaurants.get(index).name;
             String address = tempRestaurants.get(index).formattedAddress;
             Double distance = tempDistance.get(index);
@@ -170,7 +179,7 @@ public class sort {
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,picture,open,permanent,price,id));
+            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,picture,open,permanent,price,placeDetails));
             tempDistance.remove(index);
             tempRestaurants.remove(index);
             tempTime.remove(index);
@@ -188,7 +197,7 @@ public class sort {
         for (int i = time.length-1; i >=0; i--){
             double hours = time[i];
             int index = tempTime.indexOf(hours);
-            String id = tempRestaurants.get(index).placeId;
+            PlaceDetails placeDetails = tempMoreInfo.get(index);
             String name = tempRestaurants.get(index).name;
             String address = tempRestaurants.get(index).formattedAddress;
             Double distance = tempDistance.get(index);
@@ -210,7 +219,7 @@ public class sort {
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,picture,open,permanent,price,id));
+            Sortedrestaurants.add(new Restaurant(name,address,hours,distance,rating,picture,open,permanent,price,placeDetails));
             tempDistance.remove(index);
             tempRestaurants.remove(index);
             tempTime.remove(index);
@@ -227,7 +236,7 @@ public class sort {
         Quick.sort(rating);
         for (Double rate : rating){
             int index = tempRating.indexOf(rate);
-            String id = tempRestaurants.get(index).placeId;
+            PlaceDetails placeDetails = tempMoreInfo.get(index);
             String name = tempRestaurants.get(index).name;
             String address = tempRestaurants.get(index).formattedAddress;
             Double distance = tempDistance.get(index);
@@ -249,7 +258,7 @@ public class sort {
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,picture,open,permanent,price,id));
+            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,picture,open,permanent,price,placeDetails));
             tempDistance.remove(index);
             tempRestaurants.remove(index);
             tempTime.remove(index);
@@ -267,7 +276,7 @@ public class sort {
         for (int i = rating.length-1; i >= 0; i--){
             Double rate = rating[i];
             int index = tempRating.indexOf(rate);
-            String id = tempRestaurants.get(index).placeId;
+            PlaceDetails placeDetails = tempMoreInfo.get(index);
             String name = tempRestaurants.get(index).name;
             String address = tempRestaurants.get(index).formattedAddress;
             Double distance = tempDistance.get(index);
@@ -289,7 +298,7 @@ public class sort {
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,picture,open,permanent,price,id));
+            Sortedrestaurants.add(new Restaurant(name,address,time,distance,rate,picture,open,permanent,price,placeDetails));
             tempDistance.remove(index);
             tempRestaurants.remove(index);
             tempTime.remove(index);
