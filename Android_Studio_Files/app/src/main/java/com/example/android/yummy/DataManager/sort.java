@@ -1,10 +1,7 @@
-package com.example.android.yummy.DataManager;
+package com.restaurant.android.yummy.DataManager;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
-import com.example.android.yummy.MainActivities.Result;
-import com.google.android.gms.location.places.Place;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResult;
 import java.util.ArrayList;
@@ -36,12 +33,10 @@ public class sort {
             tempRating.add(details.ratings().get(i));
             tempPictures.add(details.pictures.pictures1.get(i));
             tempRestaurants.add(details.commonRestaurants_Google.get(i));
-            Log.e("detailedInfo",details.detailedInfo.get(i).name);
             tempMoreInfo.add(details.detailedInfo.get(i));
         }
         this.object = object;
         this.Sortedrestaurants = new ArrayList<>();
-        Result.updating("Sorting the restaurants ...");
         switch (sortValue){
             case("Distance(low-high)"):
                 distanceLow();
@@ -62,6 +57,8 @@ public class sort {
                 timeHigh();
                 break;
         }
+
+     //   result.resultsLayout(this);
     }
 
 
@@ -96,7 +93,6 @@ public class sort {
                 open = null;
             }
             Boolean permanent = object.details.commonRestaurants_Google.get(index).permanentlyClosed;
-            Log.e("placeDetails-Name",moreInfo.name+" " + index);
             Sortedrestaurants.add(new Restaurant(name,address,time,dist,rating,picture,open,permanent,price,moreInfo));
             tempDistance.remove(index);
             tempRestaurants.remove(index);
@@ -144,6 +140,7 @@ public class sort {
             tempTime.remove(index);
             tempRating.remove(index);
             tempPictures.remove(index);
+            tempMoreInfo.remove(index);
         }
 
     }
@@ -185,6 +182,7 @@ public class sort {
             tempTime.remove(index);
             tempRating.remove(index);
             tempPictures.remove(index);
+            tempMoreInfo.remove(index);
         }
     }
 
@@ -225,6 +223,7 @@ public class sort {
             tempTime.remove(index);
             tempRating.remove(index);
             tempPictures.remove(index);
+            tempMoreInfo.remove(index);
         }
     }
 
@@ -264,6 +263,7 @@ public class sort {
             tempTime.remove(index);
             tempRating.remove(index);
             tempPictures.remove(index);
+            tempMoreInfo.remove(index);
         }
     }
 
@@ -304,6 +304,7 @@ public class sort {
             tempTime.remove(index);
             tempRating.remove(index);
             tempPictures.remove(index);
+            tempMoreInfo.remove(index);
         }
     }
 }

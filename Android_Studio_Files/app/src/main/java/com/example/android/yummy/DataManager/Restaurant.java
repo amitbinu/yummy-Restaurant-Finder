@@ -1,4 +1,4 @@
-package com.example.android.yummy.DataManager;
+package com.restaurant.android.yummy.DataManager;
 import android.graphics.Bitmap;
 
 import com.google.maps.model.PlaceDetails;

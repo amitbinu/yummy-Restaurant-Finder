@@ -1,6 +1,6 @@
-package com.example.android.yummy.DataManager;
+package com.restaurant.android.yummy.DataManager;
 
-import com.example.android.yummy.MainActivities.Result;
+import com.restaurant.android.yummy.MainActivities.Result;
 
 /**
  * This class calls the GeoCoder class and makes sure what to do based on the results got from GeoCoder class.
@@ -24,7 +24,7 @@ public class data {
      */
 	public static void results(){
         if(checker == true){
-            Result.EXIT();
+			Result.EXIT();
         }
         else{
 			if(details.commonRestaurants_Google.size() != details.distance_getter().size()){

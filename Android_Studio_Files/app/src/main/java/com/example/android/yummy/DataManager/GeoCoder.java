@@ -1,27 +1,20 @@
-package com.example.android.yummy.DataManager;
+package com.restaurant.android.yummy.DataManager;
 
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import java.util.ArrayList;
 
 import java.util.Stack;
-import com.example.android.yummy.MainActivities.MainActivity;
-import com.example.android.yummy.apiCalls.distanceTimeBackThread;
-import com.example.android.yummy.apiCalls.photoRequest;
-import com.example.android.yummy.apiCalls.restaurant_getter;
-import com.example.android.yummy.apiCalls.second_address;
-import com.example.android.yummy.apiCalls.yelp;
+import com.restaurant.android.yummy.MainActivities.MainActivity;
+import com.restaurant.android.yummy.apiCalls.distanceTimeBackThread;
+import com.restaurant.android.yummy.apiCalls.photoRequest;
+import com.restaurant.android.yummy.apiCalls.restaurant_getter;
+import com.restaurant.android.yummy.apiCalls.second_address;
 import com.google.maps.*;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
-import com.yelp.fusion.client.models.Business;
-
-import static android.R.attr.logo;
-import static android.R.attr.value;
-import static com.example.android.yummy.apiCalls.second_address.address;
 
 
 /**
@@ -131,7 +124,6 @@ public class GeoCoder extends AppCompatActivity {
 	 */
 	private static void Restaurant_getter(String origin, String city, String FOOD) throws Exception {
 			firstRestaurants = new restaurant_getter(origin,city,context,FOOD,object);
-
 	}
 	/**
 	 * This method is called after both yelp's and google maps' response is got.
@@ -139,7 +131,6 @@ public class GeoCoder extends AppCompatActivity {
 	 * @throws Exception
 	 */
 	public static void afterWAIT() throws Exception{
-        Log.e("Running","afterWAIT()");
 		PlacesSearchResponse address = firstRestaurants.address;
         commonRestaurants_Google = new ArrayList<>();
 		Google1 = new ArrayList<>();
@@ -154,14 +145,11 @@ public class GeoCoder extends AppCompatActivity {
 		}
 
     public static void afterAddress2(PlacesSearchResponse address,ArrayList<PlaceDetails> placeDetailses,boolean NoNextPage){
-        Log.e("Running","afterAddress2()");
         CommonFinder(address,placeDetailses);
-        if(NoNextPage==true || Google1.size() >=40){
+        if(NoNextPage==true || Google1.size() >=30){
             organizeAllData();
-            Log.e("Running","organizeAllData()");
         }
         else {
-            Log.e("Running","second Address again");
             second_address SecondAddress = new second_address(address.nextPageToken,context);
 
         }
@@ -169,13 +157,12 @@ public class GeoCoder extends AppCompatActivity {
     public static void afterAddress(PlacesSearchResponse address, ArrayList<PlaceDetails> placeDetailses){
         CommonFinder(address,placeDetailses);
         organizeAllData();
-        Log.e("Running","organizeAllData()");
     }
 
     private static void organizeAllData(){
         commonRestaurants_Google = Google1;
 
-        com.example.android.yummy.MainActivities.Result.updating("Gathering restaurants' pictures");
+        com.restaurant.android.yummy.MainActivities.Result.updating("Gathering restaurants' pictures");
         pictures = new photoRequest(commonRestaurants_Google);
         try{
             DataOrganizer();}
@@ -188,18 +175,13 @@ public class GeoCoder extends AppCompatActivity {
      */
 
     private static void CommonFinder(PlacesSearchResponse address, ArrayList<PlaceDetails> placeDetailses) {
-        Log.e("Running","CommonFinder()");
-        Log.e("results-length",address.results.length+"");
-        Log.e("placeDetails-length",placeDetailses.size()+"");
-
-        for(int j =0; j < address.results.length; j++){
+        for(int j =0; j < placeDetailses.size(); j++){
             detailedInfo.add(placeDetailses.get(j));
 				if(! Google1.contains(address.results[j])){
 					Google1.add(address.results[j]);
                 }
 
             }
-        Log.e("Finished","CommonFinder()");
 
     }
     /**
