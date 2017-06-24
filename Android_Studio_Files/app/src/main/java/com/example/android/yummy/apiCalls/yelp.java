@@ -1,12 +1,12 @@
-package com.example.android.yummy.apiCalls;
+package com.restaurant.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.android.yummy.DataManager.Constants;
-import com.example.android.yummy.DataManager.GeoCoder;
-import com.example.android.yummy.MainActivities.RestaurantActivity;
+import com.restaurant.android.yummy.DataManager.Constants;
+import com.restaurant.android.yummy.DataManager.GeoCoder;
+import com.restaurant.android.yummy.MainActivities.RestaurantActivity;
 import com.yelp.fusion.client.connection.YelpFusionApi;
 import com.yelp.fusion.client.connection.YelpFusionApiFactory;
 import com.yelp.fusion.client.models.SearchResponse;

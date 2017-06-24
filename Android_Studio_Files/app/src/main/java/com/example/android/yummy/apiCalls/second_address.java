@@ -1,9 +1,8 @@
-package com.example.android.yummy.apiCalls;
+package com.restaurant.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.example.android.yummy.DataManager.GeoCoder;
+import com.restaurant.android.yummy.DataManager.GeoCoder;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.errors.InvalidRequestException;
@@ -24,6 +23,7 @@ public class second_address {
     private static String query;
     private static GeoCoder geoCoder;
     private static ArrayList<PlaceDetails> placeDetailses;
+    private static int size;
     public second_address(GeoApiContext context, String query, GeoCoder geoCoder){
         this.address = null;
         this.context = context;
@@ -47,7 +47,13 @@ public class second_address {
         protected Void doInBackground(Void... params) {
             try {
                 address = PlacesApi.textSearchNextPage(context, nextPage).await();
-                for (int i =0; i < address.results.length ; i++){
+                if(address.results.length >= 10){
+                    size = 10;
+                }
+                else{
+                    size = address.results.length;
+                }
+                for (int i =0; i < size ; i++){
 
                         PlaceDetails placeDetails = PlacesApi.placeDetails(context,address.results[i].placeId).await();
                         placeDetailses.add(placeDetails);
@@ -55,26 +61,27 @@ public class second_address {
                         try{
                             address.results[i].photos[0] = placeDetails.photos[0];
                         }
-                        catch (Exception e){
-                            address.results[i].photos[0] = placeDetails.photos[0];
-                        }
+                        catch (Exception e){ }
                     }
             }
             catch (InvalidRequestException f){
                 while (true){
                     try{
                         address = PlacesApi.textSearchNextPage(context, nextPage).await();
-                        for (int i =0; i < address.results.length ; i++){
-
+                        if(address.results.length >= 10){
+                            size = 10;
+                        }
+                        else{
+                            size = address.results.length;
+                        }
+                        for (int i =0; i < size ; i++){
                                 PlaceDetails placeDetails = PlacesApi.placeDetails(context,address.results[i].placeId).await();
                                 placeDetailses.add(placeDetails);
                                 address.results[i].rating = placeDetails.rating;
                                 try{
                                     address.results[i].photos[0] = placeDetails.photos[0];
                                 }
-                                catch (Exception e){
-                                    address.results[i].photos[0] = placeDetails.photos[0];
-                                }
+                                catch (Exception e){ }
                                 //  address.results[i].photos[0] = placeDetails.photos[0];
                             }
                         break;
@@ -88,7 +95,6 @@ public class second_address {
                 }
             }
             catch (Exception e) {
-                Log.e("secindAddress", e.getMessage());
                 address = null;
             }
             return null;
@@ -111,7 +117,13 @@ public class second_address {
 
             try {
                 address = PlacesApi.textSearchQuery(context, query).await();
-                for (int i =0; i < address.results.length ; i++){
+                if(address.results.length >= 10){
+                    size = 10;
+                }
+                else{
+                    size = address.results.length;
+                }
+                for (int i =0; i < size ; i++){
                         PlaceDetails placeDetails = PlacesApi.placeDetails(context,address.results[i].placeId).await();
                         placeDetailses.add(placeDetails);
                         address.results[i].rating = placeDetails.rating;
@@ -128,8 +140,13 @@ public class second_address {
                 while (true){
                     try{
                         address = PlacesApi.textSearchQuery(context, query).await();
-                        for (int i =0; i < address.results.length ; i++){
-
+                        if(address.results.length >= 10){
+                            size = 10;
+                        }
+                        else{
+                            size = address.results.length;
+                        }
+                        for (int i =0; i < size ; i++){
                                 PlaceDetails placeDetails = PlacesApi.placeDetails(context,address.results[i].placeId).await();
                                 placeDetailses.add(placeDetails);
                                 address.results[i].rating = placeDetails.rating;
@@ -159,7 +176,6 @@ public class second_address {
 
         @Override
         protected void onPostExecute(PlacesSearchResponse strings) {
-            //Result.result.setText(strings[0] + " " + strings[1]);
             try{
                 geoCoder.afterAddress(address,placeDetailses);
                 ;}

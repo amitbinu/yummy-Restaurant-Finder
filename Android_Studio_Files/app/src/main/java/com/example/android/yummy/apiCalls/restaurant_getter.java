@@ -1,7 +1,7 @@
-package com.example.android.yummy.apiCalls;
+package com.restaurant.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
-import com.example.android.yummy.DataManager.GeoCoder;
+import com.restaurant.android.yummy.DataManager.GeoCoder;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.PlaceDetails;
@@ -49,8 +49,7 @@ public class restaurant_getter {
 
                 }
             }
-            catch (Exception e){
-            }
+            catch (Exception e){}
             return address;
 
         }

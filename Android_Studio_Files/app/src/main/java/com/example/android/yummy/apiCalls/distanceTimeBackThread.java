@@ -1,14 +1,12 @@
-package com.example.android.yummy.apiCalls;
+package com.restaurant.android.yummy.apiCalls;
 
-import
-        android.os.AsyncTask;
-
-import com.example.android.yummy.DataManager.GeoCoder;
-import com.example.android.yummy.MainActivities.Main2Activity;
+import android.os.AsyncTask;
+import com.restaurant.android.yummy.DataManager.GeoCoder;
+import com.restaurant.android.yummy.MainActivities.Main2Activity;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
-import static com.example.android.yummy.MainActivities.Main2Activity.distances;
+import static com.restaurant.android.yummy.MainActivities.Main2Activity.distances;
 
 /**
  * Created by amitb on 2017-05-07.

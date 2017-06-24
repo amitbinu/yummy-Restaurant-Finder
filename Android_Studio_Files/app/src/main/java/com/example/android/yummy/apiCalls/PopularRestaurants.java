@@ -1,14 +1,8 @@
-package com.example.android.yummy.apiCalls;
+package com.restaurant.android.yummy.apiCalls;
 
 import android.os.AsyncTask;
-import android.util.Log;
-
-import com.example.android.yummy.DataManager.Constants;
-import com.example.android.yummy.DataManager.GeoCoder;
-import com.example.android.yummy.MainActivities.MainActivity;
-import com.example.android.yummy.MainActivities.photos;
+import com.restaurant.android.yummy.MainActivities.MainActivity;
 import com.google.maps.GeoApiContext;
-import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
@@ -60,7 +54,6 @@ public class PopularRestaurants {
                 }
             }
             catch (Exception e){
-                Log.e("ERROR IN POPULAR REST", e.getMessage(), e);
             }
             return address;
 

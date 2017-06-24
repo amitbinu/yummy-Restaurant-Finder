@@ -1,12 +1,12 @@
-package com.example.android.yummy.apiCalls;
+package com.restaurant.android.yummy.apiCalls;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import com.example.android.yummy.DataManager.Constants;
-import com.example.android.yummy.MainActivities.Result;
-import com.example.android.yummy.MainActivities.MainActivity;
-import com.example.android.yummy.MainActivities.photos;
+import com.restaurant.android.yummy.DataManager.Constants;
+import com.restaurant.android.yummy.MainActivities.Result;
+import com.restaurant.android.yummy.MainActivities.MainActivity;
+import com.restaurant.android.yummy.MainActivities.photos;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PhotoRequest;
 import com.google.maps.PlacesApi;
@@ -15,7 +15,7 @@ import com.google.maps.model.PhotoResult;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import java.util.ArrayList;
-import static com.example.android.yummy.apiCalls.restaurant_getter.city;
+import static com.restaurant.android.yummy.apiCalls.restaurant_getter.city;
 
 /**
  * Created by amitb on 2017-05-11.

@@ -1,5 +1,5 @@
-package com.example.android.yummy.apiCalls;
-import com.example.android.yummy.DataManager.Constants;
+package com.restaurant.android.yummy.apiCalls;
+import com.restaurant.android.yummy.DataManager.Constants;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
