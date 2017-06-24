@@ -1,4 +1,4 @@
-package com.example.android.yummy.MainActivities;
+package com.restaurant.android.yummy.MainActivities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.yummy.apiCalls.photoRequest;
-import com.example.android.yummy.R;
+import com.restaurant.android.yummy.apiCalls.photoRequest;
+import com.restaurant.android.yummy.R;
 import com.google.maps.model.Photo;
 
 

@@ -1,5 +1,6 @@
-package com.example.android.yummy.MainActivities;
+package com.restaurant.android.yummy.MainActivities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,12 +20,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.yummy.DataManager.Constants;
-import com.example.android.yummy.apiCalls.PopularRestaurants;
-import com.example.android.yummy.apiCalls.distanceTimeBackThread;
-import com.example.android.yummy.apiCalls.photoRequest;
-import com.example.android.yummy.R;
-import com.example.android.yummy.apiCalls.UserLocation;
+import com.restaurant.android.yummy.DataManager.Constants;
+import com.restaurant.android.yummy.apiCalls.PopularRestaurants;
+import com.restaurant.android.yummy.apiCalls.distanceTimeBackThread;
+import com.restaurant.android.yummy.apiCalls.photoRequest;
+import com.restaurant.android.yummy.R;
+import com.restaurant.android.yummy.apiCalls.UserLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -40,9 +41,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.PlacesSearchResponse;
 
-import static com.example.android.yummy.apiCalls.restaurant_getter.context;
-
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static GoogleApiClient mGoogleApiClient;
     public static String CITY, COMMUNITY, COUNTRY, STATE;
     public static double latitude, longitude;
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public static photoRequest pictures;
     private static TextView textView;
     private static ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.object = this;
@@ -66,34 +66,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION};
+        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
         if (!hasPermissions(this, PERMISSIONS)) {
-            ActivityCompat.requestPermissions( this, PERMISSIONS, 112 );
-            double starTIime = System.currentTimeMillis();
-            while(System.currentTimeMillis()-starTIime < 3000){
-            }
-            if(!hasPermissions(this, PERMISSIONS)){
+            ActivityCompat.requestPermissions(this, PERMISSIONS, 112);
+
+        /* if (!hasPermissions(this, PERMISSIONS)) {
                 this.finish();
                 System.exit(0);
             }
-            else{
-                if(isOnline() == true){
+            else {
+                if (isOnline() == true) {
                     onStart();
-                }
-                else{
-                    Toast.makeText(this,"Need Internet to work",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "Need Internet to work", Toast.LENGTH_LONG).show();
                     Intent settingsIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
                     startActivityForResult(settingsIntent, 9003);
                     onBackPressed();
                 }
-            }
-        }
-        else{
-            if(isOnline() == true){
+            }*/
+        } else {
+            if (isOnline() == true) {
                 onStart();
-            }
-            else{
-                Toast.makeText(this,"Need Internet to work",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Need Internet to work", Toast.LENGTH_LONG).show();
                 Intent settingsIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
                 startActivityForResult(settingsIntent, 9003);
                 onBackPressed();
@@ -101,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    private Boolean isOnline(){
+    private Boolean isOnline() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
@@ -118,25 +113,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return true;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
+        if (hasPermissions(this, PERMISSIONS)) {
+            if (isOnline() == true) {
+                mGoogleApiClient = new GoogleApiClient.Builder(this)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+                onStart();
+            } else {
+                Toast.makeText(this, "Need Internet to work", Toast.LENGTH_LONG).show();
+                Intent settingsIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivityForResult(settingsIntent, 9003);
+                onBackPressed();
+            }
+        } else {
+            this.finish();
+            System.exit(0);
+        }
+        return;
+    }
 
-    protected void onStart(){
+    @Override
+    protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
     }
-    protected void onStop(){
+
+    @Override
+    protected void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.e("STATUS", mGoogleApiClient.isConnected()+"");
-
+        Log.e("Error","onConnected");
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient ,builder.build());
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult locationSettingsResult) {
@@ -145,26 +165,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
+                        if (ActivityCompat.checkSelfPermission(object, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(object, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
                         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-                        if(location!=null){
-                            try{
+                        if (location != null) {
+                            try {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
-                                UserLocation userLocation = new UserLocation(latitude,longitude);
+                                UserLocation userLocation = new UserLocation(latitude, longitude);
                                 nextActivity(userLocation.cityName, userLocation.communityName, userLocation.stateName, userLocation.countryName);
-                            }
-                            catch (Exception e){
-                                Log.e("error-","onResult-onConnected-MainActivity " + e.getMessage());
-                            }
+                            } catch (Exception e) {Log.e("Error", e.getMessage());}
+                        } else {
+                            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, MainActivity.this);
                         }
-                        else{LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest,MainActivity.this);}
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
                             status.startResolutionForResult(MainActivity.this, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.e("Error", e.getMessage());
                         }
-                        catch (IntentSender.SendIntentException e) {}
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                         break;
@@ -174,10 +203,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        switch (resultCode){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
             case Activity.RESULT_OK:
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,this);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
                 break;
             case Activity.RESULT_CANCELED:
                 this.finish();
@@ -190,25 +229,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(Location location){
-        Log.e("onLocationChanged", mGoogleApiClient.isConnected()+"");
         try{
             latitude = location.getLatitude();
             longitude = location.getLongitude();
 
         UserLocation userLocation = new UserLocation(latitude,longitude);
         nextActivity(userLocation.cityName, userLocation.communityName, userLocation.stateName, userLocation.countryName);}
-        catch (Exception e){Log.e("error",e.getMessage());}
+        catch (Exception e){
+            Log.e("Error", e.getMessage());}
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.e("CONNECTION","SUSPENDED");
         onStart();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e("CONNECTION", "FAILED')");
     }
 
     private void nextActivity(String cityName, String communityName, String stateName, String CountryName){

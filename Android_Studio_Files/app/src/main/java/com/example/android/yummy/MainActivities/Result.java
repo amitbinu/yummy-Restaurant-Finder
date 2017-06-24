@@ -1,4 +1,4 @@
-package com.example.android.yummy.MainActivities;
+package com.restaurant.android.yummy.MainActivities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,12 +22,18 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.android.yummy.apiCalls.photoRequest;
-import com.example.android.yummy.DataManager.data;
-import com.example.android.yummy.DataManager.sort;
-import com.example.android.yummy.R;
+
+import com.restaurant.android.yummy.DataManager.AvoidingErrors;
+import com.restaurant.android.yummy.apiCalls.photoRequest;
+import com.restaurant.android.yummy.DataManager.data;
+import com.restaurant.android.yummy.DataManager.sort;
+import com.restaurant.android.yummy.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
-import static com.example.android.yummy.MainActivities.MainActivity.COMMUNITY;
+import static com.restaurant.android.yummy.MainActivities.MainActivity.COMMUNITY;
+import static com.restaurant.android.yummy.MainActivities.sortingRestaurants.info;
 
 public class Result extends AppCompatActivity {
     public static Boolean checker = false;
@@ -41,6 +46,8 @@ public class Result extends AppCompatActivity {
     private static Spinner spinner;
     private static TextView updateForUser;
     private static ArrayList<Integer[]> typesOfStars = new ArrayList<>();
+    private static AdView adView;
+    private static RelativeLayout relativeLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +56,9 @@ public class Result extends AppCompatActivity {
             this.object = this;
 
             setContentView(R.layout.activity_result);
+            adView = (AdView) findViewById(R.id.adView3);
+            adView.loadAd(new AdRequest.Builder().build());
+            adView.setVisibility(View.GONE);
             TextView textView = (TextView) findViewById(R.id.Header);
             textView.setText("Restaurants near " + COMMUNITY);
             if (checker == true) {
@@ -89,7 +99,6 @@ public class Result extends AppCompatActivity {
         try {
             test = new data(Main2Activity.Message, MainActivity.latitude + " " + MainActivity.longitude, COMMUNITY + ", " + MainActivity.CITY + ", " + MainActivity.STATE);
         } catch (Exception e) {
-            Log.e("Error---",e.getMessage());
         }
     }
 
@@ -106,7 +115,7 @@ public class Result extends AppCompatActivity {
 
     public static void EXIT() {
         Main2Activity.checker = true;
-        new com.example.android.yummy.DataManager.AvoidingErrors(object);
+        new AvoidingErrors(object);
     }
 
     private static photoRequest pictures;
@@ -114,49 +123,66 @@ public class Result extends AppCompatActivity {
     public static void getter() {
         pictures = new photoRequest(object);
     }
-    private static Boolean defaultItem = true;
+    public static Boolean defaultItem = true;
     public void finalRestaurants() {
-        defaultItem = true;
-        Log.e("Executing", "finalRestaurants()");
         spinner.setVisibility(View.VISIBLE);
+        spinner.setSelection(com.restaurant.android.yummy.MainActivities.sortingRestaurants.position);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String text = spinner.getSelectedItem().toString();
-                final sort sortedResult = new sort(test, text);
-                if (sortedResult.checker == false) {
-                    Toast.makeText(object, "SOME PRICES ARE NOT AVAILABLE", Toast.LENGTH_LONG).show();
+                if(com.restaurant.android.yummy.MainActivities.sortingRestaurants.sortValue!=null && !com.restaurant.android.yummy.MainActivities.sortingRestaurants.sortValue.equals(text)){
+                    com.restaurant.android.yummy.MainActivities.sortingRestaurants.position = position;
+                    com.restaurant.android.yummy.MainActivities.sortingRestaurants.sortValue = spinner.getSelectedItem().toString();
+                    info = test;
+                    Intent intent = new Intent(object, com.restaurant.android.yummy.MainActivities.sortingRestaurants.class);
+                    startActivity(intent);
+                    object.finish();
                 }
-                resultsLayout(sortedResult);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                Log.e("NOT selected", "false");
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         if(defaultItem){
-            String text = spinner.getSelectedItem().toString();
-            final sort sortedResult = new sort(test, text);
-            if (sortedResult.checker == false) {
+            sort restaurants = new sort(info,"Distance(low-high)");
+            if (restaurants.checker == false) {
                 Toast.makeText(object, "SOME PRICES ARE NOT AVAILABLE", Toast.LENGTH_LONG).show();
             }
+            com.restaurant.android.yummy.MainActivities.sortingRestaurants.sortValue = "Distance(low-high)";
             updateForUser.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
-            resultsLayout(sortedResult);
+
+            resultsLayout(restaurants);
+        }
+        else{
+            resultsLayout(com.restaurant.android.yummy.MainActivities.sortingRestaurants.restaurants);
         }
         defaultItem = true;
     }
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // View is now attached
+    }
 
-    private void resultsLayout(sort sortObject){
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        // View is now detached, and about to be destroyed
+    }
+
+
+    public void resultsLayout(sort sortObject){
+        adView.setVisibility(View.VISIBLE);
         updateForUser.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
         defaultItem = false;
         int spacingBetweenStars = 75;
         int mTopStars =480;
         final sort sortedResult = sortObject;
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RESULTrelative);
+        relativeLayout = (RelativeLayout) findViewById(R.id.RESULTrelative);
         LinearLayout mainLinearLayout = new LinearLayout(contextforme);
         LinearLayout.LayoutParams mainlayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         mainlayoutParams.setMargins(10, 10, 0, 0);
@@ -169,7 +195,7 @@ public class Result extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.dot3);
         textView.setVisibility(View.GONE);
 
-        for (int i = 0; i < test.details.pictures.pictures1.size(); i++) {
+        for (int i = 0; i < sortedResult.Sortedrestaurants.size(); i++) {
             final RelativeLayout relativeLayout1 = new RelativeLayout(this);
             relativeLayout1.setBackgroundColor(getResources().getColor(R.color.BackGroundPopular));
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,570);
@@ -180,7 +206,6 @@ public class Result extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(object, RestaurantActivity.class);
-                    Log.e("Clicked-Restaurant", sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).moreInfo.name + " " + relativeLayout1.getId());
                     RestaurantActivity.placeDetails = sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).moreInfo;
                     RestaurantActivity.ratingText =sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).rating;
                     RestaurantActivity.distanceText = sortedResult.Sortedrestaurants.get(relativeLayout1.getId()).distance;
@@ -278,7 +303,6 @@ public class Result extends AppCompatActivity {
                 }
             }
             catch (Exception e){
-                Log.e("Exception", e.getMessage());
                 imageView1.setImageResource(R.drawable.permanentlyclosed);
                 layoutParams5.setMargins(0,40,35,0);
                 open.setLayoutParams(layoutParams5);
@@ -330,17 +354,15 @@ public class Result extends AppCompatActivity {
 
             relativeLayout1.addView(ratingText);
 
-
-            Log.e("Number of Stars", numberOfStars+"");
             Integer[] typesofstars = new Integer[5];
             switch (numberOfStars){
                 case 0:
-                    Log.e("Case #", "0");
                     ImageView star = new ImageView(this);
                     star.setImageResource(R.drawable.quarterstar);
                     RelativeLayout.LayoutParams layoutParams12 = new RelativeLayout.LayoutParams(100,100);
                     layoutParams12.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParams12.setMargins(0,mTopStars,spacingBetweenStars*4,0);
+                    layoutParams12.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
+                    star.setLayoutParams(layoutParams12);
 
                     ImageView starPict = new ImageView(this);
                     starPict.setImageResource(R.drawable.quarterstar);
@@ -383,7 +405,6 @@ public class Result extends AppCompatActivity {
                     typesOfStars.add(typesofstars);
                     break;
                 case 1:
-                    Log.e("Case #", "1");
                     ImageView star1 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams10 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 0.75){
@@ -481,7 +502,6 @@ public class Result extends AppCompatActivity {
                     break;
 
                 case 2:
-                    Log.e("Case #", "2");
                     ImageView star1_2 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams13 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 1.75){
@@ -581,7 +601,6 @@ public class Result extends AppCompatActivity {
                     break;
 
                 case 3:
-                    Log.e("Case #", "3");
                     ImageView star1_3 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams15 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 2.75){
@@ -681,7 +700,6 @@ public class Result extends AppCompatActivity {
                     }
                     break;
                 case 4 :
-                    Log.e("Case #", "4");
                     ImageView star1_4 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams17 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 3.75){
@@ -780,7 +798,6 @@ public class Result extends AppCompatActivity {
                     }
                     break;
                 case 5 :
-                    Log.e("Case #", "5");
                     if(rating < 4.75){
                         ImageView star1_5 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams19 = new RelativeLayout.LayoutParams(100,100);

@@ -1,4 +1,4 @@
-package com.example.android.yummy.MainActivities;
+package com.restaurant.android.yummy.MainActivities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,13 +18,15 @@ import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.android.yummy.DataManager.Restaurant;
-import com.example.android.yummy.R;
+import com.restaurant.android.yummy.DataManager.Restaurant;
+import com.restaurant.android.yummy.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import java.util.ArrayList;
 
-import static com.example.android.yummy.R.drawable.open;
 
 public class Main2Activity extends AppCompatActivity {
     public static String Message;
@@ -35,13 +36,24 @@ public class Main2Activity extends AppCompatActivity {
     public static double[] times;
     public static String distanceUnit;
     public static Boolean checker = false;
+    private static AdView adView,adView1;
     private static ArrayList<Integer[]> typesOfStars = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+        MobileAds.initialize(this,"ca-app-pub-6392162919060947/1308594513");
+
+        adView = (AdView) findViewById(R.id.adView);
+        adView1 = (AdView) findViewById(R.id.adView2);
+        AdRequest request = new AdRequest.Builder().build();
+        adView.loadAd(request);
+        adView1.loadAd(new AdRequest.Builder().build());
+        adView.setVisibility(View.GONE);
+        adView1.setVisibility(View.GONE);
         try{
 
-            setContentView(R.layout.activity_main2);
+
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar3);
             progressBar.setVisibility(View.GONE);
             this.object = this;
@@ -117,7 +129,6 @@ public class Main2Activity extends AppCompatActivity {
             Double distance = distances[i];
             Double time = times[i];
             Double rating = ((double) Math.round(DATA.results[i].rating*100))/100 ;
-            Log.e("rating",DATA.results[i].rating+"");
             PlaceDetails placeDetails = MainActivity.popularRestaurants.placeDetailses.get(i);
             Boolean open;
             try{
@@ -133,6 +144,8 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     public void PopularRestaurantsLayout(){
+        adView.setVisibility(View.VISIBLE);
+        adView1.setVisibility(View.VISIBLE);
         int mTopStars = 470;
         int spacingBetweenStars =75;
         TextView update = (TextView) findViewById(R.id.second_update);
@@ -306,17 +319,15 @@ public class Main2Activity extends AppCompatActivity {
 
             relativeLayout1.addView(ratingText);
 
-
-            Log.e("Number of Stars", numberOfStars+"");
             Integer[] typesofstars = new Integer[5];
             switch (numberOfStars){
                 case 0:
-                    Log.e("Case #", "0");
                     ImageView star = new ImageView(this);
                     star.setImageResource(R.drawable.quarterstar);
                     RelativeLayout.LayoutParams layoutParams12 = new RelativeLayout.LayoutParams(100,100);
                     layoutParams12.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParams12.setMargins(0,mTopStars,spacingBetweenStars*4,0);
+                    layoutParams12.setMargins(0,mTopStars,100+spacingBetweenStars*4,0);
+                    star.setLayoutParams(layoutParams12);
 
                     ImageView starPict = new ImageView(this);
                     starPict.setImageResource(R.drawable.quarterstar);
@@ -359,7 +370,6 @@ public class Main2Activity extends AppCompatActivity {
                     typesOfStars.add(typesofstars);
                     break;
                 case 1:
-                    Log.e("Case #", "1");
                     ImageView star1 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams10 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 0.75){
@@ -457,7 +467,6 @@ public class Main2Activity extends AppCompatActivity {
                     break;
 
                 case 2:
-                    Log.e("Case #", "2");
                     ImageView star1_2 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams13 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 1.75){
@@ -557,7 +566,6 @@ public class Main2Activity extends AppCompatActivity {
                     break;
 
                 case 3:
-                    Log.e("Case #", "3");
                     ImageView star1_3 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams15 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 2.75){
@@ -657,7 +665,6 @@ public class Main2Activity extends AppCompatActivity {
 
                     break;
                 case 4 :
-                    Log.e("Case #", "4");
                     ImageView star1_4 = new ImageView(this);
                     RelativeLayout.LayoutParams layoutParams17 = new RelativeLayout.LayoutParams(100,100);
                     if(rating >= 3.75){
@@ -756,7 +763,6 @@ public class Main2Activity extends AppCompatActivity {
                     }
                     break;
                 case 5 :
-                    Log.e("Case #", "5");
                     if(rating < 4.75){
                         ImageView star1_5 = new ImageView(this);
                         RelativeLayout.LayoutParams layoutParams19 = new RelativeLayout.LayoutParams(100,100);
