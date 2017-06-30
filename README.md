@@ -1,3 +1,4 @@
+
 # Yummy-Restaurant Finder
 
 An android application that helps the user to choose a restaurant based on what food they want. 
@@ -11,6 +12,7 @@ When a restaurant is clicked, the application will show more information, such a
 The data shown in the application are pulled from google maps and yelp.
 
 The application can be found here : [a link](https://play.google.com/store/apps/details?id=com.restaurant.android.yummy)
+
 ![Alt text](https://github.com/amitbinu/yummy-RestaurantFinder/blob/master/pictures/yummy-1.PNG?raw=true "Loading Screen")
 
 ![Alt text](https://github.com/amitbinu/yummy-RestaurantFinder/blob/master/pictures/yummy-2.PNG?raw=true "Main Screen")
